@@ -5,6 +5,7 @@
 在cmd中尝试运行cocos，成功即正常运行
 
 二、项目配置
+从github拉取本项目，使用git clone <url>l指令
 新建一个文件夹build（为了简洁），进入build文件夹，运行cmake .. -G "Visual Studio 17 2022" -A win32指令
 运行完上述文件后，会得到.sln文件，即可打开VS进行后续编译工作
 
@@ -12,7 +13,7 @@
 将FarmingGame设为启动项，直接编译即可
 
 四、源代码书写与修改
-直接在VS中编辑即可，生成的sln相当于目录，在VS中修改的代码会直接反应到代码文件中，所有的自己写的文件都放到class中。
+直接在VS中编辑即可，生成的sln相当于目录，在VS中修改的代码保存后会直接反应到代码文件中，所有的自己写的文件都放到class中。
 假如增加文件，需要在CMakeLists中添加源文件的文件名，然后重新配置项目（重新cmake）
 
 可以参考https://www.bilibili.com/video/BV1g34y1n7HQ/
