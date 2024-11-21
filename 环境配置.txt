@@ -5,6 +5,7 @@
 在cmd中尝试运行cocos，成功即正常运行
 
 二、项目配置
+从github拉取本项目，使用git clone <url>l指令
 新建一个文件夹build（为了简洁），进入build文件夹，运行cmake .. -G "Visual Studio 17 2022" -A win32指令
 运行完上述文件后，会得到.sln文件，即可打开VS进行后续编译工作
 
