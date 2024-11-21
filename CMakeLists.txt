@@ -36,7 +36,7 @@ if(XCODE)
 endif()
 
 if(NOT DEFINED BUILD_ENGINE_DONE) # to test FarmingGame into root project
-    set(COCOS2DX_ROOT_PATH $ENV{COCOS2DX_ROOT})
+    set(COCOS2DX_ROOT_PATH $ENV{COCOS_X_ROOT}/cocos2d-x-4.0)
     set(CMAKE_MODULE_PATH ${COCOS2DX_ROOT_PATH}/cmake/Modules/)
 
     include(CocosBuildSet)
@@ -84,13 +84,6 @@ elseif(WINDOWS)
          proj.win32/game.rc
          ${common_res_files}
          )
-
-    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-        link_directories("${COCOS2DX_ROOT_PATH}/build/lib/Debug.win32")
-    else()
-        link_directories("${COCOS2DX_ROOT_PATH}/build/lib/Release.win32")
-    endif()
-
 elseif(APPLE)
     if(IOS)
         list(APPEND GAME_HEADER
