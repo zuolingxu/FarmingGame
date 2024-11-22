@@ -1,6 +1,0 @@
-1. HelloWorld项目理解
-https://www.bilibili.com/video/BV1JosjeKEfe
-从p2开始看
-掌握基本的阅读代码以及cocos lib的文件能力（按住ctrl单击即可查看定义进行溯源）
-
-2. 

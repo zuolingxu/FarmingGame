@@ -1,6 +1,8 @@
 #include "MainScene.h"
 
 USING_NS_CC;
+// If you want use json library, use this to make your code neater
+using json = nlohmann::json;
 
 Scene* Main::createScene()
 {
@@ -17,6 +19,12 @@ static void problemLoading(const char* filename)
 // on "init" you need to initialize your instance
 bool Main::init()
 {
+    // Get the path of global.json, json file can only input by ifstream
+    std::string filePath = cocos2d::FileUtils::getInstance()->fullPathForFilename("global.json");
+    std::ifstream input_file(filePath);
+    json global_json;
+    input_file >> global_json;
+    
     //////////////////////////////
     // 1. super init first
     if ( !Scene::init() )
@@ -61,7 +69,8 @@ bool Main::init()
     // add a label shows "Hello World"
     // create and initialize a label
 
-    auto label = Label::createWithTTF("Hello World", "fonts/Marker Felt.ttf", 24);
+    auto game_title = global_json["GameTitle"];
+    auto label = Label::createWithTTF(game_title, "fonts/Marker Felt.ttf", 24);
     if (label == nullptr)
     {
         problemLoading("'fonts/Marker Felt.ttf'");

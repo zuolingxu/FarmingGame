@@ -18,6 +18,7 @@ if(NOT DEFINED BUILD_ENGINE_DONE) # to test FarmingGame into root project
     add_subdirectory(${COCOS2DX_ROOT_PATH}/cocos ${ENGINE_BINARY_PATH}/cocos/core)
 endif()
 
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/json)
 # record sources, headers, resources...
 set(GAME_SOURCE)
 set(GAME_HEADER)
@@ -104,11 +105,15 @@ else()
     target_link_libraries(${APP_NAME} -Wl,--whole-archive cpp_android_spec -Wl,--no-whole-archive)
 endif()
 
-target_link_libraries(${APP_NAME} cocos2d)
+# PRIVATE method make cocos hidden from subproject of APP
+target_link_libraries(${APP_NAME} PRIVATE cocos2d)
 target_include_directories(${APP_NAME}
         PRIVATE Classes
         PRIVATE ${COCOS2DX_ROOT_PATH}/cocos/audio/include/
 )
+
+# add json as a subdirectory
+target_link_libraries(${APP_NAME} PRIVATE nlohmann_json::nlohmann_json)
 
 # mark app resources
 setup_cocos_app_config(${APP_NAME})

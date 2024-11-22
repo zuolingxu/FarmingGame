@@ -1,0 +1,7 @@
+{
+    "GameTitle": "A FarmingGame",
+    "GameVesion": "v1.0",
+    "HelloWorld": "HelloWorld.png",
+    "ObjectPath": "Resource/Object",
+    "MapPath": "Resource/Map"
+}

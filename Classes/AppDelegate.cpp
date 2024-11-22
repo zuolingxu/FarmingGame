@@ -1,8 +1,7 @@
 #include "AppDelegate.h"
 #include "MainScene.h"
 
-// uncomment this if you want to use the audio engine
-// But it didn't work because there isn't an experiment variable(I don't know what the variable is for)
+// uncomment this if you want to use the audio engine, the usage of audio engine is in the cpp_test
 // #define USE_AUDIO_ENGINE 1
 
 #if USE_AUDIO_ENGINE
@@ -12,6 +11,7 @@ using namespace cocos2d::experimental;
 
 USING_NS_CC;
 
+// set the size of the window
 static cocos2d::Size designResolutionSize = cocos2d::Size(1280, 720);
 static cocos2d::Size smallResolutionSize = cocos2d::Size(480, 320);
 static cocos2d::Size mediumResolutionSize = cocos2d::Size(1024, 768);

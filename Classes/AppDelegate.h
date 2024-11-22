@@ -2,6 +2,8 @@
 #define  _APP_DELEGATE_H_
 
 #include "cocos2d.h"
+// All player data shall be saved in this folder
+const std::string WRITABLE_PATH = cocos2d::FileUtils::getInstance()->getWritablePath();
 
 /**
 @brief    The cocos2d Application.
