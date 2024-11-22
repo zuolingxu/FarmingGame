@@ -1,11 +1,15 @@
 一、配置 cocos
 从该网站下载https://github.com/cocos2d/cocos2d-x中的stable version
-解压后在解压目录下打开cmd输入python download-deps.py安装扩展包（需要python2，使用python --version查看版本，如果当前版本为python3.x，安装并学习miniconda，或卸载系统python并重新下载并安装python2.x）
+解压后在解压目录下打开cmd输入python download-deps.py安装扩展包
+	——不会使用命令行以及文件路径请看：https://www.bilibili.com/video/BV13r421t77p/?p=2（如果不会书写文件路径必须要学）
+	——需要python2，使用python --version查看版本，如果当前版本为python3.x，安装并学习miniconda，或卸载系统python并重新下载并安装python2.x
 然后运行setup.py
-在cmd中尝试运行cocos，成功即正常运行
+在cmd中尝试cocos指令，成功即正常运行
 
 二、项目配置
 从github拉取本项目，使用git clone <url>l指令
+	——通过下载github桌面端或者git桌面端
+	——不会使用git先学习：https://www.bilibili.com/video/BV13r421t77p?p=7以及https://missing-semester-cn.github.io/2020/version-control/
 新建一个文件夹build（为了简洁），进入build文件夹，运行cmake .. -G "Visual Studio 17 2022" -A win32指令
 运行完上述文件后，会得到.sln文件，即可打开VS进行后续编译工作
 
@@ -14,6 +18,8 @@
 
 四、源代码书写与修改
 直接在VS中编辑即可，生成的sln相当于目录，在VS中修改的代码保存后会直接反应到代码文件中，所有的自己写的文件都放到class中。
-假如增加文件，需要在CMakeLists中添加源文件的文件名，然后重新配置项目（重新cmake）
+假如增加文件，或者重命名文件，需要在CMakeLists中添加源文件的文件名
+	——不会使用cmake请查看该文档：https://docs.cocos2d-x.org/cocos2d-x/v4/zh/installation/CMake-Guide.html 的 常见问题-如何添加 C/C++ 源码? 部分
+然后重新配置项目（重新进行项目配置）
 
-可以参考https://www.bilibili.com/video/BV1g34y1n7HQ/
+可以参考https://www.bilibili.com/video/BV1g34y1n7HQ/但请以本文档中的步骤为准
