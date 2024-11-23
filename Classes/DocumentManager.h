@@ -31,16 +31,16 @@ public:
 	static DocumentManager* getInstance();
 
 	// Load json file from path, if not exist, return false
-	bool loadDocument(std::string& path);
+	bool loadDocument(const std::string& path);
 
 	// free the json file from memory
-	void freeDocument(std::string& path);
+	void freeDocument(const std::string& path);
 
 	// get the json document, if not loaded it will load it first
-	const rapidjson::Document* getDocument(std::string& path);
+	const rapidjson::Document* getDocument(const std::string& path);
 
 	// load Archive document, you can only open one Archive
-	bool loadArchiveDocument(std::string& name);
+	bool loadArchiveDocument(const std::string& name);
 
 	// get Archive document, if not loaded it will return nullptr
 	rapidjson::Document* getArchiveDocument();
@@ -52,6 +52,6 @@ public:
 	void saveDocument();
 
 	// delete Archive
-	void deleteArchive(std::string& name);
+	void deleteArchive(const std::string& name);
 };
 #endif

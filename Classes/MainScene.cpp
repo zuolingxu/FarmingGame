@@ -4,6 +4,7 @@
 USING_NS_CC;
 // If you want use json library, use this to make your code neater
 using namespace rapidjson;
+const std::string g_ConfigPath = "global.json";
 
 Scene* Main::createScene()
 {
@@ -21,7 +22,7 @@ static void problemLoading(const char* filename)
 bool Main::init()
 {
     auto manager = DocumentManager::getInstance();
-    const Document* global_document = manager->getDocument(std::string("global.json"));
+    const Document* global_document = manager->getDocument(g_ConfigPath);
     
     //////////////////////////////
     // 1. super init first

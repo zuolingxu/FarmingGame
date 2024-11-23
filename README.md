@@ -9,7 +9,7 @@
 
 二、项目配置
 1. 从github拉取本项目，使用git clone <url>l指令
-	——通过下载github桌面端（直接拉取，操作简单）和git桌面端（使用命令行）
+	——通过下载github桌面端（直接拉取，操作简单）或git桌面端（使用命令行）
 	——不会使用git先学习：https://www.bilibili.com/video/BV13r421t77p?p=7以及https://missing-semester-cn.github.io/2020/version-control/
 2. 在项目根目录下使用cmd命令初始化子模块 git submodule update --init --recursive 目前应该没什么效果
 3. 新建一个文件夹build（为了简洁），进入build文件夹，运行cmake .. -G "Visual Studio 17 2022" -A win32指令
@@ -58,9 +58,10 @@ A. 文本数据储存规范
 4. 避免使用任何形式的直接在源代码中给出魔法常量，即没有任何定义直接给出的数据。
 
 B. 场景数据储存规范
-1. 首先，安装cocos dashboard，然后再dashboard中安装cocos creator 2.4.7
+1. 首先，安装cocos dashboard，然后再dashboard中安装cocos creator 2.4.7（creator3.x版本较新，为避免使用到无法导出的功能，请使用旧版本的creator）
 	——学习： https://docs.cocos2d-x.org/cocos2d-x/v4/zh/editors_and_tools/creator_to_cocos2dx.html
 2. 严格按照教程配置，三个导出选项可以选择：Export Resource Dynamically Loaded
+3. 
 
 C. 地图数据储存规范
 1. 地图数据使用tiled： https://www.mapeditor.org/ 生成

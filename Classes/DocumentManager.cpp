@@ -6,7 +6,7 @@ using namespace rapidjson;
 static const std::string g_writable_path = cocos2d::FileUtils::getInstance()->getWritablePath();
 DocumentManager* DocumentManager::instance_ = new DocumentManager;
 
-DocumentManager::DocumentManager()
+DocumentManager::DocumentManager() : data_(32)
 {
 	std::string filePath = g_writable_path + "UsrConfig.json";
 	std::ifstream input_file(filePath);
@@ -24,7 +24,7 @@ DocumentManager::DocumentManager()
 	Document doc;
 	doc.ParseStream(isw);
 	data_.emplace("UsrConfig.json", std::move(doc));
-	instance_->loadDocument(std::string("global.json"));
+	loadDocument(std::string("global.json"));
 }
 
 DocumentManager::~DocumentManager()
@@ -38,7 +38,7 @@ DocumentManager* DocumentManager::getInstance()
 	return instance_;
 }
 
-bool DocumentManager::loadDocument(std::string& path)
+bool DocumentManager::loadDocument(const std::string& path)
 {
 	// Get the path of global.json, json file can only input by ifstream
 	std::string filePath = cocos2d::FileUtils::getInstance()->fullPathForFilename(path);
@@ -50,16 +50,16 @@ bool DocumentManager::loadDocument(std::string& path)
 	IStreamWrapper isw(input_file);
 	Document doc;
 	doc.ParseStream(isw);
-	data_.emplace(std::move(path), std::move(doc));
+	data_.emplace(path, std::move(doc));
 	return true;
 }
 
-void DocumentManager::freeDocument(std::string& path)
+void DocumentManager::freeDocument(const std::string& path)
 {
 	data_.erase(path);
 }
 
-const Document* DocumentManager::getDocument(std::string& path)
+const Document* DocumentManager::getDocument(const std::string& path)
 {
     if (data_.find(path) == data_.end())
     {
@@ -72,7 +72,7 @@ const Document* DocumentManager::getDocument(std::string& path)
 	return &data_.at(path);
 }
 
-bool DocumentManager::loadArchiveDocument(std::string& name)
+bool DocumentManager::loadArchiveDocument(const std::string& name)
 {
 	if (!current_archive_.empty())
 	{
@@ -139,7 +139,7 @@ void DocumentManager::saveDocument()
 	config.Accept(writer);
 }
 
-void DocumentManager::deleteArchive(std::string& name)
+void DocumentManager::deleteArchive(const std::string& name)
 {
 	std::string filePath = g_writable_path + name;
 	std::remove(filePath.c_str());

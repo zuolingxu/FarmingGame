@@ -1,5 +1,7 @@
 #include "AppDelegate.h"
+#include "DocumentManager.h"
 #include "MainScene.h"
+#include "reader/CreatorReader.h"
 
 // uncomment this if you want to use the audio engine, the usage of audio engine is in the cpp_test
 // #define USE_AUDIO_ENGINE 1
@@ -10,6 +12,7 @@ using namespace cocos2d::experimental;
 #endif
 
 USING_NS_CC;
+using namespace rapidjson;
 
 // set the size of the window
 static cocos2d::Size designResolutionSize = cocos2d::Size(1280, 720);
@@ -92,10 +95,18 @@ bool AppDelegate::applicationDidFinishLaunching() {
     register_all_packages();
 
     // create a scene. it's an autorelease object
-    auto scene = Main::createScene();
+    auto scene_with_cpp = Main::createScene();
+
+    // creator to cocos2dx scene load
+    auto manager = DocumentManager::getInstance();
+    const Document* global_document = manager->getDocument(g_ConfigPath);
+    std::string creator_file = (*global_document)["SceneFolder"].GetString();
+    auto creator_reader = creator::CreatorReader::createWithFilename(creator_file);
+    auto scene_with_creator = creator_reader->getSceneGraph();
 
     // run
-    director->runWithScene(scene);
+    director->runWithScene(scene_with_cpp);
+    director->runWithScene(scene_with_creator);
 
     return true;
 }

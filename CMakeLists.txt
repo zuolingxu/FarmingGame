@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.13)
 
 set(APP_NAME FarmingGame)
 
@@ -12,11 +12,14 @@ endif()
 
 if(NOT DEFINED BUILD_ENGINE_DONE) # to test FarmingGame into root project
     set(COCOS2DX_ROOT_PATH $ENV{COCOS_X_ROOT}/cocos2d-x-4.0)
-    set(CMAKE_MODULE_PATH ${COCOS2DX_ROOT_PATH}/cmake/Modules/)
+    set(CMAKE_MODULE_PATH ${COCOS2DX_ROOT_PATH}/cmake/Modules)
 
     include(CocosBuildSet)
     add_subdirectory(${COCOS2DX_ROOT_PATH}/cocos ${ENGINE_BINARY_PATH}/cocos/core)
 endif()
+
+# Add the reader library
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Classes/reader)
 
 # record sources, headers, resources...
 set(GAME_SOURCE)
@@ -107,10 +110,12 @@ else()
 endif()
 
 # PRIVATE method make cocos hidden from subproject of APP
-target_link_libraries(${APP_NAME} PRIVATE cocos2d)
+target_link_libraries(${APP_NAME} cocos2d)
+target_link_libraries(${APP_NAME} creator_reader)
 target_include_directories(${APP_NAME}
         PRIVATE Classes
-        PRIVATE ${COCOS2DX_ROOT_PATH}/cocos/audio/include/
+        PRIVATE ${COCOS2DX_ROOT_PATH}/cocos/audio/include
+        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Classes/reader
 )
 
 # mark app resources

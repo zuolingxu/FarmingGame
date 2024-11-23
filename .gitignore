@@ -4,7 +4,6 @@
 /.vs
 */.idea
 */.vs
-/external/json/*
 
 # Ignore thumbnails created by windows
 Thumbs.db

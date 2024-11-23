@@ -1,6 +1,7 @@
 {
     "GameTitle": "A FarmingGame",
     "GameVesion": "v1.0",
+    "SceneFolder": "creator/Scene/",
     "MainScene": {
         "HelloWorld": "HelloWorld.png",
         "FontsArial": "fonts/arial.ttf",
