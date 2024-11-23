@@ -11,7 +11,7 @@
 1. 从github拉取本项目，使用git clone <url>l指令
 	——通过下载github桌面端（直接拉取，操作简单）和git桌面端（使用命令行）
 	——不会使用git先学习：https://www.bilibili.com/video/BV13r421t77p?p=7以及https://missing-semester-cn.github.io/2020/version-control/
-2. 在项目根目录下使用cmd命令初始化子模块git submodule update --init --recursive（目前只用到json子模块）
+2. 在项目根目录下使用cmd命令初始化子模块 git submodule update --init --recursive 目前应该没什么效果
 3. 新建一个文件夹build（为了简洁），进入build文件夹，运行cmake .. -G "Visual Studio 17 2022" -A win32指令
 4. 运行完上述文件后，会得到.sln文件，即可打开VS进行后续编译工作
 
@@ -49,8 +49,8 @@ cocos2d-x学习
 A. 文本数据储存规范
 1. 由于xml学习成本较高，本项目使用Json作为数据存储规范
 	——Json相关知识：https://www.bilibili.com/video/BV1We411y7wn/
-2. C++原生不支持Json，需要使用外部扩展库：nlohmann / json
-	——学习：直接问AI，这个库的使用方法很方便，很像c++，使用时在类的头文件中包含头文件#include "nlohmann/json.hpp"并在类cpp文件中使用using json = nlohmann::json;
+2. C++原生不支持Json，需要使用外部扩展库：rapidjson，外部扩展库cocos2d-x自带
+	——学习：https://rapidjson.org/zh-cn/md_doc_tutorial_8zh-cn.html
 3. 一个AI生成Json样例就在Resource文件夹下
 4. 避免使用任何形式的直接在源代码中给出魔法常量，即没有任何定义直接给出的数据信息，一定要从文件中读取。
 

@@ -2,7 +2,7 @@
 
 USING_NS_CC;
 // If you want use json library, use this to make your code neater
-using json = nlohmann::json;
+using namespace rapidjson;
 
 Scene* Main::createScene()
 {
@@ -22,8 +22,9 @@ bool Main::init()
     // Get the path of global.json, json file can only input by ifstream
     std::string filePath = cocos2d::FileUtils::getInstance()->fullPathForFilename("global.json");
     std::ifstream input_file(filePath);
-    json global_json;
-    input_file >> global_json;
+    std::string json_str((std::istreambuf_iterator<char>(input_file)), std::istreambuf_iterator<char>());
+    Document global_document;
+	global_document.Parse(json_str.c_str());
     
     //////////////////////////////
     // 1. super init first
@@ -69,7 +70,7 @@ bool Main::init()
     // add a label shows "Hello World"
     // create and initialize a label
 
-    auto game_title = global_json["GameTitle"];
+    auto game_title = global_document["GameTitle"].GetString();
     auto label = Label::createWithTTF(game_title, "fonts/Marker Felt.ttf", 24);
     if (label == nullptr)
     {

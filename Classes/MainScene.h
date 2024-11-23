@@ -2,8 +2,10 @@
 #define __MAIN_SCENE_H__
 
 #include <fstream>
+#include <cstring>
 #include "cocos2d.h"
-#include "nlohmann/json.hpp" // add this file to use json
+#include "json/reader.h"
+#include "json/document.h"
 
 // All player data shall be saved in this folder
 extern const std::string WRITABLE_PATH;
