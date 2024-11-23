@@ -1,0 +1,20 @@
+{
+    "key_info": {
+        "day": 0,
+        "money": 1000
+    },
+    
+    "object": {
+        "axe": [
+            1, "wood"
+        ],
+        "sunflower_seed":[
+            10
+        ]
+    },
+    
+    "relationship": {
+        "Tom": 0,
+        "Alice": 0
+    }
+}

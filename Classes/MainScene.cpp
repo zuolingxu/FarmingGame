@@ -1,4 +1,5 @@
 #include "MainScene.h"
+#include "DocumentManager.h"
 
 USING_NS_CC;
 // If you want use json library, use this to make your code neater
@@ -19,12 +20,8 @@ static void problemLoading(const char* filename)
 // on "init" you need to initialize your instance
 bool Main::init()
 {
-    // Get the path of global.json, json file can only input by ifstream
-    std::string filePath = cocos2d::FileUtils::getInstance()->fullPathForFilename("global.json");
-    std::ifstream input_file(filePath);
-    std::string json_str((std::istreambuf_iterator<char>(input_file)), std::istreambuf_iterator<char>());
-    Document global_document;
-	global_document.Parse(json_str.c_str());
+    auto manager = DocumentManager::getInstance();
+    const Document* global_document = manager->getDocument(std::string("global.json"));
     
     //////////////////////////////
     // 1. super init first
@@ -70,11 +67,12 @@ bool Main::init()
     // add a label shows "Hello World"
     // create and initialize a label
 
-    auto game_title = global_document["GameTitle"].GetString();
-    auto label = Label::createWithTTF(game_title, "fonts/Marker Felt.ttf", 24);
+    const std::string& game_title = (*global_document)["GameTitle"].GetString();
+    const std::string& arial_fonts = (*global_document)["MainScene"]["FontsArial"].GetString();
+    auto label = Label::createWithTTF(game_title, arial_fonts , 24);
     if (label == nullptr)
     {
-        problemLoading("'fonts/Marker Felt.ttf'");
+        problemLoading(arial_fonts.c_str());
     }
     else
     {
@@ -87,10 +85,11 @@ bool Main::init()
     }
 
     // add "Main" splash screen"
-    auto sprite = Sprite::create("HelloWorld.png");
+    std::string hello_world = (*global_document)["MainScene"]["HelloWorld"].GetString();
+    auto sprite = Sprite::create(hello_world);
     if (sprite == nullptr)
     {
-        problemLoading("'HelloWorld.png'");
+        problemLoading(hello_world.c_str());
     }
     else
     {
@@ -101,6 +100,7 @@ bool Main::init()
         // add the sprite as a child to this layer
         this->addChild(sprite, 0);
     }
+    manager->saveDocument();
     return true;
 }
 

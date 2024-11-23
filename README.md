@@ -50,12 +50,21 @@ A. 文本数据储存规范
 1. 由于xml学习成本较高，本项目使用Json作为数据存储规范
 	——Json相关知识：https://www.bilibili.com/video/BV1We411y7wn/
 2. C++原生不支持Json，需要使用外部扩展库：rapidjson，外部扩展库cocos2d-x自带
-	——学习：https://rapidjson.org/zh-cn/md_doc_tutorial_8zh-cn.html
+	——学习：https://rapidjson.org/zh-cn/md_doc_tutorial_8zh-cn.html，只需要看教程部分即可，学会从document读取和写入。
+	——rapidjson使用C风格字符串处理json文件，但是C风格字符串是不安全的，请使用string类处理、储存。
+	——对于设定书写json文档（用户文档），统一使用copy-string策略，确保用户数据不会因对象生命周期的限制而发生错误，即每次都提供分配器（提供doucument的就可以了），分配器不要混用，假如valueA要存入doucumentA，那么就不要用documentB的allocator。
+	——因为硬盘io时间远大于内存读取时间，能够使用同一文档的情况下请避免多次读取（比如：植物类的全部信息只在第一次创建对象时加载）。为此，创建了JsonMananger类，统一管理所有的json文件，具体接口功能说明请查看头文件。禁止将json文件命名为UsrArchive和UsrConfig，该二者有特殊含义。
 3. 一个AI生成Json样例就在Resource文件夹下
-4. 避免使用任何形式的直接在源代码中给出魔法常量，即没有任何定义直接给出的数据信息，一定要从文件中读取。
+4. 避免使用任何形式的直接在源代码中给出魔法常量，即没有任何定义直接给出的数据。
 
 B. 场景数据储存规范
-1. 通过creator to cocos2dx插件进行（待定）
+1. 首先，安装cocos dashboard，然后再dashboard中安装cocos creator 2.4.7
+	——学习： https://docs.cocos2d-x.org/cocos2d-x/v4/zh/editors_and_tools/creator_to_cocos2dx.html
+2. 严格按照教程配置，三个导出选项可以选择：Export Resource Dynamically Loaded
+
+C. 地图数据储存规范
+1. 地图数据使用tiled： https://www.mapeditor.org/ 生成
+	——学习： https://www.bilibili.com/video/BV1P54y1F78b/
 
 三、命名规范
 1. 除说明文档以外的所有文件夹、源代码、资源文件必须以英文命名，以类的类型结尾，命名要符合含义，如果不会英文请进行查询，如：场景的源代码必须以Scene结尾

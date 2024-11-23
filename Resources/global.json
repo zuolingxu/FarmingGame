@@ -1,7 +1,9 @@
 {
     "GameTitle": "A FarmingGame",
     "GameVesion": "v1.0",
-    "HelloWorld": "HelloWorld.png",
-    "ObjectPath": "Resource/Object",
-    "MapPath": "Resource/Map"
+    "MainScene": {
+        "HelloWorld": "HelloWorld.png",
+        "FontsArial": "fonts/arial.ttf",
+        "FontsMarkerFelt": "fonts/Marker Felt.ttf"
+    }
 }

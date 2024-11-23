@@ -18,7 +18,6 @@ if(NOT DEFINED BUILD_ENGINE_DONE) # to test FarmingGame into root project
     add_subdirectory(${COCOS2DX_ROOT_PATH}/cocos ${ENGINE_BINARY_PATH}/cocos/core)
 endif()
 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/json)
 # record sources, headers, resources...
 set(GAME_SOURCE)
 set(GAME_HEADER)
@@ -34,10 +33,12 @@ endif()
 list(APPEND GAME_SOURCE
      Classes/AppDelegate.cpp
      Classes/MainScene.cpp
+     Classes/DocumentManager.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
      Classes/MainScene.h
+     Classes/DocumentManager.h
      )
 
 if(ANDROID)
@@ -111,9 +112,6 @@ target_include_directories(${APP_NAME}
         PRIVATE Classes
         PRIVATE ${COCOS2DX_ROOT_PATH}/cocos/audio/include/
 )
-
-# add json as a subdirectory
-target_link_libraries(${APP_NAME} PRIVATE nlohmann_json::nlohmann_json)
 
 # mark app resources
 setup_cocos_app_config(${APP_NAME})
