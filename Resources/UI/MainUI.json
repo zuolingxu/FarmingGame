@@ -1,0 +1,6 @@
+{
+    "Name": "MainUI",
+    "HelloWorld": "Picture/HelloWorld.png",
+    "CloseNormal": "Picture/CloseNormal.png",
+    "CloseSelected": "Picture/CloseSelected.png"
+}

@@ -64,7 +64,8 @@ B. 场景数据储存规范
 3. 
 
 C. 地图数据储存规范
-1. 地图数据使用tiled： https://www.mapeditor.org/ 生成
+1. 地图数据使用tiled： https://github.com/mapeditor/tiled/releases/tag/v1.0.3 生成
+	——creator只支持v1.0.x，使用v1.0.3
 	——学习： https://www.bilibili.com/video/BV1P54y1F78b/
 
 三、命名规范

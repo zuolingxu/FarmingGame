@@ -1,7 +1,5 @@
 #include "AppDelegate.h"
 #include "DocumentManager.h"
-#include "MainScene.h"
-#include "reader/CreatorReader.h"
 
 // uncomment this if you want to use the audio engine, the usage of audio engine is in the cpp_test
 // #define USE_AUDIO_ENGINE 1
@@ -94,19 +92,25 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     register_all_packages();
 
-    // create a scene. it's an autorelease object
-    auto scene_with_cpp = Main::createScene();
-
     // creator to cocos2dx scene load
     auto manager = DocumentManager::getInstance();
-    const Document* global_document = manager->getDocument(g_ConfigPath);
-    std::string creator_file = (*global_document)["SceneFolder"].GetString();
-    auto creator_reader = creator::CreatorReader::createWithFilename(creator_file);
-    auto scene_with_creator = creator_reader->getSceneGraph();
+    const Document* global_document = manager->getDocument("global");
+    auto main_scene_path = (*global_document)["UI"]["MainUI"].GetString();
+    Scene* scene = Scene::create();
+    if (manager->loadDocument(main_scene_path, "MainUI"))
+    {
+	    auto main_scene= manager->getDocument("MainUI");
+        //Layer map_layer = MapCreator::createwithfile("MainScene");
 
+        // scene->addChild(map_layer);
+        
+    }
+
+    // Layer UI_layer = UICreator::createwithfile("MainScene");
+    // scene->addChild(UI_layer);
     // run
-    director->runWithScene(scene_with_cpp);
-    director->runWithScene(scene_with_creator);
+    // director->runWithScene(scene_with_cpp);
+    // director->runWithScene(scene_with_creator);
 
     return true;
 }

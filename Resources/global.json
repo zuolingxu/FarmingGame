@@ -1,10 +1,17 @@
 {
+    "Name": "global",
     "GameTitle": "A FarmingGame",
-    "GameVesion": "v1.0",
-    "SceneFolder": "creator/Scene/",
-    "MainScene": {
-        "HelloWorld": "HelloWorld.png",
+    "GameVersion": "v1.0",
+    "Scene": {
+    },
+    "UI": {
+        "MainUI": "UI/MainUI.json"
+    },
+    "Fonts": {
         "FontsArial": "fonts/arial.ttf",
         "FontsMarkerFelt": "fonts/Marker Felt.ttf"
+    },
+    "Data": {
+        "Plant": "Data/Plant.json"
     }
 }

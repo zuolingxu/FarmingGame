@@ -18,9 +18,6 @@ if(NOT DEFINED BUILD_ENGINE_DONE) # to test FarmingGame into root project
     add_subdirectory(${COCOS2DX_ROOT_PATH}/cocos ${ENGINE_BINARY_PATH}/cocos/core)
 endif()
 
-# Add the reader library
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Classes/reader)
-
 # record sources, headers, resources...
 set(GAME_SOURCE)
 set(GAME_HEADER)
@@ -35,13 +32,26 @@ endif()
 # add cross-platforms source files and header files 
 list(APPEND GAME_SOURCE
      Classes/AppDelegate.cpp
-     Classes/MainScene.cpp
-     Classes/DocumentManager.cpp
+     Classes/GameLogic/PlayerSprite.cpp
+     Classes/GameLogic/SaveManager.cpp
+     Classes/HelperClasses/DocumentManager.cpp
+     Classes/SceneLayer/CollideManager.cpp
+     Classes/SceneLayer/MapCreator.cpp
+     Classes/SceneLayer/PlayerController.cpp
+     Classes/UILayer/UIController.cpp
+     Classes/UILayer/UICreator.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
-     Classes/MainScene.h
-     Classes/DocumentManager.h
+     Classes/GameLogic/PlayerSprite.h
+     Classes/GameLogic/SaveManager.h
+     Classes/HelperClasses/DocumentManager.h
+     Classes/HelperClasses/GridComputer.h
+     Classes/SceneLayer/CollideManager.h
+     Classes/SceneLayer/MapCreator.h
+     Classes/SceneLayer/PlayerController.h
+     Classes/UILayer/UIController.h
+     Classes/UILayer/UICreator.h
      )
 
 if(ANDROID)
@@ -109,13 +119,18 @@ else()
     target_link_libraries(${APP_NAME} -Wl,--whole-archive cpp_android_spec -Wl,--no-whole-archive)
 endif()
 
+#set target C++ standard
+set_target_properties(${APP_NAME} PROPERTIES CXX_STANDARD 20)
+
 # PRIVATE method make cocos hidden from subproject of APP
 target_link_libraries(${APP_NAME} cocos2d)
-target_link_libraries(${APP_NAME} creator_reader)
 target_include_directories(${APP_NAME}
         PRIVATE Classes
+        PRIVATE Classes/GameLogic
+        PRIVATE Classes/HelperClasses
+        PRIVATE Classes/SceneLayer
+        PRIVATE Classes/UILayer
         PRIVATE ${COCOS2DX_ROOT_PATH}/cocos/audio/include
-        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Classes/reader
 )
 
 # mark app resources

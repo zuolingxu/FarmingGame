@@ -2,8 +2,6 @@
 #define  _APP_DELEGATE_H_
 
 #include "cocos2d.h"
-// The file Path of global.json
-const std::string g_ConfigPath = "global.json";
 
 /**
 @brief    The cocos2d Application.
