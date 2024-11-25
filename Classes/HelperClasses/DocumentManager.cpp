@@ -6,47 +6,70 @@ using namespace rapidjson;
 static const std::string g_writable_path = cocos2d::FileUtils::getInstance()->getWritablePath();
 DocumentManager* DocumentManager::instance_ = new DocumentManager;
 
-DocumentManager::DocumentManager() : data_(32), current_archive_(0)
+
+bool DocumentManager::readFile(const std::string& path, DocumentType type)
 {
-	std::string file_path = g_writable_path + "UsrConfig.json";
-	std::ifstream input_file(file_path);
+	std::ifstream input_file(path);
+	std::string name;
+	if (type == DocumentType::normal)
+	{
+		name = getFileName(path);
+	}
+	else if (type == DocumentType::config)
+	{
+		name = "UsrConfig";
+	}
+	else if (type == DocumentType::archive)
+	{
+		name = "UsrArchive";
+	}
 
 	if (!input_file.is_open())
 	{
+		CCLOG("Invalid file name");
+		return false;
+	}
+	IStreamWrapper isw(input_file);
+	Document* doc = new Document;
+	doc -> ParseStream(isw);
+	if (doc->HasParseError())
+	{
+		CCLOG("Invalid file format");
+		delete doc;
+		return false;
+	}
+	input_file.close();
+	data_.emplace(name, doc);
+	return true;
+}
+
+void DocumentManager::writeFile(const std::string& path, const std::string& name) const
+{
+	const Document* doc = data_.at(name);
+	std::ofstream ofs(path);
+	OStreamWrapper osw(ofs);
+	Writer<OStreamWrapper> writer(osw);
+	doc -> Accept(writer);
+	ofs.close();
+}
+
+DocumentManager::DocumentManager() : current_archive_(0), data_(32)
+{
+	if (!readFile(g_writable_path + "UsrConfig.json"))
+	{
 		createConfigDocument();
 	}
-	else
-	{
-		IStreamWrapper isw(input_file);
-		Document doc;
-		doc.ParseStream(isw);
-		input_file.close();
-		if (doc.HasParseError() || !doc.IsObject())
-		{
-			try
-			{
-				std::filesystem::remove(file_path);
-			}
-			catch (std::runtime_error e)
-			{
-				CCLOG("Error: %s",e.what());
-				throw std::runtime_error("Config Document has been corrupted, "
-							 "cannot delete the file, please delete the file and "
-							 "run this game again to fix it.");
-			}
-			throw std::runtime_error("Config Document has been corrupted, "
-				"run this game again to fix it.");
-		}
-		data_.emplace("UsrConfig", std::move(doc));
-	}
-
-	loadDocument("global.json", "global");
+	loadDocument("global.json");
 }
 
 DocumentManager::~DocumentManager()
 {
 	saveArchiveDocument();
 	saveConfigDocument();
+	for (const auto& pari : data_)
+	{
+		delete pari.second;
+	}
 	delete instance_;
 }
 
@@ -55,48 +78,40 @@ DocumentManager* DocumentManager::getInstance()
 	return instance_;
 }
 
-bool DocumentManager::loadDocument(const std::string& path, const std::string& name)
+std::string DocumentManager::getFileName(const std::string& path)
 {
-	if (data_.find(name) != data_.end())
+	size_t len = path.length();
+	int start;
+	for (start = len - 1; start >= 0; start--)
 	{
-		return true;
+		if (path[start] == '/' || path[start] == '\\')
+		{
+			break;
+		}
 	}
-	// Get the path of global.json, json file can only input by ifstream
-	std::string filePath = cocos2d::FileUtils::getInstance()->fullPathForFilename(path);
-	std::ifstream input_file(filePath);
-	if (!input_file.is_open())
+	int end;
+	for (end = start; end < len; end++)
 	{
-		CCLOG("File doesn't exist: %s", filePath.c_str());
-		throw std::runtime_error("Game file is not complete, please download again.");
-		return false;
+		if (path[end] == '.')
+		{
+			break;
+		}
 	}
-	IStreamWrapper isw(input_file);
-	Document doc;
-	doc.ParseStream(isw);
-	input_file.close();
+	start++;
+	if (start != 0) {
+		return path.substr(start, end - start);
+	}
+	return {};
+}
 
-	if (doc.HasParseError())
+void DocumentManager::loadDocument(const std::string& path)
+{
+	const std::string filePath = cocos2d::FileUtils::getInstance()->fullPathForFilename(path);
+	if (!readFile(filePath))
 	{
-		CCLOG("Invalid file format: %s", filePath.c_str());
-		return false;
+		throw std::runtime_error("²â²â²âFailed to read " + path + 
+			"\nThe Game File has been corrupted or incomplete. Download it again.");
 	}
-	if (name.empty())
-	{
-		if(doc.HasMember("Name") && doc["Name"].IsString())
-		{
-			data_.emplace(doc["Name"].GetString(), std::move(doc));
-		}
-		else
-		{
-			CCLOG("Document doesn't has a name");
-			return false;
-		}
-	}
-	else
-	{
-		data_.emplace(name, std::move(doc));
-	}
-	return true;
 }
 
 void DocumentManager::freeDocument(const std::string& name)
@@ -104,99 +119,82 @@ void DocumentManager::freeDocument(const std::string& name)
 	const auto it = data_.find(name);
 	if (it != data_.end())
 	{
+		delete it -> second;
 		data_.erase(it);
 	}
 }
 
 const Document* DocumentManager::getDocument(const std::string& name)
 {
-	auto it = data_.find(name);
-	if (it == data_.end())
+	const auto it = data_.find(name);
+	if (it != data_.end())
 	{
-		return nullptr;
+		return it->second;
 	}
-	return &(it->second);
+	return nullptr;
 }
 
-Document* DocumentManager::createConfigDocument()
+void DocumentManager::createConfigDocument()
 {
 	std::string file_path = cocos2d::FileUtils::getInstance()->fullPathForFilename("NewUsrConfig.json");
-	std::ifstream new_file(file_path);
-	IStreamWrapper isw(new_file);
-	Document doc;
-	doc.ParseStream(isw);
-	new_file.close();
-	data_.emplace("UsrConfig", std::move(doc));
-	int num = 1;
-	std::string archive_path = std::format("{}Save_{}.json", g_writable_path, num);
-	while (std::filesystem::exists(archive_path))
+	if (!readFile(file_path, DocumentType::config))
 	{
-		// fix the Config Document
-		loadArchiveDocument(num);
-		saveArchiveDocument();
-		freeArchiveDocument();
-		num++;
-		archive_path = std::format("{}Save_{}.json", g_writable_path, num);
+		throw std::runtime_error("Failed to read NewUsrConfig.json");
 	}
-	return &data_.at("UsrConfig");
+	
+	for (int i = 1; i <= 100; i++)
+	{
+		std::string archive_path = std::format("{}Save_{}.json", g_writable_path, i);
+		if (std::filesystem::exists(archive_path))
+		{
+			// fix the Config Document
+			loadArchiveDocument(i);
+			saveArchiveDocument();
+			freeArchiveDocument();
+		}
+		archive_path = std::format("{}Save_{}.json", g_writable_path, i);
+	}
+	saveConfigDocument();
 }
 
-Document* DocumentManager::createArchiveDocument(const int num)
+bool DocumentManager::createArchiveDocument(const int num)
 {
-	if (current_archive_ != 0)
-	{
-		CCLOG("Free current Archive first!");
-		throw std::logic_error("Free current Archive first!");
-	}
-
 	std::string archive_name = std::format("Save_{}", num);
-	if (data_["UsrConfig"]["Archive"].HasMember(archive_name.c_str()))
+	if ((*data_["UsrConfig"])["Archive"].HasMember(archive_name.c_str()))
 	{
 		CCLOG("Archive already exists!");
-		return nullptr;
+		return false;
 	}
 
 	std::string file_path = cocos2d::FileUtils::getInstance()->fullPathForFilename("NewUsrArchive.json");
-	std::ifstream new_file(file_path);
-	IStreamWrapper isw(new_file);
-	Document doc;
-	doc.ParseStream(isw);
-	new_file.close();
+	if (!readFile(file_path, DocumentType::archive))
+	{
+		throw std::runtime_error("Failed to read NewUsrConfig.json");
+	}
 
-	data_.emplace("UsrArchive", std::move(doc));
+	if (current_archive_ != 0)
+	{
+		freeArchiveDocument();
+	}
 	current_archive_ = num;
-	return &data_.at("UsrArchive");
+	saveArchiveDocument();
+	return true;
 }
 
 bool DocumentManager::loadArchiveDocument(const int num)
 {
-	if (current_archive_ != 0)
-	{
-		CCLOG("Free current Archive first!");
-		throw std::logic_error("Free current Archive first!");
-	}
-
 	auto filepath = std::format("{}Save_{}.json", g_writable_path, num);
-	std::ifstream input_file(filepath);
-
-	if (!input_file.is_open())
+	if (!readFile(filepath, DocumentType::archive))
 	{
 		return false;
 	}
-	else
+
+	if (current_archive_ != 0)
 	{
-		IStreamWrapper isw(input_file);
-		Document doc;
-		doc.ParseStream(isw);
-		input_file.close();
-		if (doc.HasParseError() || !doc.IsObject())
-		{
-			return false;
-		}
-		data_.emplace("UsrArchive", std::move(doc));
-		current_archive_ = num;
-		return true;
+		freeArchiveDocument();
 	}
+	current_archive_ = num;
+	return true;
 }
 
 void DocumentManager::freeArchiveDocument()
@@ -204,82 +202,75 @@ void DocumentManager::freeArchiveDocument()
 	if (current_archive_ != 0)
 	{
 		saveArchiveDocument();
-		data_.erase("UsrArchive");
+		freeDocument("UsrArchive");
 		current_archive_ = 0;
 	}
 }
 
-Document* DocumentManager::getArchiveDocument()
+Document* DocumentManager::getArchiveDocument() const
 {
 	if (current_archive_ == 0)
 	{
 		return nullptr;
 	}
-	return &data_.at("UsrArchive");
+	return data_.at("UsrArchive");
 }
 
-Document* DocumentManager::getConfigDocument()
+Document* DocumentManager::getConfigDocument() const
 {
-	return &data_.at("UsrConfig");
+	return data_.at("UsrConfig");
 }
 
 void DocumentManager::saveArchiveDocument()
 {
 	if (current_archive_ > 0)
 	{
-		Document& config = data_.at("UsrConfig");
-		Document& current_archive = data_.at("UsrArchive");
+		Document* config = data_.at("UsrConfig");
+		Document* current_archive = data_.at("UsrArchive");
 
 		std::string filepath = std::format("{}Save_{}.json", g_writable_path, current_archive_);
-		std::ofstream ofs(filepath);
-		OStreamWrapper osw(ofs);
-		Writer<OStreamWrapper> writer(osw);
-		current_archive.Accept(writer);
-		ofs.close();
+		writeFile(filepath, "UsrArchive");
 
-		Value& config_archive = config["Archive"];
+		Value& config_archive = (*config)["Archive"];
 		std::string file_name = std::format("Save_{}", current_archive_);
 		config_archive.RemoveMember(file_name.c_str());
-		auto& allocator = config.GetAllocator();
+		auto& allocator = config -> GetAllocator();
 		Value key_info;
-		key_info.CopyFrom(current_archive["key_info"], allocator);
+		key_info.CopyFrom((*current_archive)["key_info"], allocator);
 		config_archive.AddMember(Value(file_name.c_str(), allocator), key_info, allocator);
+		saveConfigDocument();
 	}
 }
 
-void DocumentManager::saveConfigDocument()
+void DocumentManager::saveConfigDocument() const
 {
-	Document& config = data_.at("UsrConfig");
-	std::ofstream ofs(g_writable_path + "UsrConfig.json");
-	OStreamWrapper osw(ofs);
-	Writer<OStreamWrapper> writer(osw);
-	config.Accept(writer);
-	ofs.close();
+	writeFile(g_writable_path + "UsrConfig.json", "UsrConfig");
 }
 
-void DocumentManager::deleteArchive(const int num)
+bool DocumentManager::deleteArchive(const int num)
 {
 	std::string archive_name = std::format("Save_{}", num);
 	std::string file_path = std::format("{}{}.json", g_writable_path, archive_name);
-	if (data_["UsrConfig"]["Archive"].HasMember(archive_name .c_str()))
+	Document& config = *data_.at("UsrConfig");
+	if (config["Archive"].HasMember(archive_name .c_str()))
 	{
 		if (num == current_archive_)
 		{
 			freeArchiveDocument();
 		}
-		data_["UsrConfig"]["Archive"].RemoveMember(archive_name.c_str());
+		config["Archive"].RemoveMember(archive_name.c_str());
 		if (std::filesystem::exists(file_path))
 		{
 			try
 			{
 				std::filesystem::remove(file_path);
 			}
-			catch (std::runtime_error)
+			catch (const std::exception& e)
 			{
-				throw std::runtime_error("cannot delete the file, please delete the file manually "
-					"and run this game again to fix it.");
+				return false;
 			}
 		}
 		saveConfigDocument();
 	}
+	return true;
 }

@@ -1,5 +1,7 @@
 #include "AppDelegate.h"
+#include <codecvt>
 #include "DocumentManager.h"
+#include "UICreator.h"
 
 // uncomment this if you want to use the audio engine, the usage of audio engine is in the cpp_test
 // #define USE_AUDIO_ENGINE 1
@@ -56,6 +58,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC) || (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
         // Get a Window on PC, and set the resolution of the window
         glview = GLViewImpl::createWithRect("FarmingGame", cocos2d::Rect(0, 0, designResolutionSize.width, designResolutionSize.height));
+        // glview = GLViewImpl::createWithFullScreen("FarmingGame");
 #else
         glview = GLViewImpl::create("FarmingGame");
 #endif
@@ -69,7 +72,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     director->setAnimationInterval(1.0f / 60);
 
     // Set the design resolution of the scene. It is different from the resolution of the window.
-    glview->setDesignResolutionSize(designResolutionSize.width, designResolutionSize.height, ResolutionPolicy::NO_BORDER);
+    glview->setDesignResolutionSize(smallResolutionSize.width, smallResolutionSize.height, ResolutionPolicy::NO_BORDER);
 
 #if 0 
     auto frameSize = glview->getFrameSize();
@@ -92,25 +95,51 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     register_all_packages();
 
-    // creator to cocos2dx scene load
-    auto manager = DocumentManager::getInstance();
-    const Document* global_document = manager->getDocument("global");
-    auto main_scene_path = (*global_document)["UI"]["MainUI"].GetString();
-    Scene* scene = Scene::create();
-    if (manager->loadDocument(main_scene_path, "MainUI"))
+    try
     {
-	    auto main_scene= manager->getDocument("MainUI");
-        //Layer map_layer = MapCreator::createwithfile("MainScene");
+        // creator to cocos2dx scene load
+        auto manager = DocumentManager::getInstance();
+        const Document* global_document = manager->getDocument("global");
+        auto main_scene_path = (*global_document)["UI"]["MainUI"].GetString();
+        Scene* scene = Scene::create();
+        manager->loadDocument(main_scene_path);
+    	auto main_UI = manager->getDocument("MainUI");
+    	Layer* map_layer = UICreator::createWithFile(main_UI);
+    	scene->addChild(map_layer);
+        // manager->createArchiveDocument(18);
+        // manager->saveArchiveDocument();
+        // manager->saveConfigDocument();
 
-        // scene->addChild(map_layer);
-        
+        // Layer UI_layer = UICreator::createwithfile("MainScene");
+        // scene->addChild(UI_layer);
+        // run
+        // director->runWithScene(scene_with_cpp);
+        // director->runWithScene(scene_with_creator);
+
+        manager->loadDocument("Usr");
+        // manager->createArchiveDocument(12);
+        // manager -> freeArchiveDocument();
+
+
+
+		
+
+
     }
+    catch (const std::exception& e)
+    {
+        auto manager = DocumentManager::getInstance();
+        manager->saveArchiveDocument();
+        manager->saveConfigDocument();
 
-    // Layer UI_layer = UICreator::createwithfile("MainScene");
-    // scene->addChild(UI_layer);
-    // run
-    // director->runWithScene(scene_with_cpp);
-    // director->runWithScene(scene_with_creator);
+        MessageBoxA(
+            NULL,
+            (LPCSTR) e.what(),
+            (LPCSTR)L"Error Details",
+            MB_ICONWARNING | MB_DEFBUTTON2
+        );
+    }
+    
 
     return true;
 }

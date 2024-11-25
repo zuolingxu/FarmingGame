@@ -1,6 +1,4 @@
-#ifndef JSONMANAGER_H
-#define JSONMANAGER_H
-
+#pragma once
 #include <unordered_map>
 #include <fstream>
 #include <string>
@@ -18,57 +16,71 @@ class DocumentManager
 private:
 	static DocumentManager* instance_;
 	int current_archive_;
-	std::unordered_map<std::string, rapidjson::Document> data_;
+	std::unordered_map<std::string, rapidjson::Document*> data_;
 	// The Constructor will load the Config document(writable) and the global document(unwritable)
 	DocumentManager();
 	~DocumentManager();
 
-	rapidjson::Document* createConfigDocument();
+	enum class DocumentType
+	{
+		normal,
+		config,
+		archive,
+	};
 
+	bool readFile(const std::string& path, DocumentType type = DocumentType::normal);
+	void writeFile(const std::string& path, const std::string& name) const;
 
-public: 
+	// create a new usr config and load all exist archive's key_info
+	// If cannot load NewUsrConfig, throw exception
+	void createConfigDocument();
+
+public:
 	DocumentManager(const DocumentManager&) = delete;
 	DocumentManager& operator=(const DocumentManager&) = delete;
-
 
 	// Singleton mode, there's only one instance
 	static DocumentManager* getInstance();
 
-	// Load json file from path, if not exist, return false
-	bool loadDocument(const std::string& path, const std::string& name = "");
+	// Get the name of the file from file path
+	static std::string getFileName(const std::string& path);
+
+	// Load json file from path, if not exist, throw exception
+	void loadDocument(const std::string& path);
 
 	// free the document from memory
 	void freeDocument(const std::string& name);
 
 	// get the json document, if not loaded, return nullptr
+	// The path is related to Resources folder
 	const rapidjson::Document* getDocument(const std::string& name);
 
-	// create Archive document and load it
-	// You should free loaded archive first
-	// if the Archive already exist, return nullptr
-	rapidjson::Document* createArchiveDocument(int num);
+	// create save and load a new Archive.
+	// If the Archive has been opened, it will free the former document and return true.
+	// If the Archive already exist, return false.
+	// If cannot load NewusrArchive, throw exception
+	bool createArchiveDocument(int num);
 
 	// load Archive document, you can only open one Archive once
-	// If the Archive can be opened or corrupted, it will return false
-	// You should free loaded archive first
+	// If the Archive cannot be opened or has been corrupted, it will return false
+	// If the Archive has been opened, it will free the former document and return true
 	bool loadArchiveDocument(const int num);
 
 	// get Archive document, if not loaded it will return nullptr
-	rapidjson::Document* getArchiveDocument();
+	rapidjson::Document* getArchiveDocument() const ;
 
 	// get ConfigDocument
-	rapidjson::Document* getConfigDocument();
+	rapidjson::Document* getConfigDocument() const;
 
-	// save Archive document
+	// save Archive document when an archive has been loaded
 	void saveArchiveDocument();
 
-	// freeArchiveDocument
+	// free and save Archive Document
 	void freeArchiveDocument();
 
 	// save Config document
-	void saveConfigDocument();
+	void saveConfigDocument() const;
 
 	// delete Archive and save Config document
-	void deleteArchive(int num);
+	bool deleteArchive(int num);
 };
-#endif
