@@ -1,7 +1,7 @@
 #include "AppDelegate.h"
 #include <codecvt>
 #include "DocumentManager.h"
-#include "UICreator.h"
+#include "UIManager.h"
 
 // uncomment this if you want to use the audio engine, the usage of audio engine is in the cpp_test
 // #define USE_AUDIO_ENGINE 1
@@ -97,41 +97,27 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     try
     {
-        // creator to cocos2dx scene load
+        // load ALL_UI UI need fast reaction
         auto manager = DocumentManager::getInstance();
-        const Document* global_document = manager->getDocument("global");
-        auto main_scene_path = (*global_document)["UI"]["MainUI"].GetString();
+        const Document* global_document = manager->getDocument("global.json");
+        auto all_UI = (*global_document)["UI"].GetObjectW();
+
         Scene* scene = Scene::create();
-        manager->loadDocument(main_scene_path);
-    	auto main_UI = manager->getDocument("MainUI");
-    	Layer* map_layer = UICreator::createWithFile(main_UI);
-    	scene->addChild(map_layer);
-        // manager->createArchiveDocument(18);
-        // manager->saveArchiveDocument();
-        // manager->saveConfigDocument();
+        for (auto& it: all_UI)
+        {
+            UIManager::createWithFile(it.value.GetString());
+        }
 
-        // Layer UI_layer = UICreator::createwithfile("MainScene");
-        // scene->addChild(UI_layer);
+        // load mainUI
+        auto main_UI_path = (*global_document)["UI"]["MainUI"].GetString();
+        UIManager* main_UI = UIManager::createWithFile(main_UI_path);
+        scene->addChild(main_UI->getLayer(),0 );
+
         // run
-        // director->runWithScene(scene_with_cpp);
-        // director->runWithScene(scene_with_creator);
-
-        manager->loadDocument("Usr");
-        // manager->createArchiveDocument(12);
-        // manager -> freeArchiveDocument();
-
-
-
-		
-
-
+        director->runWithScene(scene);
     }
     catch (const std::exception& e)
     {
-        auto manager = DocumentManager::getInstance();
-        manager->saveArchiveDocument();
-        manager->saveConfigDocument();
-
         MessageBoxA(
             NULL,
             (LPCSTR) e.what(),

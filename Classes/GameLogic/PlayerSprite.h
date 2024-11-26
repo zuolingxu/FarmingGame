@@ -3,7 +3,7 @@
 
 class PlayerSprite : cocos2d::Sprite{
     private:
-    static const PlayerSprite* instance;
+    static std::map<std::string, PlayerSprite* > player_list_;
     //PlayerSprite();
     //~PlayerSprite();
 

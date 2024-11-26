@@ -1,6 +1,29 @@
 {
-    "Name": "MainUI",
-    "HelloWorld": "Picture/HelloWorld.png",
-    "CloseNormal": "Picture/CloseNormal.png",
-    "CloseSelected": "Picture/CloseSelected.png"
+    "WelCome": {
+        "Type": "Text",
+        "Content": [
+            "Hello, World!"
+        ],
+        "Position": ["middle", "max"]
+    },
+
+    "HelloWorld": {
+        "Type:": "Picture",
+        "Content": [
+            "Picture/HelloWorld.png"
+        ],
+        "Position": ["middle","middle"]
+    },
+
+    "Close": {
+        "Type": "Button",
+        "Content": [
+            "Picture/CloseNormal.png" ,
+            "Picture/CloseSelected.png"
+        ],
+        "Position": ["max",0],
+        "Command": [
+            "Close"
+        ]
+    }   
 }

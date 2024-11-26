@@ -36,22 +36,22 @@ list(APPEND GAME_SOURCE
      Classes/GameLogic/SaveManager.cpp
      Classes/HelperClasses/DocumentManager.cpp
      Classes/SceneLayer/CollideManager.cpp
-     Classes/SceneLayer/MapCreator.cpp
+     Classes/SceneLayer/MapManager.cpp
      Classes/SceneLayer/PlayerController.cpp
      Classes/UILayer/UIController.cpp
-     Classes/UILayer/UICreator.cpp
+     Classes/UILayer/UIManager.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
      Classes/GameLogic/PlayerSprite.h
      Classes/GameLogic/SaveManager.h
      Classes/HelperClasses/DocumentManager.h
-     Classes/HelperClasses/GridComputer.h
+     Classes/HelperClasses/HelperClasses.h
      Classes/SceneLayer/CollideManager.h
-     Classes/SceneLayer/MapCreator.h
+     Classes/SceneLayer/MapManager.h
      Classes/SceneLayer/PlayerController.h
      Classes/UILayer/UIController.h
-     Classes/UILayer/UICreator.h
+     Classes/UILayer/UIManager.h
      )
 
 if(ANDROID)

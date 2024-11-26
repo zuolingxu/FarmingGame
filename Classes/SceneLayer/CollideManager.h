@@ -3,6 +3,6 @@
 
 class CollideManager {
 private:
-
+	std::vector<bool> collide_map;
 public:
 };
