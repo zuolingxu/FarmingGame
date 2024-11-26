@@ -51,6 +51,17 @@ DocumentManager::DocumentManager() : current_archive_(0), data_(32)
 	{
 		data_.emplace("UsrConfig", doc);
 	}
+	initNameMap();
+}
+
+void DocumentManager::initNameMap()
+{
+	const Document* doc = getDocument("global.json");
+	auto name_map = (*doc)["NameMap"].GetObjectW();
+	for (auto it: name_map)
+	{
+		name_map_.emplace(it.name.GetString(), it.value.GetString());
+	}
 }
 
 DocumentManager::~DocumentManager()
@@ -67,6 +78,11 @@ DocumentManager::~DocumentManager()
 DocumentManager* DocumentManager::getInstance()
 {
 	return instance_;
+}
+
+std::string DocumentManager::getPath(const std::string& name)
+{
+	return name_map_.at(name);
 }
 
 void DocumentManager::freeDocument(const std::string& path)

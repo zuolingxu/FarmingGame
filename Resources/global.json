@@ -2,16 +2,11 @@
     "Name": "global",
     "GameTitle": "A FarmingGame",
     "GameVersion": "v1.0",
-    "Scene": {
-    },
-    "UI": {
-        "MainUI": "UI/MainUI.json"
-    },
-    "Fonts": {
+    "NameMap": {
+        "global": "global.json",
+        "MainUI": "UI/MainUI.json",
         "FontsArial": "fonts/arial.ttf",
-        "FontsMarkerFelt": "fonts/Marker Felt.ttf"
-    },
-    "Data": {
+        "FontsMarkerFelt": "fonts/Marker Felt.ttf",
         "Plant": "Data/Plant.json"
     }
 }

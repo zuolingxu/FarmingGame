@@ -1,8 +1,8 @@
-#include "MapManager.h"
+#include "MapLayer.h"
 
 USING_NS_CC;
 
-//MapManager* MapManager::getMap(const rapidjson::Value* doc)
+//MapLayer* MapLayer::getMap(const rapidjson::Value* doc)
 //{
 //	Layer* layer = cocos2d::Layer::create();
 //

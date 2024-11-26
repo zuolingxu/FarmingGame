@@ -1,7 +1,6 @@
 #include "AppDelegate.h"
-#include <codecvt>
 #include "DocumentManager.h"
-#include "UIManager.h"
+#include "SceneManager.h"
 
 // uncomment this if you want to use the audio engine, the usage of audio engine is in the cpp_test
 // #define USE_AUDIO_ENGINE 1
@@ -99,22 +98,9 @@ bool AppDelegate::applicationDidFinishLaunching() {
     {
         // load ALL_UI UI need fast reaction
         auto manager = DocumentManager::getInstance();
-        const Document* global_document = manager->getDocument("global.json");
-        auto all_UI = (*global_document)["UI"].GetObjectW();
-
-        Scene* scene = Scene::create();
-        for (auto& it: all_UI)
-        {
-            UIManager::createWithFile(it.value.GetString());
-        }
-
-        // load mainUI
-        auto main_UI_path = (*global_document)["UI"]["MainUI"].GetString();
-        UIManager* main_UI = UIManager::createWithFile(main_UI_path);
-        scene->addChild(main_UI->getLayer(),0 );
-
-        // run
-        director->runWithScene(scene);
+        const Document* global_document = manager->getDocument(manager->getPath("global"));
+        SceneManager
+        SceneManager::getInstance()->loadScene("mainUI");
     }
     catch (const std::exception& e)
     {

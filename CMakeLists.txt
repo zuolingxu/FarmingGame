@@ -32,26 +32,28 @@ endif()
 # add cross-platforms source files and header files 
 list(APPEND GAME_SOURCE
      Classes/AppDelegate.cpp
+     Classes/SceneManager.cpp
      Classes/GameLogic/PlayerSprite.cpp
      Classes/GameLogic/SaveManager.cpp
      Classes/HelperClasses/DocumentManager.cpp
      Classes/SceneLayer/CollideManager.cpp
-     Classes/SceneLayer/MapManager.cpp
+     Classes/SceneLayer/MapLayer.cpp
      Classes/SceneLayer/PlayerController.cpp
      Classes/UILayer/UIController.cpp
-     Classes/UILayer/UIManager.cpp
+     Classes/UILayer/UILayer.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
+     Classes/SceneManager.h
      Classes/GameLogic/PlayerSprite.h
      Classes/GameLogic/SaveManager.h
      Classes/HelperClasses/DocumentManager.h
      Classes/HelperClasses/HelperClasses.h
      Classes/SceneLayer/CollideManager.h
-     Classes/SceneLayer/MapManager.h
+     Classes/SceneLayer/MapLayer.h
      Classes/SceneLayer/PlayerController.h
      Classes/UILayer/UIController.h
-     Classes/UILayer/UIManager.h
+     Classes/UILayer/UILayer.h
      )
 
 if(ANDROID)

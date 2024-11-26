@@ -17,16 +17,14 @@ private:
 	static DocumentManager* instance_;
 	int current_archive_;
 	std::unordered_map<std::string, rapidjson::Document*> data_;
+	std::unordered_map<std::string, std::string> name_map_;
 	// The Constructor will load the Config document(writable) and the global document(unwritable)
 	DocumentManager();
-	~DocumentManager();
 
-	enum class DocumentType
-	{
-		normal,
-		config,
-		archive,
-	};
+	//  Init the file name - file path map
+	void initNameMap();
+
+	~DocumentManager();
 
 	static rapidjson::Document* readFile(const std::string& path);
 	void writeFile(const std::string& path, const std::string& name) const;
@@ -42,6 +40,10 @@ public:
 	// Singleton mode, there's only one instance
 	static DocumentManager* getInstance();
 
+	// Get the file path with name, you can use it like :
+	// DocumentManager* manager = DocumentManager::getInstance;
+	// manager->getDocument(manager->getPath("global"));
+	std::string getPath(const std::string& name);
 
 	// for normal document: get -> free
 

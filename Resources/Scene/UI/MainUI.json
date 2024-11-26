@@ -1,10 +1,12 @@
 {
+    "type": "UI",
     "WelCome": {
         "Type": "Text",
         "Content": [
             "Hello, World!"
         ],
-        "Position": ["middle", "max"]
+        "Position": ["middle", "max"],
+        "maodian":[0.5,0.5]
     },
 
     "HelloWorld": {
