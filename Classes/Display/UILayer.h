@@ -1,7 +1,7 @@
 #pragma once
 #include "cocos2d.h"
 
-class PlayerController{
+class UILayer{
     private:
     public:
 };

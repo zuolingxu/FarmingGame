@@ -64,8 +64,8 @@ DocumentManager::DocumentManager() : current_archive_(0), data_(32)
 void DocumentManager::initNameMap()
 {
 	const Document* doc = getDocument("global.json");
-	auto name_map = (*doc)["NameMap"].GetObjectW();
-	for (auto it: name_map)
+	auto name_map = (*doc)["NameMap"].GetObject();
+	for (auto& it: name_map)
 	{
 		name_map_.emplace(it.name.GetString(), it.value.GetString());
 	}

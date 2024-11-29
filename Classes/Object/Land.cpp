@@ -1,6 +1,1 @@
-#include "PlayerSprite.h"
-
-//PlayerSprite::PlayerSprite(){}
-//PlayerSprite::~PlayerSprite(){}
-
-//PlayerSprite* PlayerSprite::getInstance(){}
+#include "Land.h"

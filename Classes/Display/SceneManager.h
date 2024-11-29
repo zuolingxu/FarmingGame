@@ -12,15 +12,13 @@ class SceneManager
 
 	SceneManager();
 	~SceneManager();
-
-	// Command should write here and be private
-	// ToScene(std::string name);
-	// showLayer(std::string name);
-	// hideLayer(std::string name);
-
+	void init_game_logic();
 
     public:
-	void ececuteCommand();
+	static SceneManager* getInstance();
+	void showLayer(std::string layer_name);
+	void hideLayer(std::string layer_name);
 
+	void NextScene(std::string scene_name);
 };
 

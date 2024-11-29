@@ -17,5 +17,24 @@
     "relationship": {
         "Tom": 0,
         "Alice": 0
+    },
+
+    "Map":{
+        "Farm": {
+            "12 13":[
+                "Crop", 
+                {
+                    "Name": "Potato",
+                    "Day": "1",
+                    "Water": true,
+                    "Fertilizer": 1
+                }
+            ]
+        },
+
+        "Town":{
+
+        }
     }
+
 }

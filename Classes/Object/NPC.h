@@ -3,10 +3,6 @@
 #include "DocumentManager.h"
 #include "json/reader.h"
 
-class UILayer : cocos2d::Layer{
+class NPC{
     public:
-	static UILayer* createWithFile(const std::string& name);
-
-	// initialize();
-
 };

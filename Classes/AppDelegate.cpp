@@ -99,8 +99,6 @@ bool AppDelegate::applicationDidFinishLaunching() {
         // load ALL_UI UI need fast reaction
         auto manager = DocumentManager::getInstance();
         const Document* global_document = manager->getDocument(manager->getPath("global"));
-        SceneManager
-        SceneManager::getInstance()->loadScene("mainUI");
     }
     catch (const std::exception& e)
     {
