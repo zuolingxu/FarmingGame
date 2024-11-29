@@ -32,28 +32,30 @@ endif()
 # add cross-platforms source files and header files 
 list(APPEND GAME_SOURCE
      Classes/AppDelegate.cpp
-     Classes/SceneManager.cpp
-     Classes/GameLogic/PlayerSprite.cpp
-     Classes/GameLogic/SaveManager.cpp
+     Classes/Display/MapLayer.cpp
+     Classes/Display/SceneManager.cpp
+     Classes/Display/UILayer.cpp
      Classes/HelperClasses/DocumentManager.cpp
-     Classes/SceneLayer/CollideManager.cpp
-     Classes/SceneLayer/MapLayer.cpp
-     Classes/SceneLayer/PlayerController.cpp
-     Classes/UILayer/UIController.cpp
-     Classes/UILayer/UILayer.cpp
+     Classes/Object/Animal.cpp
+     Classes/Object/Crop.cpp
+     Classes/Object/Land.cpp
+     Classes/Object/NPC.cpp
+     Classes/Object/Object.cpp
+     Classes/UILogic/UILogic.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
-     Classes/SceneManager.h
-     Classes/GameLogic/PlayerSprite.h
-     Classes/GameLogic/SaveManager.h
+     Classes/Display/MapLayer.h
+     Classes/Display/SceneManager.h
+     Classes/Display/UILayer.h
      Classes/HelperClasses/DocumentManager.h
      Classes/HelperClasses/HelperClasses.h
-     Classes/SceneLayer/CollideManager.h
-     Classes/SceneLayer/MapLayer.h
-     Classes/SceneLayer/PlayerController.h
-     Classes/UILayer/UIController.h
-     Classes/UILayer/UILayer.h
+     Classes/Object/Animal.h
+     Classes/Object/Crop.h
+     Classes/Object/Land.h
+     Classes/Object/NPC.h
+     Classes/Object/Object.h
+     Classes/UILogic/UILogic.h
      )
 
 if(ANDROID)
@@ -128,10 +130,10 @@ set_target_properties(${APP_NAME} PROPERTIES CXX_STANDARD 20)
 target_link_libraries(${APP_NAME} cocos2d)
 target_include_directories(${APP_NAME}
         PRIVATE Classes
-        PRIVATE Classes/GameLogic
+        PRIVATE Classes/Display
         PRIVATE Classes/HelperClasses
-        PRIVATE Classes/SceneLayer
-        PRIVATE Classes/UILayer
+        PRIVATE Classes/Object
+        PRIVATE Classes/UILogic
         PRIVATE ${COCOS2DX_ROOT_PATH}/cocos/audio/include
 )
 

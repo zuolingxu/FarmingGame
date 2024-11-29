@@ -1,15 +1,9 @@
 #pragma once
 #include <unordered_map>
-#include <fstream>
 #include <string>
-#include <format>
-#include <filesystem>
 #include "cocos2d.h"
-#include "json/reader.h"
 #include "json/document.h"
-#include "json/writer.h"
-#include "json/istreamwrapper.h"
-#include "json/ostreamwrapper.h"
+
 
 class DocumentManager
 {
@@ -41,7 +35,7 @@ public:
 	static DocumentManager* getInstance();
 
 	// Get the file path with name, you can use it like :
-	// DocumentManager* manager = DocumentManager::getInstance;
+	// DocumentManager* manager = DocumentManager::getInstance();
 	// manager->getDocument(manager->getPath("global"));
 	std::string getPath(const std::string& name);
 
@@ -57,14 +51,14 @@ public:
 
 
 
-	// for archive document: create/create -> get -> free/save
+	// for archive document: create/load -> get -> free/save
 	// special option: delete
 
 	// create save and load a new Archive.
 	// If the Archive has been opened, it will free the former document and return true.
 	// If the Archive already exist, return false.
-	// If cannot load NewusrArchive, throw exception
-	bool createArchiveDocument(int num);
+	// If cannot load NewUsrArchive, throw exception
+	bool createArchiveDocument(const int num);
 
 	// load Archive document, you can only open one Archive once
 	// If the Archive cannot be opened or has been corrupted, it will return false

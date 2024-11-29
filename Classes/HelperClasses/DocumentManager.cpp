@@ -1,4 +1,11 @@
 #include "DocumentManager.h"
+#include "json/writer.h"
+#include "json/istreamwrapper.h"
+#include "json/ostreamwrapper.h"
+#include <format>
+#include <filesystem>
+#include <fstream>
+
 
 using namespace rapidjson;
 // All player data shall be saved in this folder
