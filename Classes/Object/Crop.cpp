@@ -1,6 +1,28 @@
 #include "Crop.h"
 
-//PlayerSprite::PlayerSprite(){}
-//PlayerSprite::~PlayerSprite(){}
+Crop::Crop()
+{
+	
+}
 
-//PlayerSprite* PlayerSprite::getInstance(){}
+Crop::~Crop()
+{
+	
+}
+
+
+Crop* Crop::create(rapidjson::Value& val)
+{
+	return new Crop;
+}
+
+void Crop::interact()
+{
+	
+}
+
+void Crop::init()
+{
+	
+}
+

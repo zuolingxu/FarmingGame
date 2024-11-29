@@ -12,7 +12,7 @@ class SceneManager
 
 	SceneManager();
 	~SceneManager();
-	void init_game_logic();
+	void init_maps();
 
     public:
 	static SceneManager* getInstance();
