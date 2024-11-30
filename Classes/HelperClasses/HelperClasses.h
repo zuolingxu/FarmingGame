@@ -55,7 +55,7 @@ public:
 		os << vec.x << " " << vec.y;
 		return os;
 	}
-	friend std::istream& operator>>(std::istream& in, const Vec& vec)
+	friend std::istream& operator>>(std::istream& in, Vec& vec)
 	{
 		in >> vec.x >> vec.y;
 		return in;
@@ -64,15 +64,20 @@ public:
 
 // Vec2 is the 2D vector class provided by cocos2dx
 // press ctrl and click Vec2 to see class code
-inline Vec<int> gridComputer(const cocos2d::Vec2& vec){
+inline Vec<int> toGrid(const cocos2d::Vec2& vec){
 	const Vec<int> vecInt = { static_cast<int>(vec.x), static_cast<int>(vec.y) };
 	return { vecInt.X() / GridSize, vecInt.Y() / GridSize };
 }
 
 template<typename T>
-inline Vec<int> gridComputer(const Vec<T>& vec) {
+inline Vec<int> toGrid(const Vec<T>& vec) {
 	const Vec<int> vecInt = { static_cast<int>(vec.x), static_cast<int>(vec.y) };
 	return { vecInt.X() / GridSize, vecInt.Y() / GridSize };
+}
+
+inline Vec<int> toPixel(const Vec<int>& vec)
+{
+	return { vec.X() * GridSize, vec.Y() * GridSize };
 }
 
 
@@ -83,4 +88,11 @@ inline Vec<int> toVec2(const std::string& str)
 	std::istringstream iss(str);
 	iss >> vec;
 	return vec;
+}
+
+inline std::string toString(const Vec<int>& vec)
+{
+	std::ostringstream oss;
+	oss << vec;
+	return oss.str();
 }

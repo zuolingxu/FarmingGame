@@ -71,7 +71,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     director->setAnimationInterval(1.0f / 60);
 
     // Set the design resolution of the scene. It is different from the resolution of the window.
-    glview->setDesignResolutionSize(smallResolutionSize.width, smallResolutionSize.height, ResolutionPolicy::NO_BORDER);
+    glview->setDesignResolutionSize(designResolutionSize.width, designResolutionSize.height, ResolutionPolicy::NO_BORDER);
 
 #if 0 
     auto frameSize = glview->getFrameSize();
@@ -98,7 +98,10 @@ bool AppDelegate::applicationDidFinishLaunching() {
     {
         // load ALL_UI UI need fast reaction
         auto manager = DocumentManager::getInstance();
-        const Document* global_document = manager->getDocument(manager->getPath("global"));
+        Document* global_document = manager->getDocument(manager->getPath("global"));
+        CCLOG(manager->getPath("global").c_str());
+        manager->loadArchiveDocument(19);
+        SceneManager::getInstance()->createMaps();
     }
     catch (const std::exception& e)
     {

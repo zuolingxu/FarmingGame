@@ -1,5 +1,4 @@
 {
-    "Name" : "NewArchive",
     "key_info": {
         "day": 0,
         "money": 1000
@@ -20,16 +19,16 @@
     },
 
     "Map":{
-        "Farm": {
-            "12 13":[
-                "Crop", 
-                {
+        "Example": {
+            "12 13":{
+                "Type": "Land", 
+                "Info": {
                     "Name": "Potato",
                     "Day": "1",
                     "Water": true,
                     "Fertilizer": 1
                 }
-            ]
+            }    
         }
     }
 

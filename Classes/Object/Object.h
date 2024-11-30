@@ -4,6 +4,8 @@
 #include "json/document.h"
 #include "MapLayer.h"
 
+class MapLayer;
+
 class Object {
 public:
 	Object() = default;

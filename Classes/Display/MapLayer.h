@@ -2,30 +2,48 @@
 #include "json/document.h"
 #include "cocos2d.h"
 #include <vector>
-#include "Object.h"
+#include "HelperClasses.h"
+
+
+class Object;
 
 class MapLayer{
-    private:
+private:
 	cocos2d::Layer* layer_ = nullptr;
 	std::string tmx_name_;
 	cocos2d::TMXTiledMap* tiled_map_ = nullptr;
-	rapidjson::Value* object_list_;
 	std::vector<std::vector<Object*>> interact_map_;
 	std::vector<std::vector<bool>> collision_map_;
-	MapLayer(const cocos2d::Vec2 size, const std::string& tmx_name, rapidjson::Value* object_list);
+	cocos2d::Sprite* player_ = nullptr;
+	cocos2d::Camera* camera_ = nullptr;
+	bool is_front_ = false;
+
+	MapLayer(const Vec<int>& size, std::string tmx_path,
+		rapidjson::Value* const_object, rapidjson::Value* archive_object);
 	~MapLayer() = default;
 
-	void addObject(cocos2d::Vec2 pos, rapidjson::Value object_json);
+	void showTiledMap() const;
 
-	public:
-	static void createWithDocument(cocos2d::Vec2 size, std::string tmx_name, rapidjson::Value* object_json);
-	void freePictureResource();
+public:
+	MapLayer(const MapLayer&) = delete;
+	MapLayer& operator=(const MapLayer&) = delete;
+	MapLayer(MapLayer&&) = delete;
+	MapLayer& operator=(MapLayer&&) = delete;
 
-	cocos2d::TMXTiledMap* showTileMap(std::string tmx_name) const;
+	static MapLayer* createWithDocument(const Vec<int>& size, const std::string& tmx_path,
+	                                    rapidjson::Value* const_object, rapidjson::Value* archive_object);
 
-	cocos2d::Sprite* showWithPicture(std::string pic_name);
-	void changeWithPicture(cocos2d::Sprite* sprite, std::string pic_name);
+	// pos is start GRID position of player sprite
+	void init(Vec<int> pos);
 
-	cocos2d::Sprite* showWithSpriteFrame(std::string frame_name);
+	// load .plist file and picture
+	static void loadPlist(std::string plist_name);
+	static void freePlist();
+
+	// frame_name is name of frame in .plist file.
+	// pos is GRID position of sprite, the anchor is (0,0) (bottom left).
+	cocos2d::Sprite* getSpriteWithFrame(const std::string& frame_name, Vec<int> pos) const;
+
 	void changeWithActionSequence(std::vector<int> sequence);
+	void changeWithSingleFrame(int num);
 };

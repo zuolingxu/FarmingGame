@@ -23,3 +23,8 @@ void NPC::init()
 {
 	sprite_ = nullptr;
 }
+
+void NPC::clear()
+{
+	sprite_ = nullptr;
+}
