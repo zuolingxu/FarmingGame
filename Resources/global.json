@@ -4,11 +4,14 @@
     "GameVersion": "v1.0",
     "Files": {
         "global": "global.json",
-        "ArialFonts": "fonts/arial.ttf",
-        "MarkerFeltFonts": "fonts/Marker Felt.ttf",
-        "HelloScene": "Json/UI/Hello.json",
-        "HelloPicture": "Picutre/MainScene/HelloWorld.png",
-        "CloseNormalPicture":"Picture/MainScene/CloseNormal.png",
-        "CloseSeletedPicture":"Picture/MainScene/Selected.png"
-    } 
+        "ExampleLay": "Json/Layers/Example.json",
+        "ConfigLay": "Json/Config.json",
+        "FarmLay": "Json/Farm.json",
+        "HelloPic": "Picutre/MainScene/HelloWorld.png",
+        "CloseNormalPic":"Picture/MainScene/CloseNormal.png",
+        "CloseSeletedPic":"Picture/MainScene/Selected.png",
+        "ArialFon": "Fonts/arial.ttf",
+        "MarkerFeltFon": "Fonts/Marker Felt.ttf"
+    },
+    "Layers": [ "ExampleLay" ]
 }

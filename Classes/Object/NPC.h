@@ -3,15 +3,18 @@
 #include "DocumentManager.h"
 #include "Object.h"
 #include "json/document.h"
+#include "MapLayer.h"
 
-class NPC: protected Object {
+class NPC final: protected Object {
 	private:
 	cocos2d::Sprite* sprite_ = nullptr;
+	MapLayer* parent_;
 
     public:
-	NPC();
+	NPC(MapLayer* parent);
 	~NPC() override;
-	static Object* create(rapidjson::Value& val); 
+	static Object* create(rapidjson::Value& val, MapLayer* parent); 
 	virtual void init() override; 
-	virtual void interact() override; 
+	virtual void interact() override;
+	virtual void clear() override;
 };

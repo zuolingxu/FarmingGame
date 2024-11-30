@@ -4,16 +4,19 @@
 #include "DocumentManager.h"
 #include "Object.h"
 #include "json/document.h"
+#include "MapLayer.h"
 
-class Land: protected Object {
+class Land final: protected Object {
     private:
 	Crop* crop_ = nullptr;
     cocos2d::Sprite* sprite_ = nullptr;
+    MapLayer* parent_;
 
     public:
-	Land();
+	explicit Land(MapLayer* parent);
     ~Land() override;
-    static Object* create(rapidjson::Value& val);
+    static Object* create(rapidjson::Value& val, MapLayer* parent);
     virtual void init() override;
     virtual void interact() override;
+    virtual void clear() override;
 }; 

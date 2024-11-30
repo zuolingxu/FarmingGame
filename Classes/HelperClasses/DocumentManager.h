@@ -30,6 +30,8 @@ private:
 public:
 	DocumentManager(const DocumentManager&) = delete;
 	DocumentManager& operator=(const DocumentManager&) = delete;
+	DocumentManager(DocumentManager&&) = delete;
+	DocumentManager& operator=(DocumentManager&&) = delete;
 
 	// Singleton mode, there's only one instance
 	static DocumentManager* getInstance();

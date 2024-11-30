@@ -1,6 +1,6 @@
 #include "NPC.h"
 
-NPC::NPC()
+NPC::NPC(MapLayer* parent) : parent_(parent)
 {
 }
 
@@ -9,10 +9,9 @@ NPC::~NPC()
 	
 }
 
-
-Object* NPC::create(rapidjson::Value& val)
+Object* NPC::create(rapidjson::Value& val, MapLayer* parent)
 {
-	return new NPC;
+	return new NPC(parent);
 }
 
 void NPC::interact()
@@ -22,6 +21,5 @@ void NPC::interact()
 
 void NPC::init()
 {
-	
+	sprite_ = nullptr;
 }
-

@@ -2,7 +2,7 @@
 
 USING_NS_CC;
 
-Land::Land()
+Land::Land(MapLayer* parent) : parent_(parent)
 {
 	
 }
@@ -13,13 +13,13 @@ Land::~Land()
 }
 
 
-Object* Land::create(rapidjson::Value& val)
+Object* Land::create(rapidjson::Value& val, MapLayer* parent)
 {
-	Land* land = new Land;
+	Land* land = new Land(parent);
 	if (val.HasMember("SubVal"))
 	{
 		rapidjson::Value SubVal;
-		land->crop_ = Crop::create(SubVal);
+		land->crop_ = Crop::create(SubVal, parent);
 	}
 
 	return land;
@@ -35,3 +35,9 @@ void Land::interact()
 {
 	
 }
+
+void Land::clear()
+{
+	sprite_ = nullptr;
+}
+
