@@ -12,7 +12,8 @@ class SceneManager
 
 	SceneManager();
 	~SceneManager();
-	void init_maps();
+	void initLayer();
+	void parser_layer();
 
     public:
 	static SceneManager* getInstance();
