@@ -3,30 +3,25 @@
 #include "NPC.h"
 #include "Land.h"
 
-Object::~Object()
-{
-}
-
-
-Object* Object::create(rapidjson::Value& val)
+Object* Object::create(rapidjson::Value& val, MapLayer* parents)
 {
 	std::string type = val["Type"].GetString();
     rapidjson::Value& SubVal = val["Info"];
     if (type == "Animal")
     {
-        return Animal::create(SubVal);
+        return Animal::create(SubVal, parents);
     }
     else if (type == "NPC")
     {
-        return NPC::create(SubVal);
+        return NPC::create(SubVal, parents);
     }
     else if (type == "Land")
     {
-        return Land::create(SubVal);
+        return Land::create(SubVal,parents);
     }
     else
     {
-        throw std::runtime_error("Archive has been crupted");
+        throw std::runtime_error("Archive has been corrupted");
     }
 
 }
