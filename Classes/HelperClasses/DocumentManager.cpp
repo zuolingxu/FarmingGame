@@ -64,7 +64,7 @@ DocumentManager::DocumentManager() : current_archive_(0), data_(32)
 void DocumentManager::initNameMap()
 {
 	const Document* doc = getDocument("global.json");
-	auto name_map = (*doc)["NameMap"].GetObject();
+	auto name_map = (*doc)["Files"].GetObject();
 	for (auto& it: name_map)
 	{
 		name_map_.emplace(it.name.GetString(), it.value.GetString());
@@ -91,6 +91,12 @@ std::string DocumentManager::getPath(const std::string& name)
 {
 	return name_map_.at(name);
 }
+
+bool DocumentManager::hasDocument(const std::string& name) const
+{
+	return name_map_.contains(name);
+}
+
 
 void DocumentManager::freeDocument(const std::string& path)
 {

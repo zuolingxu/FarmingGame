@@ -39,6 +39,8 @@ public:
 	// manager->getDocument(manager->getPath("global"));
 	std::string getPath(const std::string& name);
 
+	bool hasDocument(const std::string& name) const;
+
 	// for normal document: get -> free
 
 	// get the json document, if not loaded, return nullptr

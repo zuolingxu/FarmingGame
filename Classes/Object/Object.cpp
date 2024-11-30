@@ -10,8 +10,8 @@ Object::~Object()
 
 Object* Object::create(rapidjson::Value& val)
 {
-	std::string type = val[0].GetString();
-    rapidjson::Value& SubVal = val[1];
+	std::string type = val["Type"].GetString();
+    rapidjson::Value& SubVal = val["Info"];
     if (type == "Animal")
     {
         return Animal::create(SubVal);

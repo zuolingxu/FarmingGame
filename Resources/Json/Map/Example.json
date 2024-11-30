@@ -1,0 +1,21 @@
+{
+    "Name": "Exaple",
+    "TMX": "tmx_file_path/name(added into global files)",
+    "Size": "100 100",
+    "Object_list": {
+        "12 13" : {
+            "Type": "Animal",
+            "Info": {
+                "Healthy": true,
+                "name": "alan"
+            }
+        },
+        "14 51":{
+            "Type": "Animal",
+            "Info": [
+                true
+            ]
+        }
+    },
+    "Object_path(other_form)": "object_file_path/name"
+}

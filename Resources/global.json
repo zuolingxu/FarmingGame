@@ -2,9 +2,13 @@
     "Name": "global",
     "GameTitle": "A FarmingGame",
     "GameVersion": "v1.0",
-    "NameMap": {
+    "Files": {
         "global": "global.json",
-        "FontsArial": "fonts/arial.ttf",
-        "FontsMarkerFelt": "fonts/Marker Felt.ttf"
-    }
+        "ArialFonts": "fonts/arial.ttf",
+        "MarkerFeltFonts": "fonts/Marker Felt.ttf",
+        "HelloScene": "Json/UI/Hello.json",
+        "HelloPicture": "Picutre/MainScene/HelloWorld.png",
+        "CloseNormalPicture":"Picture/MainScene/CloseNormal.png",
+        "CloseSeletedPicture":"Picture/MainScene/Selected.png"
+    } 
 }
