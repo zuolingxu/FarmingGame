@@ -176,13 +176,3 @@ void SceneManager::NextMap(const std::string& map_name, const std::string& pos) 
 		throw std::logic_error("Map not found, The Archive or game set may be corrupted. Download it again.");
 	}
 }
-
-void SceneManager::playAudio(const std::string& audio_name, const bool loop, const float volume)
-{
-	DocumentManager* manager = DocumentManager::getInstance();
-	if (manager->hasDocument(audio_name))
-	{
-		cocos2d::AudioEngine::play2d(manager->getPath(audio_name), loop, volume);
-	}
-}
-

@@ -1,19 +1,7 @@
 {
     "Name": "Town",
-    "TMX": "TiledMap/town-festival-v1.tmx",
+    "TMX": "TiledMap/beach.tmx",
     "ObjectList": {
-        "12 13" : {
-            "Type": "Animal",
-            "Info": {
-                "Healthy": true,
-                "name": "alan"
-            }
-        },
-        "14 22":{
-            "Type": "Animal",
-            "Info": [
-                true
-            ]
-        }
+
     }
 }

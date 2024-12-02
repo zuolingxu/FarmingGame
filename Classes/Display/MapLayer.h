@@ -10,7 +10,7 @@ class Object;
 
 class MapLayer: public cocos2d::Ref{
 private:
-	std::vector<std::vector<Object*>> interact_map_;
+	std::vector<std::vector<::Object*>> interact_map_;
 	std::vector<std::vector<bool>> collision_map_;
 	std::string tmx_name_;
 

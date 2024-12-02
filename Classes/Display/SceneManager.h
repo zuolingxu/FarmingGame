@@ -46,8 +46,5 @@ public:
 	// Go to Next Map. If pos is not specified, it won't add a player and all Listener will be removed(for start UI)
 	// If the map cannot be found, it will throw an exception
 	void NextMap(const std::string& map_name, const std::string& pos = "default") const;
-
-	// Audio Engine example
-	static void playAudio(const std::string& audio_name, bool loop, float volume);
 };
 

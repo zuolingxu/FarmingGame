@@ -26,9 +26,9 @@ MapLayer::MapLayer(const std::string& tmx_path,
         TMXTiledMap* tmx = TMXTiledMap::create(tmx_name_);
         tmx->retain();
         Vec<int> size = tmx->getMapSize();
-        interact_map_ = std::vector(size.X(), std::vector<Object*>(size.Y(), nullptr));
+        interact_map_ = std::vector(size.X(), std::vector<::Object*>(size.Y(), nullptr));
         collision_map_ = std::vector(size.X(), std::vector<bool>(size.Y(), false));
-        //addCollisions();
+        // addCollisions(); 
     	tmx->release();
     }
 
@@ -69,15 +69,15 @@ void MapLayer::addTiledMap()
     {
         TMXTiledMap* tmx = TMXTiledMap::create(tmx_name_);
         tiled_map_ = tmx;
-		
-        layer_->addChild(tmx, -256);
+        tiled_map_->setTileAnimEnabled(true);
+        layer_->addChild(tiled_map_, -256);
     }
 }
 
 void MapLayer::addObject(Vec<int> pos, rapidjson::Value& val)
 {
     focus_pos_ = std::move(pos);
-    Object* obj = Object::create(val, this);
+    ::Object* obj = ::Object::create(val, this);
     obj->retain();
     interact_map_[focus_pos_.X()][focus_pos_.Y()] = obj;
 }
@@ -235,7 +235,7 @@ void MapLayer::onMouseDown(cocos2d::Event* event)
     {
         if (e->getMouseButton() == cocos2d::EventMouse::MouseButton::BUTTON_LEFT) 
         {
-            Object* focus = interact_map_[focus_pos_.X()][focus_pos_.Y()];
+            ::Object* focus = interact_map_[focus_pos_.X()][focus_pos_.Y()];
             if (focus != nullptr)
             {
                 focus->interact();
@@ -312,7 +312,7 @@ Node* MapLayer::toFront(PlayerSprite* main_player)
     is_front_ = true;
     for (auto& row : interact_map_)
     {
-	    for (Object* object: row)
+	    for (::Object* object: row)
 	    {
 		    if (object != nullptr)
 		    {
@@ -346,7 +346,7 @@ void MapLayer::settle() const
 {
 	for (auto& row : interact_map_)
 	{
-		for (Object* object : row)
+		for (::Object* object : row)
 		{
 			if (object != nullptr)
 			{
@@ -375,7 +375,7 @@ void MapLayer::clearObjects()
 {
     for (auto& row : interact_map_)
     {
-	    for (Object* object : row)
+	    for (::Object* object : row)
 	    {
             object->clear();
             object->release();

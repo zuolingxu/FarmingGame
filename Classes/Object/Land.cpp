@@ -13,7 +13,7 @@ Land::~Land()
 }
 
 
-Object* Land::create(rapidjson::Value& val, MapLayer* parent)
+::Object* Land::create(rapidjson::Value& val, MapLayer* parent)
 {
 	Land* land = new Land(parent);
 	if (val.HasMember("SubVal"))
