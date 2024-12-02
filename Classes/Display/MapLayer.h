@@ -1,37 +1,44 @@
 #pragma once
 #include "json/document.h"
 #include "cocos2d.h"
+#include "PlayerSprite.h"
 #include <vector>
 #include "HelperClasses.h"
 
 
 class Object;
 
-class MapLayer{
+class MapLayer: public cocos2d::Ref{
 private:
 	std::vector<std::vector<Object*>> interact_map_;
 	std::vector<std::vector<bool>> collision_map_;
 	std::string tmx_name_;
 
-	cocos2d::Layer* layer_ = nullptr;
+	cocos2d::Node* layer_ = nullptr;
 	cocos2d::TMXTiledMap* tiled_map_ = nullptr;
-	cocos2d::Sprite* player_ = nullptr;
+	PlayerSprite* main_player_ = nullptr;
 	cocos2d::Camera* camera_ = nullptr;
 	cocos2d::EventListenerTouchAllAtOnce* touch_listener_ = nullptr;
 	cocos2d::EventListenerKeyboard* keyboard_Listener_ = nullptr;
 	cocos2d::EventListenerMouse* mouse_listener_ = nullptr;
-	Vec<int> add_pos_;
+	Vec<int> focus_pos_;
 	bool is_front_ = false;
 
-	MapLayer(const Vec<int>& size, std::string tmx_path,
+	MapLayer(const std::string& tmx_path,
 		rapidjson::Value* const_object, rapidjson::Value* archive_object);
 	~MapLayer() = default;
 
-	void addTiledMap() const;
+	static MapLayer* createWithDocument(const std::string& tmx_path,
+	rapidjson::Value* const_object, rapidjson::Value* archive_object);
+
+
+	// These function is for InitStep
+	void addTiledMap();
 	void addObject(Vec<int> pos, rapidjson::Value& val);
+	void addCollisions();
 	void addEventListener();
 
-	// CallBacks
+	// CallBacks for Listener
 	void onTouchesBegan(const std::vector<cocos2d::Touch*>& touches, cocos2d::Event* event);
 	void onTouchesMoved(const std::vector<cocos2d::Touch*>& touches, cocos2d::Event* event);
 	void onTouchesEnded(const std::vector<cocos2d::Touch*>& touches, cocos2d::Event* event);
@@ -43,29 +50,41 @@ private:
 	void onMouseMove(cocos2d::Event* event);
 	void onMouseUp(cocos2d::Event* event);
 
+	// changes for CallBacks
+	void changeFocus();
+	void changePosition(const Vec<int>& direction);
+	void changeHolding(int num);
+
+
+protected:
+	friend class SceneManager;
+	//  These function is for SceneManager
+	// pos is start GRID position of player sprite
+	cocos2d::Node* toFront(PlayerSprite* main_player);
+	void pause() const;
+	void resume() const;
+	void toBack();
+
+	// settle should be called after a day
+	void settle() const;
+
 public:
 	MapLayer(const MapLayer&) = delete;
 	MapLayer& operator=(const MapLayer&) = delete;
 	MapLayer(MapLayer&&) = delete;
 	MapLayer& operator=(MapLayer&&) = delete;
 
-	static MapLayer* createWithDocument(const Vec<int>& size, const std::string& tmx_path,
-	                                    rapidjson::Value* const_object, rapidjson::Value* archive_object);
-
-	// pos is start GRID position of player sprite
-	void toFront(Vec<int> pos);
-	void pause() const;
-	void resume() const;
-	void toBack();
-
-	void settle() const;
-
+	// These function is for Object
 	// load .plist file and picture
 	static void loadPlist(std::string plist_name);
 
+	void addPlayerSprite(PlayerSprite* player);
+
+	void clearObjects();
+
 	// frame_name is name of frame in .plist file.
 	// pos is GRID position of sprite, the anchor is (0,0) (bottom left).
-	cocos2d::Sprite* getSpriteWithFrame(const std::string& frame_name) const;
+	cocos2d::Sprite* addSpriteWithFrame(const std::string& frame_name) const;
 
 	void changeWithActionSequence(std::vector<int> sequence);
 	void changeWithSingleFrame(int num);

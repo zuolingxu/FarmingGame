@@ -6,13 +6,15 @@
         "global": "global.json",
         "ExampleMap": "Json/Example.json",
         "ConfigUI": "Json/Config.json",
-        "FarmMap": "Json/Farm.json",
+        "TownMap": "Json/Town.json",
+        "chicken_house_Map": "Json/chicken_house.json",
         "HelloPic": "Picture/HelloWorld.png",
         "CloseNormalPic":"Picture/CloseNormal.png",
         "CloseSeletedPic":"Picture/Selected.png",
         "ArialFon": "Fonts/arial.ttf",
-        "MarkerFeltFon": "Fonts/Marker Felt.ttf"
+        "MarkerFeltFon": "Fonts/Marker Felt.ttf",
+        "LoadingBarPic": "Picture/UI/LoadingBarFile.png"
     },
     "UI": [ "ConfigUI" ],
-    "Map": [ "ExampleMap"]
+    "Map": [ "TownMap","chicken_house_Map"]
 }

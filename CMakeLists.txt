@@ -35,6 +35,7 @@ list(APPEND GAME_SOURCE
      Classes/Display/MapLayer.cpp
      Classes/Display/SceneManager.cpp
      Classes/Display/UILayer.cpp
+     Classes/Display/PlayerSprite.cpp
      Classes/HelperClasses/DocumentManager.cpp
      Classes/Object/Animal.cpp
      Classes/Object/Crop.cpp
@@ -48,6 +49,7 @@ list(APPEND GAME_HEADER
      Classes/Display/MapLayer.h
      Classes/Display/SceneManager.h
      Classes/Display/UILayer.h
+     Classes/Display/PlayerSprite.h
      Classes/HelperClasses/DocumentManager.h
      Classes/HelperClasses/HelperClasses.h
      Classes/Object/Animal.h

@@ -92,7 +92,14 @@ DocumentManager* DocumentManager::getInstance()
 
 std::string DocumentManager::getPath(const std::string& name)
 {
-	return name_map_.at(name);
+	if (name_map_.contains(name))
+	{
+		return name_map_.at(name);
+	}
+	else
+	{
+		return "";
+	}
 }
 
 bool DocumentManager::hasDocument(const std::string& name) const

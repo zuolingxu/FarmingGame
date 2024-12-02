@@ -3,11 +3,10 @@
 #include "SceneManager.h"
 
 // uncomment this if you want to use the audio engine, the usage of audio engine is in the cpp_test
-// #define USE_AUDIO_ENGINE 1
+#define USE_AUDIO_ENGINE 1
 
 #if USE_AUDIO_ENGINE
 #include "audio/include/AudioEngine.h"
-using namespace cocos2d::experimental;
 #endif
 
 USING_NS_CC;
@@ -102,6 +101,9 @@ bool AppDelegate::applicationDidFinishLaunching() {
         CCLOG(manager->getPath("global").c_str());
         manager->loadArchiveDocument(19);
         SceneManager::getInstance()->createMaps();
+        SceneManager::getInstance()->NextMap("Town");
+        // Sleep(5000);
+        // SceneManager::getInstance()->NextMap("Chicken");
     }
     catch (const std::exception& e)
     {

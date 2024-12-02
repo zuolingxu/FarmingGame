@@ -6,7 +6,7 @@
 
 class MapLayer;
 
-class Object {
+class Object : public cocos2d::Ref {
 public:
 	Object() = default;
 	virtual ~Object() = default;

@@ -1,7 +1,6 @@
 {
-    "Name": "Example",
-    "TMX": "tmx_file_name/path",
-    "Size": "100 100",
+    "Name": "Town",
+    "TMX": "TiledMap/town-festival-v1.tmx",
     "ObjectList": {
         "12 13" : {
             "Type": "Animal",
@@ -10,7 +9,7 @@
                 "name": "alan"
             }
         },
-        "14 51":{
+        "14 22":{
             "Type": "Animal",
             "Info": [
                 true
