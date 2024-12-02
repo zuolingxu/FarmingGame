@@ -96,7 +96,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     try
     {
-        // load ALL_UI UI need fast reaction
+        // load ALL_UI UI_ need fast reaction
         auto manager = DocumentManager::getInstance();
         Document* global_document = manager->getDocument(manager->getPath("global"));
         CCLOG(manager->getPath("global").c_str());

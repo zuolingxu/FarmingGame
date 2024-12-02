@@ -19,4 +19,5 @@ class Land final: protected Object {
     virtual void init() override;
     virtual void interact() override;
     virtual void clear() override;
+    virtual void settle() override;
 }; 

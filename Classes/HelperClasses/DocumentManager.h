@@ -14,7 +14,7 @@ private:
 	// The Constructor will load the Config document(writable) and the global document(unwritable)
 	DocumentManager();
 
-	//  Init the file name - file path map
+	//  Init the file name - file path map_
 	void initNameMap();
 
 	~DocumentManager();

@@ -12,8 +12,8 @@ private:
 	static SceneManager* instance_;
 	cocos2d::Director* director_;
 	std::unordered_map<std::string, cocos2d::Layer*> layers_;
-	std::unordered_map<std::string, MapLayer*> maps_;
-	std::unordered_map<std::string, UILayer*> UIs_;
+	std::unordered_map<std::string, MapLayer*> map_;
+	std::unordered_map<std::string, UILayer*> UI_;
 
 	SceneManager();
 	~SceneManager();

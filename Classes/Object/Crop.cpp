@@ -31,4 +31,7 @@ void Crop::clear()
 	sprite_ = nullptr;
 }
 
-
+void Crop::settle()
+{
+	
+}

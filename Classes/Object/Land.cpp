@@ -41,3 +41,7 @@ void Land::clear()
 	sprite_ = nullptr;
 }
 
+void Land::settle()
+{
+	
+}

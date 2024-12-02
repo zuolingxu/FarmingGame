@@ -31,7 +31,7 @@ void SceneManager::createMapWithDocument(rapidjson::Document* doc)
 		archive_object = &(*archive_doc)["Map"][name.c_str()];
 	}
 
-	maps_.emplace(name, MapLayer::createWithDocument(
+	map_.emplace(name, MapLayer::createWithDocument(
 		Size, tmx_path,const_object, archive_object));
 }
 
@@ -63,7 +63,16 @@ void SceneManager::showLayer(std::string layer_name)
 
 void SceneManager::NextScene(std::string scene_name)
 {
-	
+	Scene* temp = Scene::create();
+	const auto background = cocos2d::LayerColor::create(cocos2d::Color4B::BLACK);
+	temp -> addChild(background);
+	Director::getInstance()->replaceScene(TransitionFade::create(0.5f, temp));
+	Scene* next = Scene::create();
+	if (map_.contains(scene_name))
+	{
+		
+	}
+	Director::getInstance()->replaceScene(TransitionFade::create(0.5f, temp));
 }
 
 

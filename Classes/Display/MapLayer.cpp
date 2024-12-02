@@ -16,8 +16,7 @@ MapLayer::MapLayer(const Vec<int>& size ,std::string tmx_path,
     {
         for (auto& object : const_object->GetObject())
         {
-            Vec<int> pos = toVec2(object.name.GetString());
-            interact_map_[pos.X()][pos.Y()] = Object::create(object.value, this);
+            addObject(toVec2(object.name.GetString()), object.value);
         }
     }
 
@@ -25,8 +24,7 @@ MapLayer::MapLayer(const Vec<int>& size ,std::string tmx_path,
     {
         for (auto& object : archive_object->GetObject())
         {
-            Vec<int> pos = toVec2(object.name.GetString());
-            interact_map_[pos.X()][pos.Y()] = Object::create(object.value, this);
+            addObject(toVec2(object.name.GetString()), object.value);
         }
     }
 }
@@ -36,7 +34,7 @@ MapLayer* MapLayer::createWithDocument(const Vec<int>& size, const std::string& 
     return new MapLayer(size, tmx_path, const_object, archive_object);
 }
 
-void MapLayer::showTiledMap() const
+void MapLayer::addTiledMap() const
 {
     if (tiled_map_ != nullptr)
     {
@@ -45,12 +43,93 @@ void MapLayer::showTiledMap() const
     }
 }
 
-void MapLayer::init(Vec<int> pos)
+void MapLayer::addObject(Vec<int> pos, rapidjson::Value& val)
+{
+    add_pos_ = std::move(pos);
+    interact_map_[add_pos_.X()][add_pos_.Y()] = Object::create(val, this);
+}
+
+
+void MapLayer::addEventListener()
+{
+    // Touch Listener
+    touch_listener_ = cocos2d::EventListenerTouchAllAtOnce::create();
+    touch_listener_->onTouchesBegan = CC_CALLBACK_2(onTouchesBegan, this);
+    touch_listener_->onTouchesMoved = CC_CALLBACK_2(onTouchesMoved, this);
+    touch_listener_->onTouchesEnded = CC_CALLBACK_2(onTouchesEnded, this);
+
+    // Keyboard Listener
+    keyboard_Listener_ = cocos2d::EventListenerKeyboard::create();
+    keyboard_Listener_->onKeyPressed = CC_CALLBACK_2(onKeyPressed, this);
+    keyboard_Listener_->onKeyReleased = CC_CALLBACK_2(onKeyReleased, this);
+
+    // Mouse Listener
+    mouse_listener_ = cocos2d::EventListenerMouse::create();
+    mouse_listener_->onMouseDown = CC_CALLBACK_1(onMouseDown, this);
+    mouse_listener_->onMouseMove = CC_CALLBACK_1(onMouseMove, this);
+    mouse_listener_->onMouseUp = CC_CALLBACK_1(onMouseUp, this);
+
+    // add Listener to Layer
+    layer_->getEventDispatcher()->addEventListenerWithSceneGraphPriority(touch_listener_, layer_);
+    layer_->getEventDispatcher()->addEventListenerWithSceneGraphPriority(keyboard_Listener_, layer_);
+    layer_->getEventDispatcher()->addEventListenerWithSceneGraphPriority(mouse_listener_, layer_);
+}
+
+void MapLayer::onTouchesBegan(const std::vector<cocos2d::Touch*>& touches, cocos2d::Event* event)
+{
+    CCLOG("Touches began!");
+    event->stopPropagation();
+}
+
+void MapLayer::onTouchesMoved(const std::vector<cocos2d::Touch*>& touches, cocos2d::Event* event)
+{
+    CCLOG("Touches moved!");
+    event->stopPropagation(); 
+}
+
+void MapLayer::onTouchesEnded(const std::vector<cocos2d::Touch*>& touches, cocos2d::Event* event)
+{
+    CCLOG("Touches ended!");
+    event->stopPropagation(); 
+}
+
+void MapLayer::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event)
+{
+    CCLOG("Key pressed: %d", keyCode);
+    event->stopPropagation();
+}
+
+void MapLayer::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event)
+{
+    CCLOG("Key released: %d", keyCode);
+    event->stopPropagation(); 
+}
+
+void MapLayer::onMouseDown(cocos2d::Event* event)
+{
+    CCLOG("Mouse button pressed!");
+    event->stopPropagation(); 
+}
+
+void MapLayer::onMouseMove(cocos2d::Event* event)
+{
+    CCLOG("Mouse moved!");
+    event->stopPropagation();
+}
+
+void MapLayer::onMouseUp(cocos2d::Event* event)
+{
+    CCLOG("Mouse button released!");
+    event->stopPropagation();
+}
+
+
+void MapLayer::toFront(Vec<int> pos)
 {
     layer_ = Layer::create();
 
     // create player sprite
-    player_ = getSpriteWithFrame("", pos);
+    player_ = getSpriteWithFrame("");
     pos = toPixel(pos);
 
     // bind camera
@@ -64,7 +143,7 @@ void MapLayer::init(Vec<int> pos)
     layer_->addChild(camera_);
     layer_->setCameraMask(static_cast<unsigned short>(CameraFlag::USER1));
 
-    showTiledMap();
+    addTiledMap();
     is_front_ = true;
     for (auto& row : interact_map_)
     {
@@ -78,6 +157,36 @@ void MapLayer::init(Vec<int> pos)
     }
 }
 
+void MapLayer::pause() const
+{
+    layer_->pause();
+}
+
+void MapLayer::resume() const
+{
+	layer_->resume();
+}
+
+void MapLayer::toBack()
+{
+    is_front_ = false;
+    SpriteFrameCache::getInstance()->removeSpriteFrames();
+}
+
+void MapLayer::settle() const
+{
+	for (auto& row : interact_map_)
+	{
+		for (Object* object : row)
+		{
+			if (object != nullptr)
+			{
+				object->settle();
+			}
+		}
+	}
+}
+
 void MapLayer::loadPlist(std::string plist_name)
 {
     DocumentManager* manager = DocumentManager::getInstance();
@@ -88,12 +197,7 @@ void MapLayer::loadPlist(std::string plist_name)
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile(plist_name);
 }
 
-void MapLayer::freePlist()
-{
-    SpriteFrameCache::getInstance()->removeSpriteFrames();
-}
-
-Sprite* MapLayer::getSpriteWithFrame(const std::string& frame_name, Vec<int> pos) const
+Sprite* MapLayer::getSpriteWithFrame(const std::string& frame_name) const
 {
     if (is_front_)
     {
@@ -101,7 +205,7 @@ Sprite* MapLayer::getSpriteWithFrame(const std::string& frame_name, Vec<int> pos
         if (spriteFrame != nullptr) 
         {
             Sprite* sprite = Sprite::createWithSpriteFrame(spriteFrame);
-            pos = toPixel(pos);
+            Vec<int> pos = toPixel(add_pos_);
             sprite->setPosition(static_cast<float>(pos.X()), static_cast<float>(pos.Y()));
             sprite->setAnchorPoint(Vec2(0, 0));
             layer_->addChild(sprite, 0);

@@ -28,3 +28,8 @@ void NPC::clear()
 {
 	sprite_ = nullptr;
 }
+
+void NPC::settle()
+{
+	
+}
