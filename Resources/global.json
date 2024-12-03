@@ -4,17 +4,14 @@
     "GameVersion": "v1.0",
     "Files": {
         "global": "global.json",
-        "ExampleMap": "Json/Example.json",
-        "ConfigUI": "Json/Config.json",
-        "TownMap": "Json/Town.json",
-        "chicken_house_Map": "Json/chicken_house.json",
-        "HelloPic": "Picture/HelloWorld.png",
-        "CloseNormalPic":"Picture/CloseNormal.png",
-        "CloseSeletedPic":"Picture/Selected.png",
-        "ArialFon": "Fonts/arial.ttf",
-        "MarkerFeltFon": "Fonts/Marker Felt.ttf",
-        "LoadingBarPic": "Picture/UI/LoadingBarFile.png"
+        "test": "config/test.json",
+        "HelloPic": "image/hello_world.png",
+        "CloseNormalPic":"image/close_normal.png",
+        "CloseSeletedPic":"image/close_seleted.png",
+        "LoadingBarPic": "image/loading_bar.png",
+        "ArialFon": "fonts/arial.ttf",
+        "MarkerFeltFon": "fonst/Marker Felt.ttf"
     },
     "UI": [ "ConfigUI" ],
-    "Map": [ "TownMap","chicken_house_Map"]
+    "Map": [ "test"]
 }
