@@ -2,10 +2,14 @@
 #include "json/writer.h"
 #include "json/istreamwrapper.h"
 #include "json/ostreamwrapper.h"
+#include "cocos2d.h"
 #include <format>
 #include <filesystem>
 #include <fstream>
 
+#ifdef _MSC_VER
+#undef GetObject
+#endif
 
 using namespace rapidjson;
 // All player data shall be saved in this folder
@@ -63,9 +67,8 @@ DocumentManager::DocumentManager() : current_archive_(0), data_(32)
 
 void DocumentManager::initNameMap()
 {
-	const Document* doc = getDocument("global.json");
-	auto name_map = (*doc)["Files"].GetObject();
-	for (auto& it: name_map)
+	rapidjson::Value* name_map = &(*getDocument("global.json"))["Files"];
+	for (auto& it: name_map->GetObject())
 	{
 		name_map_.emplace(it.name.GetString(), it.value.GetString());
 	}
@@ -89,7 +92,14 @@ DocumentManager* DocumentManager::getInstance()
 
 std::string DocumentManager::getPath(const std::string& name)
 {
-	return name_map_.at(name);
+	if (name_map_.contains(name))
+	{
+		return name_map_.at(name);
+	}
+	else
+	{
+		return "";
+	}
 }
 
 bool DocumentManager::hasDocument(const std::string& name) const
@@ -108,7 +118,7 @@ void DocumentManager::freeDocument(const std::string& path)
 	}
 }
 
-const Document* DocumentManager::getDocument(const std::string& path)
+rapidjson::Document* DocumentManager::getDocument(const std::string& path)
 {
 	if (!data_.contains(path))
 	{
@@ -164,12 +174,13 @@ bool DocumentManager::createArchiveDocument(const int num)
 	{
 		throw std::runtime_error("Failed to read NewUsrConfig.json");
 	}
-	data_.emplace("UsrArchive", doc);
 
 	if (current_archive_ != 0)
 	{
 		freeArchiveDocument();
 	}
+
+	data_.emplace("UsrArchive", doc);
 	current_archive_ = num;
 	saveArchiveDocument();
 	return true;

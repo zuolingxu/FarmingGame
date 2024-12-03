@@ -1,31 +1,91 @@
 #pragma once
 #include "json/document.h"
 #include "cocos2d.h"
+#include "PlayerSprite.h"
+#include <vector>
+#include "HelperClasses.h"
 
-class MapLayer{
-    private:
-		cocos2d::Layer* layer;
 
-	public:
-        cocos2d::TMXTiledMap* createTileMap(std::string tmx_name) const;
+class Object;
 
-        //void CreatorReader::parseTilemap(cocos2d::TMXTiledMap* tilemap, const buffers::TileMap* tilemapBuffer) const
-        //{
-        //    const auto& nodeBuffer = tilemapBuffer->node();
-        //    parseNode(tilemap, nodeBuffer);
+class MapLayer: public cocos2d::Ref{
+private:
+	std::vector<std::vector<::Object*>> interact_map_;
+	std::vector<std::vector<bool>> collision_map_;
+	std::string tmx_name_;
 
-        //    // calculate scale. changing the contentSize in TMX doesn't affect its visual size
-        //    // so we have to re-scale the map
-        //    const auto& desiredSize = tilemapBuffer->desiredContentSize();
-        //    const auto& currentSize = tilemap->getContentSize();
+	cocos2d::Node* layer_ = nullptr;
+	cocos2d::TMXTiledMap* tiled_map_ = nullptr;
+	PlayerSprite* main_player_ = nullptr;
+	cocos2d::Camera* camera_ = nullptr;
+	cocos2d::EventListenerTouchAllAtOnce* touch_listener_ = nullptr;
+	cocos2d::EventListenerKeyboard* keyboard_Listener_ = nullptr;
+	cocos2d::EventListenerMouse* mouse_listener_ = nullptr;
+	Vec<int> focus_pos_;
+	bool is_front_ = false;
 
-        //    float wr = desiredSize->w() / currentSize.width;
-        //    float hr = desiredSize->h() / currentSize.height;
+	MapLayer(const std::string& tmx_path,
+		rapidjson::Value* const_object, rapidjson::Value* archive_object);
+	~MapLayer() = default;
 
-        //    float sx = tilemap->getScaleX();
-        //    float sy = tilemap->getScaleY();
+	static MapLayer* createWithDocument(const std::string& tmx_path,
+	rapidjson::Value* const_object, rapidjson::Value* archive_object);
 
-        //    tilemap->setScaleX(wr * sx);
-        //    tilemap->setScaleY(hr * sy);
-        //}
+
+	// These function is for InitStep
+	void addTiledMap();
+	void addObject(Vec<int> pos, rapidjson::Value& val);
+	void addCollisions();
+	void addEventListener();
+
+	// CallBacks for Listener
+	void onTouchesBegan(const std::vector<cocos2d::Touch*>& touches, cocos2d::Event* event);
+	void onTouchesMoved(const std::vector<cocos2d::Touch*>& touches, cocos2d::Event* event);
+	void onTouchesEnded(const std::vector<cocos2d::Touch*>& touches, cocos2d::Event* event);
+
+	void onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
+	void onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
+
+	void onMouseDown(cocos2d::Event* event);
+	void onMouseMove(cocos2d::Event* event);
+	void onMouseUp(cocos2d::Event* event);
+
+	// changes for CallBacks
+	void changeFocus();
+	void changePosition(const Vec<int>& direction);
+	void changeHolding(int num);
+
+
+protected:
+	friend class SceneManager;
+	//  These function is for SceneManager
+	// pos is start GRID position of player sprite
+	cocos2d::Node* toFront(PlayerSprite* main_player);
+	void pause() const;
+	void resume() const;
+	void toBack();
+
+	// settle should be called after a day
+	void settle() const;
+
+public:
+	MapLayer(const MapLayer&) = delete;
+	MapLayer& operator=(const MapLayer&) = delete;
+	MapLayer(MapLayer&&) = delete;
+	MapLayer& operator=(MapLayer&&) = delete;
+
+	// These function is for Object
+	// load .plist file and picture
+	static void loadPlist(std::string plist_name);
+
+	void addPlayerSprite(PlayerSprite* player);
+
+	void clearObjects();
+
+	// frame_name is name of frame in .plist file.
+	// pos is GRID position of sprite, the anchor is (0,0) (bottom left).
+	cocos2d::Sprite* addSpriteWithFrame(const std::string& frame_name) const;
+
+	void changeWithActionSequence(std::vector<int> sequence);
+	void changeWithSingleFrame(int num);
 };

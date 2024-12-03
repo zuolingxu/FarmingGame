@@ -11,10 +11,11 @@ class NPC final: protected Object {
 	MapLayer* parent_;
 
     public:
-	NPC(MapLayer* parent);
+	explicit NPC(MapLayer* parent);
 	~NPC() override;
 	static Object* create(rapidjson::Value& val, MapLayer* parent); 
 	virtual void init() override; 
 	virtual void interact() override;
 	virtual void clear() override;
+	virtual void settle() override;
 };

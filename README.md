@@ -54,7 +54,8 @@ A. 文本数据储存规范
 	——rapidjson使用C风格字符串处理json文件，但是C风格字符串是不安全的，请使用string类处理、储存。
 	——对于设定书写json文档（用户文档），统一使用copy-string策略，确保用户数据不会因对象生命周期的限制而发生错误，即每次都提供分配器（提供doucument的就可以了），分配器不要混用，假如valueA要存入doucumentA，那么就不要用documentB的allocator。
 	——因为硬盘io时间远大于内存读取时间，能够使用同一文档的情况下请避免多次读取（比如：植物类的全部信息只在第一次创建对象时加载）。为此，创建了DocumentMananger类，统一管理所有的json文件，具体接口功能说明请查看头文件。禁止将json文件命名为UsrArchive和UsrConfig，该二者有特殊含义。
-	——推荐使用VS code编辑Json文件
+	——推荐使用VS code编辑Json文件和合并冲突
+	——因为rapidjson的一个GetObject方法与Windows API的宏冲突了，所以在包含顺序中，不要让cocos2d.h或任何包含windows.h的头文件的定义顺序前于json/document.h头文件，并在源文件中通过#undef GetObject删除宏定义
 3. 一个AI生成Json样例就在Resource文件夹下
 4. 避免使用任何形式的直接在源代码中给出魔法常量，即没有任何定义直接给出的数据。
 

@@ -4,7 +4,9 @@
 #include "json/document.h"
 #include "MapLayer.h"
 
-class Object {
+class MapLayer;
+
+class Object : public cocos2d::Ref {
 public:
 	Object() = default;
 	virtual ~Object() = default;
@@ -15,4 +17,5 @@ public:
 	virtual void init() = 0; 
 	virtual void interact() = 0;
 	virtual void clear() = 0;
+	virtual void settle() = 0;
 };

@@ -7,21 +7,32 @@ Object* Object::create(rapidjson::Value& val, MapLayer* parents)
 {
 	std::string type = val["Type"].GetString();
     rapidjson::Value& SubVal = val["Info"];
+    Object* ref = nullptr;
     if (type == "Animal")
     {
-        return Animal::create(SubVal, parents);
+        ref = Animal::create(SubVal, parents);
     }
     else if (type == "NPC")
     {
-        return NPC::create(SubVal, parents);
+        ref = NPC::create(SubVal, parents);
     }
     else if (type == "Land")
     {
-        return Land::create(SubVal,parents);
+        ref = Land::create(SubVal,parents);
     }
     else
     {
         throw std::runtime_error("Archive has been corrupted");
     }
 
+    if (ref)
+    {
+        ref->autorelease();
+    }
+    else
+    {
+        CC_SAFE_DELETE(ref);
+        CCLOG("Object::create() failed");
+    }
+    return ref;
 }

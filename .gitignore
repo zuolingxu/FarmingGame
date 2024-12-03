@@ -6,6 +6,7 @@
 */.vs
 ~$*.docx
 *.tmp
+/v3
 
 # Ignore thumbnails created by windows
 Thumbs.db

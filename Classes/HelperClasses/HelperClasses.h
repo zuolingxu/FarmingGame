@@ -13,6 +13,8 @@ private:
 public:
 	Vec() : x(T()), y(T()) {}
 	~Vec() = default;
+	Vec(const cocos2d::Vec2& vec) : x(static_cast<T>(vec.x)), y(static_cast<T>(vec.y)) {}
+	Vec(const cocos2d::Size& vec) : x(static_cast<T>(vec.width)), y(static_cast<T>(vec.height)) {}
 	Vec(const T x,const T y) : x(x), y(y) {}
 	Vec(const Vec& other) : x(other.x), y(other.y) {}
 	Vec(Vec&& other) noexcept: x(std::move(other.x)), y(std::move(other.y)) {}
@@ -55,24 +57,31 @@ public:
 		os << vec.x << " " << vec.y;
 		return os;
 	}
-	friend std::istream& operator>>(std::istream& in, const Vec& vec)
+	friend std::istream& operator>>(std::istream& in, Vec& vec)
 	{
 		in >> vec.x >> vec.y;
 		return in;
 	}
+	operator cocos2d::Vec2() const { return { static_cast<float>(x), static_cast<float>(y) }; }
+	operator cocos2d::Size() const { return { static_cast<float>(x), static_cast<float>(y) }; }
 };
 
 // Vec2 is the 2D vector class provided by cocos2dx
 // press ctrl and click Vec2 to see class code
-inline Vec<int> gridComputer(const cocos2d::Vec2& vec){
-	const Vec<int> vecInt = { static_cast<int>(vec.x), static_cast<int>(vec.y) };
+inline Vec<int> toGrid(const cocos2d::Vec2& vec){
+	const Vec<int> vecInt(vec);
 	return { vecInt.X() / GridSize, vecInt.Y() / GridSize };
 }
 
 template<typename T>
-inline Vec<int> gridComputer(const Vec<T>& vec) {
+inline Vec<int> toGrid(const Vec<T>& vec) {
 	const Vec<int> vecInt = { static_cast<int>(vec.x), static_cast<int>(vec.y) };
 	return { vecInt.X() / GridSize, vecInt.Y() / GridSize };
+}
+
+inline cocos2d::Vec2 toPixel(const Vec<int>& vec)
+{
+	return Vec<int>{vec.X() * GridSize, vec.Y() * GridSize};
 }
 
 
@@ -83,4 +92,11 @@ inline Vec<int> toVec2(const std::string& str)
 	std::istringstream iss(str);
 	iss >> vec;
 	return vec;
+}
+
+inline std::string toString(const Vec<int>& vec)
+{
+	std::ostringstream oss;
+	oss << vec;
+	return oss.str();
 }

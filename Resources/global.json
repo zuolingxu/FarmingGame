@@ -4,14 +4,17 @@
     "GameVersion": "v1.0",
     "Files": {
         "global": "global.json",
-        "ExampleLay": "Json/Layers/Example.json",
-        "ConfigLay": "Json/Config.json",
-        "FarmLay": "Json/Farm.json",
-        "HelloPic": "Picutre/MainScene/HelloWorld.png",
-        "CloseNormalPic":"Picture/MainScene/CloseNormal.png",
-        "CloseSeletedPic":"Picture/MainScene/Selected.png",
+        "ExampleMap": "Json/Example.json",
+        "ConfigUI": "Json/Config.json",
+        "TownMap": "Json/Town.json",
+        "chicken_house_Map": "Json/chicken_house.json",
+        "HelloPic": "Picture/HelloWorld.png",
+        "CloseNormalPic":"Picture/CloseNormal.png",
+        "CloseSeletedPic":"Picture/Selected.png",
         "ArialFon": "Fonts/arial.ttf",
-        "MarkerFeltFon": "Fonts/Marker Felt.ttf"
+        "MarkerFeltFon": "Fonts/Marker Felt.ttf",
+        "LoadingBarPic": "Picture/UI/LoadingBarFile.png"
     },
-    "Layers": [ "ExampleLay" ]
+    "UI": [ "ConfigUI" ],
+    "Map": [ "TownMap","chicken_house_Map"]
 }

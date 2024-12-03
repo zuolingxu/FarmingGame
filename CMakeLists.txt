@@ -1,22 +1,39 @@
+#/****************************************************************************
+# Copyright (c) 2013-2014 cocos2d-x.org
+# Copyright (c) 2015-2017 Chukong Technologies Inc.
+#
+# http://www.cocos2d-x.org
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+# ****************************************************************************/
+
 cmake_minimum_required(VERSION 3.13)
 
 set(APP_NAME FarmingGame)
 
 project(${APP_NAME})
 
-if(XCODE)
-    if(NOT DEFINED CMAKE_XCODE_ATTRIBUTE_IPHONEOS_DEPLOYMENT_TARGET)
-        SET (CMAKE_XCODE_ATTRIBUTE_IPHONEOS_DEPLOYMENT_TARGET 8.0)
-    endif()
-endif()
+set(COCOS2DX_ROOT_PATH $ENV{COCOS_X_ROOT}/cocos2d-x)
+set(CMAKE_MODULE_PATH ${COCOS2DX_ROOT_PATH}/cmake/Modules/)
 
-if(NOT DEFINED BUILD_ENGINE_DONE) # to test FarmingGame into root project
-    set(COCOS2DX_ROOT_PATH $ENV{COCOS_X_ROOT}/cocos2d-x-4.0)
-    set(CMAKE_MODULE_PATH ${COCOS2DX_ROOT_PATH}/cmake/Modules)
-
-    include(CocosBuildSet)
-    add_subdirectory(${COCOS2DX_ROOT_PATH}/cocos ${ENGINE_BINARY_PATH}/cocos/core)
-endif()
+include(CocosBuildSet)
+add_subdirectory(${COCOS2DX_ROOT_PATH}/cocos ${ENGINE_BINARY_PATH}/cocos/core)
 
 # record sources, headers, resources...
 set(GAME_SOURCE)
@@ -35,6 +52,7 @@ list(APPEND GAME_SOURCE
      Classes/Display/MapLayer.cpp
      Classes/Display/SceneManager.cpp
      Classes/Display/UILayer.cpp
+     Classes/Display/PlayerSprite.cpp
      Classes/HelperClasses/DocumentManager.cpp
      Classes/Object/Animal.cpp
      Classes/Object/Crop.cpp
@@ -48,6 +66,7 @@ list(APPEND GAME_HEADER
      Classes/Display/MapLayer.h
      Classes/Display/SceneManager.h
      Classes/Display/UILayer.h
+     Classes/Display/PlayerSprite.h
      Classes/HelperClasses/DocumentManager.h
      Classes/HelperClasses/HelperClasses.h
      Classes/Object/Animal.h
@@ -126,7 +145,6 @@ endif()
 #set target C++ standard
 set_target_properties(${APP_NAME} PROPERTIES CXX_STANDARD 20)
 
-# PRIVATE method make cocos hidden from subproject of APP
 target_link_libraries(${APP_NAME} cocos2d)
 target_include_directories(${APP_NAME}
         PRIVATE Classes
@@ -134,28 +152,28 @@ target_include_directories(${APP_NAME}
         PRIVATE Classes/HelperClasses
         PRIVATE Classes/Object
         PRIVATE Classes/UILogic
-        PRIVATE ${COCOS2DX_ROOT_PATH}/cocos/audio/include
+        PRIVATE ${COCOS2DX_ROOT_PATH}/cocos/audio/include/
 )
 
 # mark app resources
 setup_cocos_app_config(${APP_NAME})
 if(APPLE)
     set_target_properties(${APP_NAME} PROPERTIES RESOURCE "${APP_UI_RES}")
-
     if(MACOSX)
-        set_xcode_property(${APP_NAME} INFOPLIST_FILE "${CMAKE_CURRENT_SOURCE_DIR}/proj.ios_mac/mac/Info.plist")
+        set_target_properties(${APP_NAME} PROPERTIES
+                              MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/proj.ios_mac/mac/Info.plist"
+                              )
     elseif(IOS)
-        set_xcode_property(${APP_NAME} INFOPLIST_FILE "${CMAKE_CURRENT_SOURCE_DIR}/proj.ios_mac/ios/Info.plist")
+        cocos_pak_xcode(${APP_NAME} INFO_PLIST "iOSBundleInfo.plist.in")
         set_xcode_property(${APP_NAME} ASSETCATALOG_COMPILER_APPICON_NAME "AppIcon")
+        set_xcode_property(${APP_NAME} DEVELOPMENT_TEAM "")
+        set_xcode_property(${APP_NAME} CODE_SIGN_IDENTITY "iPhone Developer")
     endif()
-
-    # For code-signing, set the DEVELOPMENT_TEAM:
-    #set_xcode_property(${APP_NAME} DEVELOPMENT_TEAM "GRLXXXX2K9")
 elseif(WINDOWS)
     cocos_copy_target_dll(${APP_NAME})
 endif()
 
 if(LINUX OR WINDOWS)
-    cocos_get_resource_path(APP_RES_DIR ${APP_NAME})
-    cocos_copy_target_res(${APP_NAME} LINK_TO ${APP_RES_DIR} FOLDERS ${GAME_RES_FOLDER})
+    set(APP_RES_DIR "$<TARGET_FILE_DIR:${APP_NAME}>/Resources")
+    cocos_copy_target_res(${APP_NAME} COPY_TO ${APP_RES_DIR} FOLDERS ${GAME_RES_FOLDER})
 endif()

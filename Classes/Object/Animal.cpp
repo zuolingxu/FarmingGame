@@ -31,4 +31,7 @@ void Animal::clear()
 	sprite_ = nullptr;
 }
 
-
+void Animal::settle()
+{
+	
+}

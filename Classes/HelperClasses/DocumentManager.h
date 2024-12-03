@@ -1,7 +1,6 @@
 #pragma once
 #include <unordered_map>
 #include <string>
-#include "cocos2d.h"
 #include "json/document.h"
 
 
@@ -15,7 +14,7 @@ private:
 	// The Constructor will load the Config document(writable) and the global document(unwritable)
 	DocumentManager();
 
-	//  Init the file name - file path map
+	//  Init the file name - file path map_
 	void initNameMap();
 
 	~DocumentManager();
@@ -48,7 +47,7 @@ public:
 	// get the json document, if not loaded, return nullptr
 	// The path is related to Resources folder
 	// If not loaded, load file with path, if not exist, throw exception
-	const rapidjson::Document* getDocument(const std::string& path);
+	rapidjson::Document* getDocument(const std::string& path);
 
 	// free the document from memory
 	void freeDocument(const std::string& path);
