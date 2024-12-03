@@ -1,6 +1,6 @@
 {
     "Name": "Chicken",
-    "TMX": "TiledMap/beach.tmx",
+    "TMX": "TiledMap/town.tmx",
     "ObjectList": {
 
     }

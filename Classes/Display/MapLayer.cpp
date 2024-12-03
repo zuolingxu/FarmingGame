@@ -23,13 +23,13 @@ MapLayer::MapLayer(const std::string& tmx_path,
 
     if (!tmx_name_.empty())
     {
-        TMXTiledMap* tmx = TMXTiledMap::create(tmx_name_);
-        tmx->retain();
-        Vec<int> size = tmx->getMapSize();
+        tiled_map_ = TMXTiledMap::create(tmx_name_);
+        tiled_map_->retain();
+        Vec<int> size = tiled_map_->getMapSize();
         interact_map_ = std::vector(size.X(), std::vector<::Object*>(size.Y(), nullptr));
         collision_map_ = std::vector(size.X(), std::vector<bool>(size.Y(), false));
-        // addCollisions(); 
-    	tmx->release();
+        addCollisions(); 
+        tiled_map_->release();
     }
 
     if (const_object != nullptr)
@@ -67,8 +67,7 @@ void MapLayer::addTiledMap()
 {
     if (!tmx_name_.empty())
     {
-        TMXTiledMap* tmx = TMXTiledMap::create(tmx_name_);
-        tiled_map_ = tmx;
+        tiled_map_ = TMXTiledMap::create(tmx_name_);
         tiled_map_->setTileAnimEnabled(true);
         layer_->addChild(tiled_map_, -256);
     }
@@ -84,19 +83,23 @@ void MapLayer::addObject(Vec<int> pos, rapidjson::Value& val)
 
 void MapLayer::addCollisions()
 {
-    cocos2d::TMXObjectGroup* objectGroup = tiled_map_->getObjectGroup("collision");
+    const cocos2d::TMXObjectGroup* objectGroup = tiled_map_->getObjectGroup("collision");
 
-    if (objectGroup) {
-        ValueVector objects = objectGroup->getObjects();
+    if (objectGroup != nullptr) 
+    {
+        const ValueVector& objects = objectGroup->getObjects();
         for (const Value& obj : objects) {
             ValueMap dict = obj.asValueMap();
             const float x1 = dict.at("x").asFloat();
             const float x2 = x1 + dict.at("width").asFloat();
             const float y1 = dict.at("y").asFloat();
             const float y2 = y1 + dict.at("height").asFloat();
-            for (int x = static_cast<int>(x1); x <= static_cast<int>(x2) + 1; x++)
+            Vec<int> left_bottom = toGrid({x1,y1});
+            Vec<int> right_top = toGrid({x2,y2});
+            for (int x = left_bottom.X(); x <= right_top.X(); x++)
             {
-                for (int y = static_cast<int>(y1); y <= static_cast<int>(y2) + 1; y++){
+                for (int y = right_top.Y(); y <= right_top.Y(); y++)
+                {
                     collision_map_[x][y] = true;
                 }
             }
