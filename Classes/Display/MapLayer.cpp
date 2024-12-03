@@ -292,6 +292,7 @@ void MapLayer::changeHolding(const int num)
 Node* MapLayer::toFront(PlayerSprite* main_player)
 {
     layer_ = Node::create();
+    layer_->retain();
     addTiledMap();
 
     Size map_size = tiled_map_->getMapSize();

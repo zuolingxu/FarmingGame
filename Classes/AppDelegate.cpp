@@ -102,10 +102,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
         rapidjson::Document* global_document = manager->getDocument(manager->getPath("global"));
         CCLOG(manager->getPath("global").c_str());
         manager->loadArchiveDocument(19);
-        SceneManager::getInstance()->createMaps();
-        SceneManager::getInstance()->NextMap("Town");
-        // Sleep(5000);
-        // SceneManager::getInstance()->NextMap("Chicken");
+        SceneManager::getInstance()->NextMap("test");
     }
     catch (const std::exception& e)
     {

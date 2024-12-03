@@ -5,6 +5,7 @@
 #include "cocos2d.h"
 #include "MapLayer.h"
 #include "UILayer.h"
+#include "ui/UILoadingBar.h"
 
 class SceneManager
 {
@@ -21,6 +22,31 @@ private:
 	// void createUIWithDocument(rapidjson::Document* doc);
 	void createMapWithDocument(rapidjson::Document* doc);
 
+	// If the Archive has been load/unload the maps will be automatic created/removed
+	// create map with document when loading Archive
+	void createMaps();
+
+	// clear all game logic when changing Archive 
+	void clearMaps();
+
+	class NextMapCallBack
+	{
+	private:
+		float loading_per = 0;
+		std::string map_name;
+		std::string pos;
+		cocos2d::ui::LoadingBar* loading_bar = nullptr;
+		cocos2d::Scene* loading_scene = nullptr;
+		cocos2d::Node* next_map = nullptr;
+	public:
+		NextMapCallBack(std::string map_name, std::string pos);
+		~NextMapCallBack() = default;
+		void operator()();
+		void create();
+		void render();
+		void assemble();
+	};
+
 public:
 	SceneManager(SceneManager const&) = delete;
 	SceneManager(SceneManager&&) = delete;
@@ -28,12 +54,6 @@ public:
 	SceneManager& operator=(SceneManager&&) = delete;
 
 	static SceneManager* getInstance();
-
-	// create map with document when loading Archive
-	void createMaps();
-
-	// clear all game logic when changing Archive 
-	void clearMaps();
 
 	// settle every object on the map after day passed
 	void settle();
