@@ -21,13 +21,15 @@
     "Map":{
         "Example": {
             "12 13":{
-                "Type": "Land", 
-                "Info": {
-                    "Name": "Potato",
-                    "Day": "1",
-                    "Water": true,
-                    "Fertilizer": 1
-                }
+                "Type": "Land",
+              "Info": {
+                "tupianlujing"
+                "CropName": "Potato",
+                "LiveDay": "1",
+                "MaturationDay": "5",
+                "Water": true,
+                "Fertilizer": 1
+              }
             }    
         }
     }
