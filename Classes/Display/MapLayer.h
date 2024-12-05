@@ -59,11 +59,11 @@ private:
 protected:
 	friend class SceneManager;
 	//  These function is for SceneManager
-	// pos is start GRID position of player sprite
 	cocos2d::Node* toFront(PlayerSprite* main_player);
 	void pause() const;
 	void resume() const;
 	void toBack();
+	void clearObjects();
 
 	// settle should be called after a day
 	void settle() const;
@@ -78,9 +78,9 @@ public:
 	// load .plist file and picture
 	static void loadPlist(std::string plist_name);
 
-	void addPlayerSprite(PlayerSprite* player);
+	bool hasCollision(Vec<int> pos);
 
-	void clearObjects();
+	void addPlayerSprite(PlayerSprite* player);
 
 	// frame_name is name of frame in .plist file.
 	// pos is GRID position of sprite, the anchor is (0,0) (bottom left).

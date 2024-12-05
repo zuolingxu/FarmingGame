@@ -1,7 +1,12 @@
 {
     "Name": "test",
-    "TMX": "TiledMap/beach.tmx",
+    "TMX": "TiledMap/npc1house.tmx",
     "ObjectList": {
+        "12 12": {
+            "Type" : "Animal",
+            "Info": {
 
+            }
+        }
     }
 }

@@ -2,15 +2,16 @@
 #include <string>
 #include <unordered_map>
 #include "DocumentManager.h"
-#include "cocos2d.h"
 #include "MapLayer.h"
 #include "UILayer.h"
 #include "ui/UILoadingBar.h"
+#include "cocos2d.h"
 
 class SceneManager
 {
 private:
 	static SceneManager* instance_;
+	std::string current_map_name_;
 	cocos2d::Director* director_;
 	std::unordered_map<std::string, cocos2d::Layer*> layers_;
 	std::unordered_map<std::string, MapLayer*> map_;
@@ -42,6 +43,7 @@ private:
 		NextMapCallBack(std::string map_name, std::string pos);
 		~NextMapCallBack() = default;
 		void operator()();
+		void start();
 		void create();
 		void render();
 		void assemble();

@@ -8,6 +8,8 @@ USING_NS_CC;
 #undef GetObject
 #endif
 
+static constexpr int TMX_ZORDER = -256;
+
 MapLayer::MapLayer(const std::string& tmx_path, 
     rapidjson::Value* const_object, rapidjson::Value* archive_object) 
 {
@@ -69,7 +71,8 @@ void MapLayer::addTiledMap()
     {
         tiled_map_ = TMXTiledMap::create(tmx_name_);
         tiled_map_->setTileAnimEnabled(true);
-        layer_->addChild(tiled_map_, -256);
+        tiled_map_->setPosition3D({0, 0, 0});
+        layer_->addChild(tiled_map_, TMX_ZORDER);
     }
 }
 
@@ -107,6 +110,17 @@ void MapLayer::addCollisions()
     }
     else {
         CCLOG("Object layer not found!");
+    }
+
+    for (int i = 0; i < collision_map_.size(); i++)
+    {
+	    for (int j = 0; j < collision_map_[i].size(); j++)
+	    {
+            if (interact_map_[i][j] != nullptr)
+            {
+                collision_map_[i][j] = collision_map_[i][j] || interact_map_[i][j]->hasCollision();
+            }
+	    }
     }
 }
 
@@ -159,19 +173,19 @@ void MapLayer::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Ev
     {
     case cocos2d::EventKeyboard::KeyCode::KEY_UP_ARROW:
     case cocos2d::EventKeyboard::KeyCode::KEY_W:
-        // main_player_->move(Vec<int>(0, 1));
+        main_player_->move(PlayerSprite::MOVEMENTS::W_UP);
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_DOWN_ARROW:
     case cocos2d::EventKeyboard::KeyCode::KEY_S:
-        // main_player_->move(Vec<int>(0, -1));
+        main_player_->move(PlayerSprite::MOVEMENTS::W_DOWN);
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_LEFT_ARROW:
     case cocos2d::EventKeyboard::KeyCode::KEY_A:
-        // main_player_->move(Vec<int>(-1, 0));
+        main_player_->move(PlayerSprite::MOVEMENTS::W_LEFT);
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
     case cocos2d::EventKeyboard::KeyCode::KEY_D:
-        // main_player_->changePosition(Vec<int>(1, 0));
+        main_player_->move(PlayerSprite::MOVEMENTS::W_RIGHT);
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_1:
     case cocos2d::EventKeyboard::KeyCode::KEY_2:
@@ -194,8 +208,6 @@ void MapLayer::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Ev
     case cocos2d::EventKeyboard::KeyCode::KEY_EQUAL:
         changeHolding(12);
         break;
-    case cocos2d::EventKeyboard::KeyCode::KEY_SHIFT:
-            // main_player_->changeSpeed();
     default: break;
     }
     event->stopPropagation();
@@ -207,22 +219,22 @@ void MapLayer::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::E
     {
     case cocos2d::EventKeyboard::KeyCode::KEY_UP_ARROW:
     case cocos2d::EventKeyboard::KeyCode::KEY_W:
-        // main_player -> stop(Vec<int>(0, 1));
+        main_player_ -> stop(PlayerSprite::MOVEMENTS::W_UP);
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_DOWN_ARROW:
     case cocos2d::EventKeyboard::KeyCode::KEY_S:
-        // main_player -> stop(Vec<int>(0, -1));
+        main_player_->stop(PlayerSprite::MOVEMENTS::W_DOWN);
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_LEFT_ARROW:
     case cocos2d::EventKeyboard::KeyCode::KEY_A:
-        // main_player -> stop(Vec<int>(-1, 0));
+        main_player_->stop(PlayerSprite::MOVEMENTS::W_LEFT);
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
     case cocos2d::EventKeyboard::KeyCode::KEY_D:
-        // main_player -> stop(Vec<int>(1, 0));
+        main_player_->stop(PlayerSprite::MOVEMENTS::W_RIGHT);
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_SHIFT:
-        // main_player_->changeSpeed();
+        main_player_->changeSpeed();
         break;
     default: break;
     }
@@ -293,6 +305,7 @@ Node* MapLayer::toFront(PlayerSprite* main_player)
 {
     layer_ = Node::create();
     layer_->retain();
+
     addTiledMap();
 
     Size map_size = tiled_map_->getMapSize();
@@ -300,16 +313,29 @@ Node* MapLayer::toFront(PlayerSprite* main_player)
     Vec2 pixel_pos = { map_size.width * tiled_size.width / 2, map_size.height * tiled_size.height / 2 };
     if (main_player != nullptr)
     {
-	    pixel_pos = main_player->getPosition();
-        main_player_ = main_player;
+    	pixel_pos = main_player->getPosition();
+    	main_player_ = main_player;
+        main_player_->setPosition3D({pixel_pos.x, pixel_pos.y, 0});
+        layer_->addChild(main_player_, pixel_pos.x);
+        Vec3 pos_3d(pixel_pos.x, pixel_pos.y, 100);
+        Vec3 pos_camera = pos_3d + Vec3(0, -45, 100);
+
+        // bind camera
+        Size view_size = Director::getInstance()->getOpenGLView()->getFrameSize();
+        const float aspect_ratio_ = view_size.width / view_size.height;
+        camera_ = Camera::createPerspective(60, aspect_ratio_, 0.1f, 1000.0f);
+
+        camera_->setPosition3D(pos_camera);
+        camera_->lookAt(pos_3d);
+    }
+    else
+    {
+        camera_ = Camera::create();
+        camera_->setPosition(pixel_pos);
     }
 
-    // bind camera
-    camera_ = Camera::create();
     camera_->setCameraFlag(CameraFlag::USER1);
     camera_->setDepth(10);
-    // camera_->setScale(main_player == nullptr ? 2.0f : 4.0f);
-    camera_->setPosition(pixel_pos);
 
     layer_->addChild(camera_);
 
@@ -396,9 +422,10 @@ Sprite* MapLayer::addSpriteWithFrame(const std::string& frame_name) const
         if (spriteFrame != nullptr) 
         {
             Sprite* sprite = Sprite::createWithSpriteFrame(spriteFrame);
-            sprite->setPosition(toPixel(focus_pos_));
+            toPixel(focus_pos_);
+            sprite->setPosition3D({0,0,0});
             sprite->setAnchorPoint(Vec2(0, 0));
-            layer_->addChild(sprite, focus_pos_.Y());
+            layer_->addChild(sprite, focus_pos_.Y() * GridSize);
             return sprite;
         }
     }
