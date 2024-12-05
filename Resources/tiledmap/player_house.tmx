@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="18" height="16" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="13">
+ <tileset firstgid="1" source="townInterior..tsx"/>
+ <tileset firstgid="2177" source="walls_and_floors..tsx"/>
+ <layer id="4" name="floor" width="18" height="16">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAACmNgGL7gIicDwyVO8mkYeAhkP+Iknx51z6h7Rt2D3T0AVyvUeYAEAAA=
+  </data>
+ </layer>
+ <layer id="1" name="edge" width="18" height="16">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAACuNiYGBgphDzALEjA+XAddScUXNGzRkS5iwE4kVAvAwHXgxVuwSH/HIgXgHEALuy61+ABAAA
+  </data>
+ </layer>
+ <layer id="2" name="wall" width="18" height="16">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAACmNgoB5w4qQMw0AQJ2UYBpI4KcOjYBSMAtoCANqM9wKABAAA
+  </data>
+ </layer>
+ <layer id="3" name="object" width="18" height="16">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAACmNgIA3MZmJgmMNEnNpHePi7gWbsIdIcJkbc/NtAM+5AzdlAnHFYwW+gGX+IdA8+IM3MwCDDjFv+ItDtl6DuzwTSvUDcB8T9jLj1YAMfgeo/QfV0Aum1QLwOiNcD8UoSzUIGZ4F6zwHxeSA+SYE5owABAoDhGAjEQSSGJw8LAwMvC6pYIQ4zfgLxLyD+jUVOB2iGLpo5E3GYIwkUlwJiaSzyPkAzfFkwxSkBAMiNgwGABAAA
+  </data>
+ </layer>
+ <layer id="5" name="object2" width="18" height="16">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAACmNgGAXEgDhGBoZ4RsrNqQOaUU8Fc7ABfxqZOwpGAa0AAJ174vaABAAA
+  </data>
+ </layer>
+ <objectgroup id="6" name="collision">
+  <object id="1" x="34" y="67" width="26.75" height="40.75"/>
+  <object id="2" x="22" y="196.25" width="34.75" height="39.25"/>
+  <object id="3" x="244" y="197.5" width="23.75" height="37.5"/>
+  <object id="4" x="83.25" y="84" width="7" height="22"/>
+  <object id="5" x="101.75" y="89" width="37.5" height="32.5"/>
+  <object id="6" x="149.25" y="102.25" width="7.5" height="17.5"/>
+  <object id="7" x="20.75" y="52.75" width="245.5" height="6.75"/>
+  <object id="8" x="196" y="66.7273" width="23.0909" height="6.90909"/>
+  <object id="9" x="275" y="54.25" width="8" height="196.5"/>
+  <object id="10" x="165.25" y="245.75" width="103.5" height="6.5"/>
+  <object id="11" x="3.25" y="53.25" width="7.75" height="197.5"/>
+  <object id="12" x="16" y="245.5" width="123.25" height="6"/>
+ </objectgroup>
+</map>
