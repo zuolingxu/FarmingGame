@@ -18,7 +18,7 @@ Object* Animal::create(rapidjson::Value& val, MapLayer* parent)
 
 void Animal::init()
 {
-	
+	info_.sprite = nullptr;
 }
 
 void Animal::interact()
@@ -28,10 +28,27 @@ void Animal::interact()
 
 void Animal::clear()
 {
-	sprite_ = nullptr;
+	info_.sprite = nullptr;
 }
+
+void Animal::pause()
+{
+	
+}
+
+void Animal::resume()
+{
+	
+}
+
 
 void Animal::settle()
 {
 	
 }
+
+bool Animal::hasCollision()
+{
+	return true;
+}
+

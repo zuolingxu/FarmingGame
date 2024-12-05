@@ -7,7 +7,6 @@
 
 class NPC final: protected Object {
 	private:
-	cocos2d::Sprite* sprite_ = nullptr;
 	MapLayer* parent_;
 
     public:
@@ -17,5 +16,8 @@ class NPC final: protected Object {
 	virtual void init() override; 
 	virtual void interact() override;
 	virtual void clear() override;
+	virtual void pause() override;
+	virtual void resume() override;
 	virtual void settle() override;
+	virtual bool hasCollision() override;
 };

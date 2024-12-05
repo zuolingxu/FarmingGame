@@ -16,5 +16,7 @@ class Crop{
 	void init();
 	void interact();
 	void clear();
+	void pause();
+	void resume();
 	void settle();
 }; 
