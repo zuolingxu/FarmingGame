@@ -9,7 +9,6 @@
 class Land final: protected Object {
     private:
 	Crop* crop_ = nullptr;
-    cocos2d::Sprite* sprite_ = nullptr;
     MapLayer* parent_;
 
     public:
@@ -19,5 +18,8 @@ class Land final: protected Object {
     virtual void init() override;
     virtual void interact() override;
     virtual void clear() override;
+    virtual void pause() override;
+    virtual void resume() override;
     virtual void settle() override;
+    virtual bool hasCollision() override;
 }; 

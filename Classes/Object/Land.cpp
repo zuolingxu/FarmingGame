@@ -27,7 +27,7 @@ Land::~Land()
 
 void Land::init()
 {
-	
+	info_.sprite = nullptr;
 }
 
 
@@ -38,10 +38,25 @@ void Land::interact()
 
 void Land::clear()
 {
-	sprite_ = nullptr;
+	info_.sprite = nullptr;
+}
+
+void Land::pause()
+{
+	
+}
+
+void Land::resume()
+{
+	
 }
 
 void Land::settle()
 {
 	
+}
+
+bool Land::hasCollision()
+{
+	return true;
 }

@@ -1,6 +1,6 @@
 {
-    "Name": "Town",
-    "TMX": "TiledMap/town.tmx",
+    "Name": "test",
+    "TMX": "TiledMap/beach.tmx",
     "ObjectList": {
 
     }

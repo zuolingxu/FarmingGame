@@ -21,15 +21,31 @@ void NPC::interact()
 
 void NPC::init()
 {
-	sprite_ = nullptr;
+	info_.sprite = nullptr;
 }
 
 void NPC::clear()
 {
-	sprite_ = nullptr;
+	info_.sprite = nullptr;
 }
+
+void NPC::pause()
+{
+	
+}
+
+void NPC::resume()
+{
+	
+}
+
 
 void NPC::settle()
 {
 	
+}
+
+bool NPC::hasCollision()
+{
+	return true;
 }

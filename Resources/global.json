@@ -8,7 +8,7 @@
         "HelloPic": "image/hello_world.png",
         "CloseNormalPic":"image/close_normal.png",
         "CloseSeletedPic":"image/close_seleted.png",
-        "LoadingBarPic": "image/loading_bar.png",
+        "loading_bar": "image/loading_bar.png",
         "ArialFon": "fonts/arial.ttf",
         "MarkerFeltFon": "fonst/Marker Felt.ttf"
     },
