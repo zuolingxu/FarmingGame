@@ -18,11 +18,13 @@ PlayerSprite::~PlayerSprite()
 PlayerSprite* PlayerSprite::create()
 {
     PlayerSprite* sprite = new (std::nothrow) PlayerSprite();
+    //精灵初始化成功
     if (sprite && sprite->init())
     {
         sprite->autorelease();
         return sprite;
     }
+    //精灵初始化失败
     CC_SAFE_DELETE(sprite);
     return nullptr;
 }
