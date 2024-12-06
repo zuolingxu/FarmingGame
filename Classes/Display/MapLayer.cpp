@@ -8,10 +8,11 @@ USING_NS_CC;
 #undef GetObject
 #endif
 
+static constexpr int BACKGROUND_ZORDER = -512;
 static constexpr int TMX_ZORDER = -256;
 
-MapLayer::MapLayer(const std::string& tmx_path, 
-    rapidjson::Value* const_object, rapidjson::Value* archive_object) 
+MapLayer::MapLayer(const std::string& tmx_path, const cocos2d::Color3B& background_color,
+    rapidjson::Value* const_object, rapidjson::Value* archive_object) : background_color_(background_color)
 {
     DocumentManager* manager = DocumentManager::getInstance();
     if (manager->hasDocument(tmx_path))
@@ -51,9 +52,9 @@ MapLayer::MapLayer(const std::string& tmx_path,
     }
 }
 
-MapLayer* MapLayer::createWithDocument(const std::string& tmx_path, rapidjson::Value* const_object, rapidjson::Value* archive_object)
+MapLayer* MapLayer::createWithDocument(const std::string& tmx_path, const Color3B& background_color, rapidjson::Value* const_object, rapidjson::Value* archive_object)
 {
-    MapLayer* map = new(std::nothrow) MapLayer(tmx_path, const_object, archive_object);
+    MapLayer* map = new(std::nothrow) MapLayer(tmx_path, background_color, const_object, archive_object);
     if (map)
     {
         map->autorelease();
@@ -71,7 +72,7 @@ void MapLayer::addTiledMap()
     {
         tiled_map_ = TMXTiledMap::create(tmx_name_);
         tiled_map_->setTileAnimEnabled(true);
-        tiled_map_->setPosition3D({0, 0, 0});
+        // tiled_map_->setPosition3D({0, 0, 0});
         layer_->addChild(tiled_map_, TMX_ZORDER);
     }
 }
@@ -118,7 +119,8 @@ void MapLayer::addCollisions()
 	    {
             if (interact_map_[i][j] != nullptr)
             {
-                collision_map_[i][j] = collision_map_[i][j] || interact_map_[i][j]->hasCollision();
+                
+                collision_map_[i][j] = collision_map_[i][j] == true || interact_map_[i][j]->hasCollision();
             }
 	    }
     }
@@ -305,34 +307,39 @@ Node* MapLayer::toFront(PlayerSprite* main_player)
 {
     layer_ = Node::create();
     layer_->retain();
-
     addTiledMap();
 
+    auto background = cocos2d::LayerColor::create(cocos2d::Color4B(background_color_));
     Size map_size = tiled_map_->getMapSize();
     Size tiled_size = tiled_map_->getTileSize();
-    Vec2 pixel_pos = { map_size.width * tiled_size.width / 2, map_size.height * tiled_size.height / 2 };
+    Size map_size_pixel(map_size.width * tiled_size.width, map_size.height * tiled_size.height);
+    Size background_size = map_size_pixel + designResolutionSize + Size(1000, 1000);
+	background->setContentSize(background_size);
+    background->setAnchorPoint(cocos2d::Vec2(0.5, 0.5));
+    background->setPosition(map_size_pixel / 2 - background_size / 2);
+    layer_->addChild(background, BACKGROUND_ZORDER);
+
+
+    Vec2 pixel_pos = map_size_pixel / 2;
     if (main_player != nullptr)
     {
     	pixel_pos = main_player->getPosition();
     	main_player_ = main_player;
-        main_player_->setPosition3D({pixel_pos.x, pixel_pos.y, 0});
         layer_->addChild(main_player_, pixel_pos.x);
-        Vec3 pos_3d(pixel_pos.x, pixel_pos.y, 100);
-        Vec3 pos_camera = pos_3d + Vec3(0, -45, 100);
 
-        // bind camera
-        Size view_size = Director::getInstance()->getOpenGLView()->getFrameSize();
-        const float aspect_ratio_ = view_size.width / view_size.height;
-        camera_ = Camera::createPerspective(60, aspect_ratio_, 0.1f, 1000.0f);
+        // 3d camera 
+        // Vec3 pos_3d(pixel_pos.x, pixel_pos.y, 100);
+        // Vec3 pos_camera = pos_3d + Vec3(0, 0, 100);
+    	// main_player_->setPosition3D({pixel_pos.x, pixel_pos.y, 0});
+        // Size view_size = Director::getInstance()->getOpenGLView()->getFrameSize();
+        // const float aspect_ratio_ = view_size.width / view_size.height;
+        // camera_ = Camera::createPerspective(60, aspect_ratio_, 0.1f, 1000.0f);
+        // camera_->setPosition3D(pos_camera);
+        // camera_->lookAt(pos_3d);
+    }
 
-        camera_->setPosition3D(pos_camera);
-        camera_->lookAt(pos_3d);
-    }
-    else
-    {
-        camera_ = Camera::create();
-        camera_->setPosition(pixel_pos);
-    }
+    camera_ = Camera::create();
+    camera_->setPosition(pixel_pos);
 
     camera_->setCameraFlag(CameraFlag::USER1);
     camera_->setDepth(10);
@@ -359,11 +366,31 @@ Node* MapLayer::toFront(PlayerSprite* main_player)
 void MapLayer::pause() const
 {
     layer_->pause();
+    for (auto& row : interact_map_)
+    {
+        for (::Object* object : row)
+        {
+            if (object != nullptr)
+            {
+                object->pause();
+            }
+        }
+    }
 }
 
 void MapLayer::resume() const
 {
 	layer_->resume();
+    for (auto& row : interact_map_)
+    {
+	    for (::Object* object : row)
+	    {
+		    if (object != nullptr)
+		    {
+			    object->resume();
+		    }
+	    }
+    }
 }
 
 void MapLayer::toBack()
@@ -396,9 +423,20 @@ void MapLayer::loadPlist(std::string plist_name)
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile(plist_name);
 }
 
+bool MapLayer::hasCollision(const cocos2d::Vec2& pos)
+{
+	Vec<int> grid = toGrid(pos);
+    if (grid.X() > 0 && grid.X() > 0 && grid.X() < collision_map_ .size() && grid.Y() < collision_map_[grid.X()].size())
+    {
+	    return collision_map_[grid.X()][grid.Y()];
+    } 
+    return true; 
+}
+
 void MapLayer::addPlayerSprite(PlayerSprite* player)
 {
-    // leave for network
+    layer_->addChild(player, player->getPosition().x);
+    player->setCameraMask(static_cast<unsigned short>(CameraFlag::USER1));
 }
 
 void MapLayer::clearObjects()
@@ -414,6 +452,7 @@ void MapLayer::clearObjects()
 }
 
 
+
 Sprite* MapLayer::addSpriteWithFrame(const std::string& frame_name) const
 {
     if (is_front_)
@@ -423,8 +462,9 @@ Sprite* MapLayer::addSpriteWithFrame(const std::string& frame_name) const
         {
             Sprite* sprite = Sprite::createWithSpriteFrame(spriteFrame);
             toPixel(focus_pos_);
-            sprite->setPosition3D({0,0,0});
+            // sprite->setPosition3D({0,0,0});
             sprite->setAnchorPoint(Vec2(0, 0));
+            sprite->setCameraMask(static_cast<unsigned short>(CameraFlag::USER1));
             layer_->addChild(sprite, focus_pos_.Y() * GridSize);
             return sprite;
         }

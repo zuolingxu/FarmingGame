@@ -22,6 +22,7 @@ public:
         I_RIGHT,
         NONE
     };
+    static MOVEMENTS getMovementFromString(const std::string& name);
 
     PlayerSprite();
     ~PlayerSprite() override;

@@ -10,8 +10,7 @@ USING_NS_CC;
 
 static constexpr int FRONT_UI_ZORDER = 10;
 static constexpr int BACK_UI_ZORDER = -10;
-static constexpr int BACKGROUND1_ZORDER = -30;
-static constexpr int BACKGROUND2_ZORDER = -20;
+static constexpr int BACKGROUND_ZORDER = -30;
 static constexpr int MAP_ZORDER = 0;
 
 SceneManager* SceneManager::instance_ = new SceneManager;
@@ -42,6 +41,14 @@ void SceneManager::createMapWithDocument(rapidjson::Document* doc)
 		tmx_path = manager->getPath(tmx_path);
 	}
 
+	// default background is black
+	Color3B backGroundColor = {0,0,0};
+	if (doc->HasMember("BackGroundColor"))
+	{
+		backGroundColor = Color3B((*doc)["BackGroundColor"][0].GetInt(),
+			(*doc)["BackGroundColor"][1].GetInt(), (*doc)["BackGroundColor"][2].GetInt());
+	}
+
 	rapidjson::Value* const_object = nullptr, *archive_object = nullptr;
 	if (doc->HasMember("ObjectList"))
 	{
@@ -53,7 +60,7 @@ void SceneManager::createMapWithDocument(rapidjson::Document* doc)
 		archive_object = &(*archive_doc)["Map"][name.c_str()];
 	}
 
-	MapLayer* map = MapLayer::createWithDocument(tmx_path, const_object, archive_object);
+	MapLayer* map = MapLayer::createWithDocument(tmx_path, backGroundColor, const_object, archive_object);
 	map->retain();
 	map_.emplace(name, map);
 }
@@ -181,10 +188,8 @@ void SceneManager::NextMapCallBack::operator()()
 void SceneManager::NextMapCallBack::start()
 {
 	loading_scene = Scene::create();
-	auto background1 = cocos2d::LayerColor::create(cocos2d::Color4B::BLUE);
-	loading_scene->addChild(background1, BACKGROUND1_ZORDER);
-	auto background2 = cocos2d::LayerColor::create(cocos2d::Color4B(Color3B(255, 248, 220)));
-	loading_scene->addChild(background2, BACKGROUND2_ZORDER);
+	auto background = cocos2d::LayerColor::create(cocos2d::Color4B(Color3B(255, 248, 220)));
+	loading_scene->addChild(background, BACKGROUND_ZORDER);
 
 
 	cocos2d::Size win_size = Director::getInstance()->getWinSizeInPixels();
@@ -246,10 +251,13 @@ void SceneManager::NextMapCallBack::assemble()
 {
 	Scene* next = Scene::create();
 	next->addChild(next_map, MAP_ZORDER);
-	auto background1 = LayerColor::create(cocos2d::Color4B::BLACK);
-	next->addChild(background1, BACKGROUND1_ZORDER);
-	auto background2 = LayerColor::create(cocos2d::Color4B(Color3B(173, 216, 230)));
-	next->addChild(background2, BACKGROUND2_ZORDER);
+	auto back = next_map->getChildByName("background");
+	// auto background = cocos2d::LayerColor::create(cocos2d::Color4B(Color3B(120,22,22)));
+	// background->setName("background");
+	// next_map->removeChildByName("background");
+	// back->setParent(nullptr);
+	// next->addChild(background, BACKGROUND_ZORDER);
+
 	next_map->release();
 	getInstance()->permanent_node_->setParent(nullptr);
 	next->addChild(getInstance()->permanent_node_, BACK_UI_ZORDER);

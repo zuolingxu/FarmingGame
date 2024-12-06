@@ -1,6 +1,7 @@
 {
     "Name": "test",
-    "TMX": "TiledMap/npc1house.tmx",
+    "TMX": "TiledMap/beach.tmx",
+    "BackGroundColor":[51,102,153],
     "ObjectList": {
         "12 12": {
             "Type" : "Animal",
