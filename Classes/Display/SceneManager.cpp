@@ -1,9 +1,17 @@
 #include "SceneManager.h"
+
+#include <poly2tri/sweep/advancing_front.h>
+
 #include "HelperClasses.h"
 #include "audio/include/AudioEngine.h"
 #include "ui/UILoadingBar.h"
 
 USING_NS_CC;
+
+static constexpr int FRONT_UI_ZORDER = 10;
+static constexpr int BACK_UI_ZORDER = -10;
+static constexpr int BACKGROUND_ZORDER = -30;
+static constexpr int MAP_ZORDER = 0;
 
 SceneManager* SceneManager::instance_ = new SceneManager;
 
@@ -33,6 +41,14 @@ void SceneManager::createMapWithDocument(rapidjson::Document* doc)
 		tmx_path = manager->getPath(tmx_path);
 	}
 
+	// default background is black
+	Color3B backGroundColor = {0,0,0};
+	if (doc->HasMember("BackGroundColor"))
+	{
+		backGroundColor = Color3B((*doc)["BackGroundColor"][0].GetInt(),
+			(*doc)["BackGroundColor"][1].GetInt(), (*doc)["BackGroundColor"][2].GetInt());
+	}
+
 	rapidjson::Value* const_object = nullptr, *archive_object = nullptr;
 	if (doc->HasMember("ObjectList"))
 	{
@@ -44,7 +60,7 @@ void SceneManager::createMapWithDocument(rapidjson::Document* doc)
 		archive_object = &(*archive_doc)["Map"][name.c_str()];
 	}
 
-	MapLayer* map = MapLayer::createWithDocument(tmx_path, const_object, archive_object);
+	MapLayer* map = MapLayer::createWithDocument(tmx_path, backGroundColor, const_object, archive_object);
 	map->retain();
 	map_.emplace(name, map);
 }
@@ -71,6 +87,7 @@ void SceneManager::clearMaps()
 	if (DocumentManager::getInstance()->getArchiveDocument() == nullptr && !map_.empty()){
 		for (auto& map : map_)
 		{
+			map.second->clearObjects();
 			map.second->release();
 		}
 		map_.clear();
@@ -93,10 +110,10 @@ void SceneManager::hideUILayer() const
 	{
 		layer->setVisible(false);
 		layer->pause();
-		layer->setLocalZOrder(-10);
+		layer->setLocalZOrder(BACK_UI_ZORDER);
 	}
 	permanent_node_->setVisible(false);
-	permanent_node_->setLocalZOrder(-10);
+	permanent_node_->setLocalZOrder(BACK_UI_ZORDER);
 }
 
 void SceneManager::changeUILayer(const std::string& UI_name) const
@@ -107,13 +124,13 @@ void SceneManager::changeUILayer(const std::string& UI_name) const
 		{
 			layer->setVisible(false);
 			layer->pause();
-			layer->setLocalZOrder(-10);
+			layer->setLocalZOrder(BACK_UI_ZORDER);
 		}
 		else
 		{
 			layer->setVisible(true);
 			layer->resume();
-			layer->setLocalZOrder(10);
+			layer->setLocalZOrder(FRONT_UI_ZORDER);
 		}
 	}
 }
@@ -122,10 +139,13 @@ void SceneManager::showUILayer(const std::string& UI_name) const
 {
 	permanent_node_->setVisible(true);
 	Node* layer = permanent_node_->getChildByName(UI_name);
-	layer->setVisible(true);
-	layer->resume();
-	layer->setLocalZOrder(10);
-	permanent_node_->setLocalZOrder(10);
+	map_.at(current_map_name_)->pause();
+	if (layer != nullptr){
+		layer->setVisible(true);
+		layer->resume();
+		layer->setLocalZOrder(FRONT_UI_ZORDER);
+		permanent_node_->setLocalZOrder(FRONT_UI_ZORDER);
+	}
 }
 
 
@@ -137,8 +157,7 @@ void SceneManager::NextMap(const std::string& map_name, const std::string& pos) 
 	auto functionCallback = std::function<void(float)>([call_back](float dt) {
 		(*call_back)();  
 		});
-	loader->schedule(functionCallback, instance_, 0.3f, 2, 0.0f, false, "loading");
-
+	loader->schedule(functionCallback, instance_, 0.0f, 3, 0.0f, false, "loading");
 }
 
 
@@ -147,33 +166,40 @@ SceneManager::NextMapCallBack::NextMapCallBack(std::string map_name, std::string
 
 void SceneManager::NextMapCallBack::operator()()
 {
-	if (loading_per < 40.0f)
+	if (loading_per < 1.0f)
+	{
+		start();
+	}
+	else if (loading_per < 10.0f)
 	{
 		create();
 	}
-	else if (loading_per > 40.0f && loading_per < 80.0f)
+	else if (loading_per < 80.0f)
 	{
 		render();
 	}
-	else if (loading_per >= 80.0f)
+	else if (loading_per < 100.0f)
 	{
 		assemble();
 	}
 	loading_bar->setPercent(loading_per);
 }
 
-void SceneManager::NextMapCallBack::create()
+void SceneManager::NextMapCallBack::start()
 {
 	loading_scene = Scene::create();
-	auto background = cocos2d::LayerColor::create(cocos2d::Color4B::BLACK);
-	loading_scene->addChild(background, -10);
+	auto background = cocos2d::LayerColor::create(cocos2d::Color4B(Color3B(255, 248, 220)));
+	loading_scene->addChild(background, BACKGROUND_ZORDER);
+
+
+	cocos2d::Size win_size = Director::getInstance()->getWinSizeInPixels();
 
 	loading_bar = ui::LoadingBar::create(DocumentManager::getInstance()->getPath("loading_bar"));
+	loading_bar->setColor(Color3B(255, 165, 0));
 	loading_bar->setDirection(ui::LoadingBar::Direction::LEFT);
-	loading_bar->setScale(2.0f, 2.0f);
-	loading_bar->setPosition(Vec2(400, 400));
-	loading_bar->setPercent(0);
-	loading_scene->addChild(loading_bar, 50);
+	loading_bar->setScale(1.0f, 1.0f);
+	loading_bar->setPosition(win_size / 2);
+	loading_scene->addChild(loading_bar, 10);
 
 	if (Director::getInstance()->getRunningScene() == nullptr)
 	{
@@ -181,26 +207,35 @@ void SceneManager::NextMapCallBack::create()
 	}
 	else
 	{
+		getInstance()->map_.at(getInstance()->current_map_name_)->toBack();
 		Director::getInstance()->replaceScene(TransitionFade::create(0.5f, loading_scene));
 	}
+	loading_per = 5.0f;
+}
 
-	SceneManager::getInstance()->createMaps();
-	SceneManager::getInstance()->clearMaps();
+
+void SceneManager::NextMapCallBack::create()
+{
+	getInstance()->createMaps();
+	getInstance()->clearMaps();
 	loading_per = 45.0f;
 }
 
 void SceneManager::NextMapCallBack::render()
 {
-	if (SceneManager::getInstance()->map_.contains(map_name))
+	if (getInstance()->map_.contains(map_name))
 	{
 		PlayerSprite* main_player = nullptr;
 		if (pos != "default")
 		{
-			main_player = PlayerSprite::create();
-			main_player->setPosition(toVec2(pos));
+			
+			main_player = PlayerSprite::create(
+				(*DocumentManager::getInstance()->getConfigDocument())["always_run"].GetBool());
+			main_player->setPosition(toPixel(toVec2(pos)));
 		}
 
-		next_map = SceneManager::getInstance()->map_.at(map_name)->toFront(main_player);
+		next_map = getInstance()->map_.at(map_name)->toFront(main_player);
+		getInstance()->current_map_name_ = map_name;
 		if (pos == "default")
 		{
 			next_map->getEventDispatcher()->removeEventListenersForTarget(next_map);
@@ -217,10 +252,11 @@ void SceneManager::NextMapCallBack::render()
 void SceneManager::NextMapCallBack::assemble()
 {
 	Scene* next = Scene::create();
-	next->addChild(next_map, -10);
+	next->addChild(next_map, MAP_ZORDER);
+
 	next_map->release();
-	SceneManager::getInstance()->permanent_node_->setParent(nullptr);
-	next->addChild(SceneManager::getInstance()->permanent_node_, -10);
+	getInstance()->permanent_node_->setParent(nullptr);
+	next->addChild(getInstance()->permanent_node_, BACK_UI_ZORDER);
 
 	Director::getInstance()->replaceScene(TransitionFade::create(0.5f, next));
 	loading_per = 100.0f;

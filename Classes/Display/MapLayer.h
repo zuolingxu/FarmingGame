@@ -1,4 +1,5 @@
 #pragma once
+#define CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL 1
 #include "json/document.h"
 #include "cocos2d.h"
 #include "PlayerSprite.h"
@@ -7,12 +8,14 @@
 
 
 class Object;
+class PlayerSprite;
 
 class MapLayer: public cocos2d::Ref{
 private:
 	std::vector<std::vector<::Object*>> interact_map_;
 	std::vector<std::vector<bool>> collision_map_;
 	std::string tmx_name_;
+	cocos2d::Color3B background_color_;
 
 	cocos2d::Node* layer_ = nullptr;
 	cocos2d::TMXTiledMap* tiled_map_ = nullptr;
@@ -24,12 +27,12 @@ private:
 	Vec<int> focus_pos_;
 	bool is_front_ = false;
 
-	MapLayer(const std::string& tmx_path,
+	MapLayer(const std::string& tmx_path, const cocos2d::Color3B& background_color, 
 		rapidjson::Value* const_object, rapidjson::Value* archive_object);
 	~MapLayer() = default;
 
 	static MapLayer* createWithDocument(const std::string& tmx_path,
-	rapidjson::Value* const_object, rapidjson::Value* archive_object);
+	                                    const cocos2d::Color3B& background_color, rapidjson::Value* const_object, rapidjson::Value* archive_object);
 
 
 	// These function is for InitStep
@@ -52,21 +55,24 @@ private:
 
 	// changes for CallBacks
 	void changeFocus();
-	void changePosition(const Vec<int>& direction);
 	void changeHolding(int num);
 
 
 protected:
 	friend class SceneManager;
 	//  These function is for SceneManager
-	// pos is start GRID position of player sprite
 	cocos2d::Node* toFront(PlayerSprite* main_player);
 	void pause() const;
 	void resume() const;
 	void toBack();
+	void clearObjects();
 
 	// settle should be called after a day
 	void settle() const;
+
+	// The following function is for camera reset
+	friend PlayerSprite;
+	cocos2d::Camera* getCamera() const;
 
 public:
 	MapLayer(const MapLayer&) = delete;
@@ -78,9 +84,11 @@ public:
 	// load .plist file and picture
 	static void loadPlist(std::string plist_name);
 
-	void addPlayerSprite(PlayerSprite* player);
+	// to know if a place has a collision, the pos should be a pixel position
+	bool hasCollision(const cocos2d::Vec2& pos);
 
-	void clearObjects();
+	// This is for NetWork
+	void addPlayerSprite(PlayerSprite* player);
 
 	// frame_name is name of frame in .plist file.
 	// pos is GRID position of sprite, the anchor is (0,0) (bottom left).

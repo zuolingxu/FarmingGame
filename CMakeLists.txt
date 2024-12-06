@@ -54,6 +54,7 @@ list(APPEND GAME_SOURCE
      Classes/Display/UILayer.cpp
      Classes/Display/PlayerSprite.cpp
      Classes/HelperClasses/DocumentManager.cpp
+     Classes/HelperClasses/TimeManager.cpp
      Classes/Object/Animal.cpp
      Classes/Object/Crop.cpp
      Classes/Object/Land.cpp
@@ -69,6 +70,7 @@ list(APPEND GAME_HEADER
      Classes/Display/PlayerSprite.h
      Classes/HelperClasses/DocumentManager.h
      Classes/HelperClasses/HelperClasses.h
+     Classes/HelperClasses/TimeManager.h
      Classes/Object/Animal.h
      Classes/Object/Crop.h
      Classes/Object/Land.h

@@ -5,6 +5,8 @@
     "Files": {
         "global": "global.json",
         "test": "config/test.json",
+        "player": "config/player_movement.json",
+        "playerpls": "plist/player.plist",
         "HelloPic": "image/hello_world.png",
         "CloseNormalPic":"image/close_normal.png",
         "CloseSeletedPic":"image/close_seleted.png",

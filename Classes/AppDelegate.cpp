@@ -19,11 +19,6 @@ using namespace CocosDenshion;
 
 USING_NS_CC;
 
-static cocos2d::Size designResolutionSize = cocos2d::Size(1024, 720);
-static cocos2d::Size smallResolutionSize = cocos2d::Size(480, 320);
-static cocos2d::Size mediumResolutionSize = cocos2d::Size(1024, 720);
-static cocos2d::Size largeResolutionSize = cocos2d::Size(2048, 1536);
-
 AppDelegate::AppDelegate()
 {
 }
@@ -60,7 +55,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto glview = director->getOpenGLView();
     if (!glview) {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC) || (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
-        glview = GLViewImpl::createWithRect("FarmingGame", cocos2d::Rect(0, 0, designResolutionSize.width, designResolutionSize.height));
+        glview = GLViewImpl::createWithRect("FarmingGame", cocos2d::Rect(0, 0, mediumResolutionSize.width, mediumResolutionSize.height));
         // glview = GLViewImpl::createWithFullScreen("FarmingGame");
 #else
         glview = GLViewImpl::create("FarmingGame");
@@ -102,7 +97,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
         rapidjson::Document* global_document = manager->getDocument(manager->getPath("global"));
         CCLOG(manager->getPath("global").c_str());
         manager->loadArchiveDocument(19);
-        SceneManager::getInstance()->NextMap("test");
+        SceneManager::getInstance()->NextMap("test","10 10");
     }
     catch (const std::exception& e)
     {
