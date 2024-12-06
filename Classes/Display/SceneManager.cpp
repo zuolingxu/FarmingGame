@@ -197,7 +197,7 @@ void SceneManager::NextMapCallBack::start()
 	loading_bar = ui::LoadingBar::create(DocumentManager::getInstance()->getPath("loading_bar"));
 	loading_bar->setColor(Color3B(255, 165, 0));
 	loading_bar->setDirection(ui::LoadingBar::Direction::LEFT);
-	loading_bar->setScale(2.0f, 2.0f);
+	loading_bar->setScale(1.0f, 1.0f);
 	loading_bar->setPosition(win_size / 2);
 	loading_scene->addChild(loading_bar, 10);
 
@@ -228,7 +228,9 @@ void SceneManager::NextMapCallBack::render()
 		PlayerSprite* main_player = nullptr;
 		if (pos != "default")
 		{
-			main_player = PlayerSprite::create();
+			
+			main_player = PlayerSprite::create(
+				(*DocumentManager::getInstance()->getConfigDocument())["always_run"].GetBool());
 			main_player->setPosition(toPixel(toVec2(pos)));
 		}
 
@@ -251,12 +253,6 @@ void SceneManager::NextMapCallBack::assemble()
 {
 	Scene* next = Scene::create();
 	next->addChild(next_map, MAP_ZORDER);
-	auto back = next_map->getChildByName("background");
-	// auto background = cocos2d::LayerColor::create(cocos2d::Color4B(Color3B(120,22,22)));
-	// background->setName("background");
-	// next_map->removeChildByName("background");
-	// back->setParent(nullptr);
-	// next->addChild(background, BACKGROUND_ZORDER);
 
 	next_map->release();
 	getInstance()->permanent_node_->setParent(nullptr);

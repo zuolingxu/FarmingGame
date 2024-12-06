@@ -3,5 +3,5 @@
     "Archive":{
     },
     "full_screen" : false,
-    "keep_run" : true
+    "always_run" : true
 }

@@ -4,6 +4,8 @@
 #include <sstream>
 #include <iostream>
 constexpr int GridSize = 16;
+constexpr int ScaleFactor = 2.0f;
+
 const cocos2d::Size designResolutionSize = cocos2d::Size(480, 320);
 const cocos2d::Size smallResolutionSize = cocos2d::Size(480, 320);
 const cocos2d::Size mediumResolutionSize = cocos2d::Size(1024, 720);

@@ -97,7 +97,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
         rapidjson::Document* global_document = manager->getDocument(manager->getPath("global"));
         CCLOG(manager->getPath("global").c_str());
         manager->loadArchiveDocument(19);
-        SceneManager::getInstance()->NextMap("test","5 5");
+        SceneManager::getInstance()->NextMap("test","10 10");
     }
     catch (const std::exception& e)
     {
