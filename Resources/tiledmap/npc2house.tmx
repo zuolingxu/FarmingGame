@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="15" height="18" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="19">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="15" height="18" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="20">
  <tileset firstgid="1" source="townInterior..tsx"/>
  <tileset firstgid="2177" source="walls_and_floors..tsx"/>
  <layer id="3" name="floor" width="15" height="18">
@@ -18,7 +18,6 @@
   </data>
  </layer>
  <objectgroup id="4" name="collision">
-  <object id="1" x="68" y="99.3333" width="119.667" height="57"/>
   <object id="2" x="194.667" y="125" width="12.3333" height="29"/>
   <object id="3" x="210.667" y="136.667" width="12.6667" height="18.3333"/>
   <object id="4" x="116" y="187.667" width="39.3333" height="30"/>
@@ -36,5 +35,6 @@
   <object id="16" x="211.667" y="99" width="9.33333" height="9.33333"/>
   <object id="17" x="34.6667" y="84" width="10" height="10"/>
   <object id="18" x="17" y="99.6667" width="11.3333" height="9"/>
+  <object id="19" x="70.3333" y="101.667" width="115.333" height="35"/>
  </objectgroup>
 </map>

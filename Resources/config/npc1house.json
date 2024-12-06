@@ -1,0 +1,17 @@
+{
+    "Name": "npc1house",
+    "TMX": "tiledMap/npc1house.tmx",
+    "ObjectList": {
+        "11 8":{
+            "Type":"npc",
+            "Info":{
+                "Name":"Abigail",
+                "favorability":0,
+                "marriage":false,
+                "friendship":false
+            }
+        }
+    }
+}
+
+

@@ -4,12 +4,12 @@
  <tileset firstgid="2177" source="walls_and_floors..tsx"/>
  <layer id="2" name="floor" width="15" height="18">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAACmNgGJngNid56ojVR676UTAK6AnecJKOQQAAw2+0EzgEAAA=
+   H4sIAAAAAAAACmNgGJngNicDw2siMEgdur47nKTRMAAy7w0naTS59r4etXfUXiLsfcNJOgYBADW/snA4BAAA
   </data>
  </layer>
  <layer id="1" name="wall" width="15" height="18">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAACu3LwQmDQBCF4VVz8aYlaGIhidqIWonYiEbQQpIqkhIswid5C4usMrmKAx8MzPyOUsoBFzyBC/+1AGK4CtwgZBexe0AqkLFP4M6ugFKgYp+zXboaPr7d19gb9rrd62wao/2n0872mO1EW+0koFvJr61toYOX4Q1P9Zt+dVsMMMIMNrvH0zgEAAA=
+   H4sIAAAAAAAACu3L2QmAMBCE4UQtQEvwKsSrEbUSsREP0EK0LycwgeDTIviWhe9p59dKKQ0BhAIR91YMGeQCBSTsUnY1NAIt+xIqdj0MAiP7jq3pJiW7mb1tpZ3b2/bL+da3f7ULrHA5bti42V8/44ATHvZTmxA4BAAA
   </data>
  </layer>
  <layer id="3" name="furniture" width="15" height="18">
