@@ -1,0 +1,18 @@
+{
+    "Name": "town_festival",
+    "TMX": "tiledMap/town_festival.tmx",
+    "ObjectList": {
+        "40 2":{
+            "Type":"npc",
+            "Info":{
+                "Name":"Haley",
+                "favorability":0,
+                "marriage":false,
+                "friendship":false,
+                "festival":true
+            }
+        }
+    }
+}
+
+

@@ -1,0 +1,17 @@
+{
+    "Name": "npc1house",
+    "TMX": "tiledMap/npc2house.tmx",
+    "ObjectList": {
+        "2 8":{
+            "Type":"npc",
+            "Info":{
+                "Name":"Caroline",
+                "favorability":0,
+                "marriage":false,
+                "friendship":false
+            }
+        }
+    }
+}
+
+
