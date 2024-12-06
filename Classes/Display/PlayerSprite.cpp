@@ -11,6 +11,61 @@ const std::vector<Vec<int>> PlayerSprite::directions_({ {0,1}, {0,-1}, {-1,0}, {
 std::string PlayerSprite::plist_name_;
 std::vector<std::vector<int>> PlayerSprite::movements_(12,std::vector<int>());
 
+PlayerSprite::MOVEMENTS PlayerSprite::getMovementFromString(const std::string& name)
+{
+    if (name == "UP")
+    {
+        return MOVEMENTS::UP;
+    }
+    else if (name == "DOWN")
+    {
+        return MOVEMENTS::DOWN;
+    }
+    else if (name == "LEFT")
+    {
+        return MOVEMENTS::LEFT;
+    }
+    else if (name == "RIGHT")
+    {
+        return MOVEMENTS::RIGHT;
+    }
+    else if (name == "W_UP")
+    {
+        return MOVEMENTS::W_UP;
+    }
+    else if (name == "W_DOWN")
+    {
+        return MOVEMENTS::W_DOWN;
+    }
+    else if (name == "W_LEFT")
+    {
+        return MOVEMENTS::W_LEFT;
+    }
+    else if (name == "W_RIGHT")
+    {
+        return MOVEMENTS::W_RIGHT;
+    }
+    else if (name == "I_UP")
+    {
+        return MOVEMENTS::I_UP;
+    }
+    else if (name == "I_DOWN")
+    {
+        return MOVEMENTS::I_DOWN;
+    }
+    else if (name == "I_LEFT")
+    {
+        return MOVEMENTS::I_LEFT;
+    }
+    else if (name == "I_RIGHT")
+    {
+        return MOVEMENTS::I_RIGHT;
+    }
+    else
+    {
+        return MOVEMENTS::NONE;
+    }
+}
 
 PlayerSprite::PlayerSprite()
 {
@@ -34,61 +89,7 @@ PlayerSprite* PlayerSprite::create()
         MapLayer::loadPlist(plist_name_);
         for (auto& i: (*doc)["movement"].GetObject())
         {
-            MOVEMENTS move_e;
-            std::string name = i.name.GetString();
-            if (name == "UP")
-            {
-                move_e = MOVEMENTS::UP;
-            }
-            else if (name == "DOWN")
-            {
-                move_e = MOVEMENTS::DOWN;
-            }
-            else if (name == "LEFT")
-            {
-                move_e = MOVEMENTS::LEFT;
-            }
-            else if (name == "RIGHT")
-            {
-                move_e = MOVEMENTS::RIGHT;
-            }
-            else if (name == "W_UP")
-            {
-                move_e = MOVEMENTS::W_UP;
-            }
-            else if (name == "W_DOWN")
-            {
-	            move_e = MOVEMENTS::W_DOWN;
-            }
-            else if (name == "W_LEFT")
-            {
-	            move_e = MOVEMENTS::W_LEFT;
-            }
-            else if (name == "W_RIGHT")
-            {
-                move_e = MOVEMENTS::W_RIGHT;
-            }
-            else if (name == "I_UP")
-            {
-	            move_e = MOVEMENTS::I_UP;
-            }
-            else if (name == "I_DOWN")
-            {
-	            move_e = MOVEMENTS::I_DOWN;
-            }
-            else if (name == "I_LEFT")
-            {
-	            move_e = MOVEMENTS::I_LEFT;
-            }
-            else if (name == "I_RIGHT")
-            {
-	            move_e = MOVEMENTS::I_RIGHT;
-            }
-            else
-            {
-	            move_e = MOVEMENTS::NONE;
-            }
-            
+            MOVEMENTS move_e = getMovementFromString(i.name.GetString());
             if (move_e != MOVEMENTS::NONE)
             {
                 const int move_i = static_cast<int>(move_e);

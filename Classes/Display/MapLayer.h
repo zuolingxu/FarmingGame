@@ -13,6 +13,7 @@ private:
 	std::vector<std::vector<::Object*>> interact_map_;
 	std::vector<std::vector<bool>> collision_map_;
 	std::string tmx_name_;
+	cocos2d::Color3B background_color_;
 
 	cocos2d::Node* layer_ = nullptr;
 	cocos2d::TMXTiledMap* tiled_map_ = nullptr;
@@ -24,12 +25,12 @@ private:
 	Vec<int> focus_pos_;
 	bool is_front_ = false;
 
-	MapLayer(const std::string& tmx_path,
+	MapLayer(const std::string& tmx_path, const cocos2d::Color3B& background_color, 
 		rapidjson::Value* const_object, rapidjson::Value* archive_object);
 	~MapLayer() = default;
 
 	static MapLayer* createWithDocument(const std::string& tmx_path,
-	rapidjson::Value* const_object, rapidjson::Value* archive_object);
+	                                    const cocos2d::Color3B& background_color, rapidjson::Value* const_object, rapidjson::Value* archive_object);
 
 
 	// These function is for InitStep
@@ -78,7 +79,8 @@ public:
 	// load .plist file and picture
 	static void loadPlist(std::string plist_name);
 
-	bool hasCollision(Vec<int> pos);
+	// to know if a place has a collision, the pos should be a pixel position
+	bool hasCollision(const cocos2d::Vec2& pos);
 
 	void addPlayerSprite(PlayerSprite* player);
 

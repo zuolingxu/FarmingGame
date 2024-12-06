@@ -4,7 +4,7 @@
         "money": 1000
     },
     
-    "object": {
+    "belongings": {
         "axe": [
             1, "wood"
         ],
@@ -23,7 +23,6 @@
             "12 13":{
                 "Type": "Land",
               "Info": {
-                "tupianlujing"
                 "CropName": "Potato",
                 "LiveDay": "1",
                 "MaturationDay": "5",
