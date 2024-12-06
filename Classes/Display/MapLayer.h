@@ -1,4 +1,5 @@
 #pragma once
+#define CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL 1
 #include "json/document.h"
 #include "cocos2d.h"
 #include "PlayerSprite.h"
@@ -7,6 +8,7 @@
 
 
 class Object;
+class PlayerSprite;
 
 class MapLayer: public cocos2d::Ref{
 private:
@@ -53,7 +55,6 @@ private:
 
 	// changes for CallBacks
 	void changeFocus();
-	void changePosition(const Vec<int>& direction);
 	void changeHolding(int num);
 
 
@@ -69,6 +70,10 @@ protected:
 	// settle should be called after a day
 	void settle() const;
 
+	// The following function is for camera reset
+	friend PlayerSprite;
+	cocos2d::Camera* getCamera() const;
+
 public:
 	MapLayer(const MapLayer&) = delete;
 	MapLayer& operator=(const MapLayer&) = delete;
@@ -82,6 +87,7 @@ public:
 	// to know if a place has a collision, the pos should be a pixel position
 	bool hasCollision(const cocos2d::Vec2& pos);
 
+	// This is for NetWork
 	void addPlayerSprite(PlayerSprite* player);
 
 	// frame_name is name of frame in .plist file.

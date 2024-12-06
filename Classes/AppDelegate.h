@@ -1,6 +1,7 @@
 #ifndef  _APP_DELEGATE_H_
 #define  _APP_DELEGATE_H_
 
+#define CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL 1
 #include "cocos2d.h"
 
 /**
