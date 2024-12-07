@@ -110,6 +110,7 @@ PlayerSprite* PlayerSprite::create(bool always_run)
         sprite->setAnchorPoint(Vec2(0.5, 0));
         return sprite;
     }
+    //�����ʼ��ʧ��
     CC_SAFE_DELETE(sprite);
 
     return nullptr;
