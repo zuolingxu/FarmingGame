@@ -1,6 +1,7 @@
 #include "AppDelegate.h"
 #include "DocumentManager.h"
 #include "SceneManager.h"
+#include "UILayer.h"
 
 // #define USE_AUDIO_ENGINE 1
 // #define USE_SIMPLE_AUDIO_ENGINE 1
@@ -92,12 +93,10 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     try
     {
-        // load ALL_UI UI_ need fast reaction
-        auto manager = DocumentManager::getInstance();
-        rapidjson::Document* global_document = manager->getDocument(manager->getPath("global"));
-        CCLOG(manager->getPath("global").c_str());
-        manager->loadArchiveDocument(19);
-        SceneManager::getInstance()->NextMap("test","10 10");
+        Scene* scene = Scene::create();
+
+            scene->addChild(UILayer::createUILayer(UILayerType::BAG));
+            Director::getInstance()->runWithScene(scene);
     }
     catch (const std::exception& e)
     {

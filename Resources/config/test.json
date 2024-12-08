@@ -1,6 +1,6 @@
 {
     "Name": "test",
-    "TMX": "TiledMap/beach.tmx",
+    "TMX": "TiledMap/introduction.tmx",
     "BackGroundColor":[51,102,153],
     "ObjectList": {
         "12 12": {

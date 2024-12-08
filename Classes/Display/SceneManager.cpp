@@ -22,8 +22,8 @@ SceneManager::SceneManager() : director_(Director::getInstance())
 	permanent_node_ = Node::create();
 	permanent_node_->retain();
 	permanent_node_->setName("UI");
-
 	// TODO: createUILayer();
+
 }
 
 SceneManager::~SceneManager()
