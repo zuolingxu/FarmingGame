@@ -16,6 +16,7 @@ private:
 	std::vector<std::vector<bool>> collision_map_;
 	std::string tmx_name_;
 	cocos2d::Color3B background_color_;
+	std::vector<PlayerSprite*> players_;
 
 	cocos2d::Node* layer_ = nullptr;
 	cocos2d::TMXTiledMap* tiled_map_ = nullptr;
@@ -92,7 +93,8 @@ public:
 
 	// frame_name is name of frame in .plist file.
 	// pos is GRID position of sprite, the anchor is (0,0) (bottom left).
-	cocos2d::Sprite* addSpriteWithFrame(const std::string& frame_name) const;
+	cocos2d::Sprite* addSpriteWithFrame(const std::string& frame_name);
+	PlayerSprite* addPlayerSpriteWithDocument(const rapidjson::Document* sprite_document);
 
 	void changeWithActionSequence(std::vector<int> sequence);
 	void changeWithSingleFrame(int num);

@@ -55,8 +55,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto glview = director->getOpenGLView();
     if (!glview) {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC) || (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
-        glview = GLViewImpl::createWithRect("FarmingGame", cocos2d::Rect(0, 0, mediumResolutionSize.width, mediumResolutionSize.height));
-        // glview = GLViewImpl::createWithFullScreen("FarmingGame");
+    	glview = GLViewImpl::createWithRect("FarmingGame", cocos2d::Rect(0, 0, mediumResolutionSize.width, mediumResolutionSize.height));
 #else
         glview = GLViewImpl::create("FarmingGame");
 #endif
@@ -71,6 +70,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     // Set the design resolution
     glview->setDesignResolutionSize(designResolutionSize.width, designResolutionSize.height, ResolutionPolicy::NO_BORDER);
+
     // auto frameSize = glview->getFrameSize();
     // // if the frame's height is larger than the height of medium size.
     // if (frameSize.height > mediumResolutionSize.height)
@@ -116,7 +116,6 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
 // This function will be called when the app is inactive. Note, when receiving a phone call it is invoked.
 void AppDelegate::applicationDidEnterBackground() {
-    Director::getInstance()->stopAnimation();
 
 #if USE_AUDIO_ENGINE
     AudioEngine::pauseAll();

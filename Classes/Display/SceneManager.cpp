@@ -12,6 +12,7 @@ static constexpr int FRONT_UI_ZORDER = 10;
 static constexpr int BACK_UI_ZORDER = -10;
 static constexpr int BACKGROUND_ZORDER = -30;
 static constexpr int MAP_ZORDER = 0;
+static constexpr float SCALE_FACTOR = 1.5f;
 
 SceneManager* SceneManager::instance_ = new SceneManager;
 
@@ -191,14 +192,11 @@ void SceneManager::NextMapCallBack::start()
 	auto background = cocos2d::LayerColor::create(cocos2d::Color4B(Color3B(255, 248, 220)));
 	loading_scene->addChild(background, BACKGROUND_ZORDER);
 
-
-	cocos2d::Size win_size = Director::getInstance()->getWinSizeInPixels();
-
 	loading_bar = ui::LoadingBar::create(DocumentManager::getInstance()->getPath("loading_bar"));
 	loading_bar->setColor(Color3B(255, 165, 0));
 	loading_bar->setDirection(ui::LoadingBar::Direction::LEFT);
 	loading_bar->setScale(1.0f, 1.0f);
-	loading_bar->setPosition(win_size / 2);
+	loading_bar->setPosition(Director::getInstance()->getWinSizeInPixels() / 2);
 	loading_scene->addChild(loading_bar, 10);
 
 	if (Director::getInstance()->getRunningScene() == nullptr)
@@ -218,6 +216,12 @@ void SceneManager::NextMapCallBack::create()
 {
 	getInstance()->createMaps();
 	getInstance()->clearMaps();
+	if (map_name == "introduction" && !getInstance()->map_.contains("introduction"))
+	{
+		DocumentManager* manager = DocumentManager::getInstance();
+		rapidjson::Document* introduction = manager->getDocument(manager->getPath("introduction"));
+		getInstance()->createMapWithDocument(introduction);
+	}
 	loading_per = 45.0f;
 }
 
@@ -228,9 +232,10 @@ void SceneManager::NextMapCallBack::render()
 		PlayerSprite* main_player = nullptr;
 		if (pos != "default")
 		{
-			
-			main_player = PlayerSprite::create(
-				(*DocumentManager::getInstance()->getConfigDocument())["always_run"].GetBool());
+			DocumentManager* manager = DocumentManager::getInstance();
+			rapidjson::Document* doc = manager->getDocument(manager->getPath("player"));
+			main_player = PlayerSprite::create
+			(doc, (*manager->getConfigDocument())["always_run"].GetBool());
 			main_player->setPosition(toPixel(toVec2(pos)));
 		}
 

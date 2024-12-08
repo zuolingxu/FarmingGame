@@ -4,7 +4,6 @@
 #include <sstream>
 #include <iostream>
 constexpr int GridSize = 16;
-constexpr int ScaleFactor = 2.0f;
 
 const cocos2d::Size designResolutionSize = cocos2d::Size(480, 320);
 const cocos2d::Size smallResolutionSize = cocos2d::Size(480, 320);
@@ -105,4 +104,9 @@ inline std::string toString(const Vec<int>& vec)
 	std::ostringstream oss;
 	oss << vec;
 	return oss.str();
+}
+
+inline std::string getFrameName(std::string frame_format, int i)
+{
+	return frame_format.replace(frame_format.find("{}"), 2, std::to_string(i));
 }
