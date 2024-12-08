@@ -10,7 +10,7 @@ class MapLayer;
 class PlayerSprite : public cocos2d::Sprite
 {
 public:
-    enum class MOVEMENTS : char
+    enum class MOVEMENT : char
     {
         UP,
         DOWN,
@@ -24,32 +24,38 @@ public:
         I_DOWN,
         I_LEFT,
         I_RIGHT,
+        STAY,
         NONE,
-        EVERY
+        ALL
     };
-    static MOVEMENTS getMovementFromString(const std::string& name);
+    static MOVEMENT getMovementFromString(const std::string& name);
 
-    PlayerSprite(bool always_run) : run_(always_run) {};
+    PlayerSprite(bool always_run, const rapidjson::Document* doc);
     ~PlayerSprite() override;
 
-    static PlayerSprite* create(bool always_run);
+    static PlayerSprite* create(const rapidjson::Document* doc, bool always_run = false);
 
-    void move(MOVEMENTS move_e);
-    void stop(MOVEMENTS move_e);
-    void interact(MOVEMENTS move_e);
+    void moveBy(MOVEMENT direction, int length);
+    void move(MOVEMENT move_e);
+    void stop(MOVEMENT move_e);
+    void interact(Vec<int> pos);
+    void stay();
     void changeSpeed();
     virtual void update(float delta) override;
     void setParentMapLayer(MapLayer* parent);
 
 private:
-    static std::string plist_name_;
-    static std::vector<std::vector<int>> movements_;
+
     const static std::vector<Vec<int>> directions_;
 
+    std::vector<std::vector<int>> movements_ = std::vector(12, std::vector<int>());
+    std::string plist_name_;
+    std::string frame_format_;
     MapLayer* parent_ = nullptr;
     cocos2d::RepeatForever* repeat_action_ = nullptr;
-    MOVEMENTS stand_direction_ = MOVEMENTS::DOWN;
+    MOVEMENT stand_direction_ = MOVEMENT::DOWN;
     bool run_ = false;
-    bool is_moving_ = false;
+    bool is_moving = false;
+    cocos2d::Vec2 destination = {-1,-1};
 };
 

@@ -16,6 +16,8 @@ private:
 	std::vector<std::vector<bool>> collision_map_;
 	std::string tmx_name_;
 	cocos2d::Color3B background_color_;
+	std::vector<PlayerSprite*> players_;
+	cocos2d::Sprite* focus_ = nullptr;
 
 	cocos2d::Node* layer_ = nullptr;
 	cocos2d::TMXTiledMap* tiled_map_ = nullptr;
@@ -24,6 +26,7 @@ private:
 	cocos2d::EventListenerTouchAllAtOnce* touch_listener_ = nullptr;
 	cocos2d::EventListenerKeyboard* keyboard_Listener_ = nullptr;
 	cocos2d::EventListenerMouse* mouse_listener_ = nullptr;
+	cocos2d::Vec2 mouse_pos_ = cocos2d::Vec2::ZERO;
 	Vec<int> focus_pos_;
 	bool is_front_ = false;
 
@@ -54,9 +57,8 @@ private:
 	void onMouseUp(cocos2d::Event* event);
 
 	// changes for CallBacks
-	void changeFocus();
 	void changeHolding(int num);
-
+	void refocus();
 
 protected:
 	friend class SceneManager;
@@ -92,8 +94,8 @@ public:
 
 	// frame_name is name of frame in .plist file.
 	// pos is GRID position of sprite, the anchor is (0,0) (bottom left).
-	cocos2d::Sprite* addSpriteWithFrame(const std::string& frame_name) const;
+	cocos2d::Sprite* addSpriteWithFrame(const std::string& frame_name);
+	PlayerSprite* addPlayerSpriteWithDocument(const rapidjson::Document* sprite_document);
 
-	void changeWithActionSequence(std::vector<int> sequence);
 	void changeWithSingleFrame(int num);
 };
