@@ -9,6 +9,7 @@
 
 class TimeManager {
 private:
+    const float MinuteOfOneDay = 10; // 现实MinuteOfOneDay分钟等于游戏1天
     static TimeManager* instance_;//单例函数
 
     //现实时间10分钟，游戏时间一天24小时
@@ -25,7 +26,7 @@ private:
     void settleAllObjects(); // 调用所有物品的 settle 函数
 
 public:
-    static TimeManager* getInstance(); // 获取单例实例
+    static TimeManager* getInstance(); // 获取单例实例 在void SceneManager::createMaps()被调用，开始计时
 
     //给ui的接口
     //获取当前时间
@@ -44,4 +45,10 @@ public:
     //可能用到的接口
     void endOfDay(); // 一天结束，调用所有settle（）
     void saveGameData(); // 在NewUrsArchive中存档
+
+    //调试使用
+    /*/void logCurrentTime() {
+        CCLOG("Current Day: %d", current_day_);
+        CCLOG("Current Time: %.1f", current_time_);
+    }*/
 };
