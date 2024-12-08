@@ -14,8 +14,21 @@
     },
     
     "relationship": {
-        "Tom": 0,
-        "Alice": 0
+        "Caroline": 0,
+        "Abigail": 0,
+        "Haley":0
+    },
+
+    "friendship":{
+        "Caroline": false,
+        "Abigail": false,
+        "Haley":false
+    },
+
+    "marriage":{
+        "Caroline": false,
+        "Abigail": false,
+        "Haley":false
     },
 
     "Map":{

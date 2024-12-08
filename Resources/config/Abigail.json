@@ -1,6 +1,7 @@
 {
     "Abigail_move":{
         "plist": "Abigail.plist",
+        "frame_format":"Abigail-{}.png",
         "movement": {
             "DOWN": [0],
             "RIGHT": [4],

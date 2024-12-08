@@ -1,6 +1,7 @@
 {
     "cow_move":{
         "plist": "cow.plist",
+        "frame_format":"cow-{}.png",
         "movement": {
             "DOWN": [0],
             "RIGHT": [3],

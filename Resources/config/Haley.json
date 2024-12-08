@@ -1,6 +1,7 @@
 {
     "Haley_move":{
         "plist": "Haley.plist",
+        "frame_format":"Haley-{}.png",
         "movement": {
             "DOWN": [0],
             "RIGHT": [4],
