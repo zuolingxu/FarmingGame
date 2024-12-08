@@ -6,6 +6,7 @@
 class UILogic
 {
 private:
+
 public:
 };
 
