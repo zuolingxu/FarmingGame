@@ -38,7 +38,8 @@ public:
     void moveBy(MOVEMENT direction, int length);
     void move(MOVEMENT move_e);
     void stop(MOVEMENT move_e);
-    void interact(MOVEMENT move_e);
+    void interact(Vec<int> pos);
+    void stay();
     void changeSpeed();
     virtual void update(float delta) override;
     void setParentMapLayer(MapLayer* parent);

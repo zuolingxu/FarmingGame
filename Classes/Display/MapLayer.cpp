@@ -12,7 +12,7 @@ USING_NS_CC;
 static constexpr int BACKGROUND_ZORDER = -512;
 static constexpr int TMX_ZORDER = -256;
 static constexpr int MAP_MAX_LENGTH = 10;
-static constexpr float SCALE_FACTOR = 1.8f;
+static constexpr float SCALE_FACTOR = 1.5f;
 
 MapLayer::MapLayer(const std::string& tmx_path, const cocos2d::Color3B& background_color,
     rapidjson::Value* const_object, rapidjson::Value* archive_object) : background_color_(background_color)
@@ -260,22 +260,31 @@ void MapLayer::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::E
 
 void MapLayer::onMouseDown(cocos2d::Event* event)
 {
+    static const std::vector<Vec<int>> valid_pos = { {1,0} ,{1,1}, {0,0},
+        {0,1},{-1,1},{-1,0},{-1,-1},{0,-1},{1,-1}};
     cocos2d::EventMouse* e = dynamic_cast<cocos2d::EventMouse*>(event);
-
     if (e)
     {
         if (e->getMouseButton() == cocos2d::EventMouse::MouseButton::BUTTON_LEFT) 
         {
             ::Object* focus = interact_map_[focus_pos_.X()][focus_pos_.Y()];
-            if (focus != nullptr)
+            Vec<int> grid_pos = toGrid(main_player_->getPosition());
+            for (auto& pos : valid_pos)
             {
-                focus->interact();
+				if (focus_pos_ == grid_pos + pos) {
+                    main_player_->interact(pos);
+                    if (focus != nullptr)
+                    {
+                        focus->interact();
+                    }
+				}
             }
         }
         else if (e->getMouseButton() == cocos2d::EventMouse::MouseButton::BUTTON_RIGHT) 
         {
             // TODO: interact with holdings
         }
+        
     }
     event->stopPropagation(); 
 }
@@ -286,11 +295,10 @@ void MapLayer::onMouseMove(cocos2d::Event* event)
     if (e)
     {
         Size win_size = Director::getInstance()->getWinSize();
-        cocos2d::Vec2 mouse_pos = e->getLocation();
-        mouse_pos.y = win_size.height - mouse_pos.y;
-        mouse_pos = (mouse_pos - win_size / 2) / SCALE_FACTOR;
-        focus_pos_ = toGrid(mouse_pos + main_player_->getPosition());
-        CCLOG("focus: %d %d", focus_pos_.X(), focus_pos_.Y());
+    	mouse_pos_ = e->getLocation();
+        mouse_pos_.y = win_size.height - mouse_pos_.y;
+        mouse_pos_ = (mouse_pos_ - win_size / 2) / SCALE_FACTOR;
+        refocus();
     }
     event->stopPropagation();
 }
@@ -301,16 +309,16 @@ void MapLayer::onMouseUp(cocos2d::Event* event)
     event->stopPropagation();
 }
 
-void MapLayer::changeFocus()
-{
-	// TODO: change focus
-}
-
 void MapLayer::changeHolding(const int num)
 {
 	// UILogic::changeHoldings(num);
 }
 
+void MapLayer::refocus()
+{
+    focus_pos_ = toGrid(mouse_pos_ + main_player_->getPosition());
+    focus_->setPosition(toPixel(focus_pos_));
+}
 
 Node* MapLayer::toFront(PlayerSprite* main_player)
 {
@@ -361,6 +369,10 @@ Node* MapLayer::toFront(PlayerSprite* main_player)
     }
 
     addEventListener();
+    focus_ = Sprite::create(DocumentManager::getInstance()->getPath("FocusPic"));
+    focus_->setPosition(toPixel(focus_pos_));
+    focus_->setAnchorPoint(Vec(0, 0));
+    layer_->addChild(focus_, 512);
     layer_->setCameraMask(static_cast<unsigned short>(CameraFlag::USER1));
     return layer_;
 }

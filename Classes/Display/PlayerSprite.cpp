@@ -1,7 +1,4 @@
 #include "PlayerSprite.h"
-
-#include <ftimage.h>
-
 #include "MapLayer.h"
 
 USING_NS_CC;
@@ -9,9 +6,10 @@ USING_NS_CC;
 #undef GetObject
 #endif
 
-static constexpr float SCALE_FACTOR = 1.8f;
+static constexpr float SCALE_FACTOR = 1.5f;
 static constexpr float FRAME_LENGTH_WALK = 0.3f; // 18 frames
 static constexpr float FRAME_LENGTH_RUN = 0.2f; // 12 frames
+static constexpr float FRAME_LENGTH_INTERACT = 0.08f; // 7 frames, 6 duration
 static constexpr int SPEED_WALK = 12; // 1.8 pixel / frame
 static constexpr int SPEED_RUN = 16; // 1.25 pixel / frame
 static constexpr float DISPLACEMENT_WALK = SPEED_WALK / (FRAME_LENGTH_WALK * 60);
@@ -119,9 +117,6 @@ PlayerSprite* PlayerSprite::create(const rapidjson::Document* doc, bool always_r
     return nullptr;
 }
 
-
-
-
 void PlayerSprite::moveBy(MOVEMENT direction, int length)
 {
 	move(direction);
@@ -173,9 +168,51 @@ void PlayerSprite::stop(MOVEMENT move_e)
     }
 }
 
-void PlayerSprite::interact(MOVEMENT move_e)
+void PlayerSprite::interact(Vec<int> pos)
 {
-	
+    if (repeat_action_ != nullptr)
+    {
+        stopAction(repeat_action_);
+        repeat_action_->release();
+        repeat_action_ = nullptr;
+        is_moving = false;
+    }
+
+	if (pos.Y() == -1)
+	{
+        stand_direction_ = MOVEMENT::DOWN;
+	}
+    else if (pos.X() == 1)
+    {
+	    stand_direction_ = MOVEMENT::RIGHT;
+    }
+    else if (pos.X() == -1)
+    {
+	    stand_direction_ = MOVEMENT::LEFT;
+    }
+    else if (pos.Y() == 1)
+    {
+	    stand_direction_ = MOVEMENT::UP;
+    }
+
+    Animation* animation = Animation::create();
+    animation->setDelayPerUnit(FRAME_LENGTH_INTERACT);
+    MOVEMENT move_e = static_cast<MOVEMENT>(static_cast<int>(stand_direction_) + 8);
+    for (int i : movements_[static_cast<int>(move_e)])
+    {
+        auto frame = SpriteFrameCache::getInstance()->getSpriteFrameByName(getFrameName(frame_format_, i));
+        animation->addSpriteFrame(frame);
+    }
+    auto frame = SpriteFrameCache::getInstance()->getSpriteFrameByName(getFrameName(frame_format_, 
+        movements_[static_cast<int>(stand_direction_)][0]));
+    animation->addSpriteFrame(frame);
+    Animate* animate = Animate::create(animation);
+    runAction(animate);
+    parent_->layer_->getEventDispatcher()->pauseEventListenersForTarget(parent_->layer_);
+    auto functionCallback = std::function<void(float)>([this](float dt) {
+        parent_->layer_->getEventDispatcher()->resumeEventListenersForTarget(parent_->layer_);
+        });
+    schedule(functionCallback, 0, 0, 0.48f, "interact");
 }
 
 void PlayerSprite::changeSpeed()
@@ -218,4 +255,5 @@ void PlayerSprite::update(float delta)
 
     parent_->getCamera()->setPosition(getPosition()
         - Director::getInstance()->getWinSize() / SCALE_FACTOR / 2);
+    parent_->refocus();
 }

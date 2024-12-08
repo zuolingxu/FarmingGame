@@ -12,7 +12,6 @@ static constexpr int FRONT_UI_ZORDER = 10;
 static constexpr int BACK_UI_ZORDER = -10;
 static constexpr int BACKGROUND_ZORDER = -30;
 static constexpr int MAP_ZORDER = 0;
-static constexpr float SCALE_FACTOR = 1.5f;
 
 SceneManager* SceneManager::instance_ = new SceneManager;
 

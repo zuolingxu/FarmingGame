@@ -12,8 +12,9 @@
         "CloseSeletedPic":"image/close_seleted.png",
         "loading_bar": "image/loading_bar.png",
         "ArialFon": "fonts/arial.ttf",
-        "MarkerFeltFon": "fonst/Marker Felt.ttf"
+        "MarkerFeltFon": "fonst/Marker Felt.ttf",
+        "FocusPic": "image/selected_tile.png"
     },
-    "UI": [ "ConfigUI" ],
-    "Map": [ "test"]
+    "UI": ["ConfigUI"],
+    "Map": ["test"]
 }
