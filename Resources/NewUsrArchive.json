@@ -1,6 +1,6 @@
 {
     "key_info": {
-        "day": 0,
+        "day": 1,
         "money": 1000
     },
     
@@ -22,7 +22,7 @@
         "Example": {
             "12 13":{
                 "Type": "Land",
-              "Info": {
+                "Info": {
                 "CropName": "Potato",
                 "LiveDay": "1",
                 "MaturationDay": "5",

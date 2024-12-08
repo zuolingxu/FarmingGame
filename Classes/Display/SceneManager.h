@@ -7,6 +7,7 @@
 #include "UILayer.h"
 #include "ui/UILoadingBar.h"
 #include "cocos2d.h"
+#include "TimeManager.h"
 
 class SceneManager
 {

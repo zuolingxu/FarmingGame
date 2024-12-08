@@ -1,0 +1,17 @@
+{
+    "Haley_move":{
+        "plist": "Haley.plist",
+        "movement": {
+            "DOWN": [0],
+            "RIGHT": [4],
+            "UP": [8],
+            "LEFT": [12],
+            "W_DOWN": [1,2,3],
+            "W_RIGHT": [5,6,7],
+            "W_UP": [9,10,11],
+            "W_LEFT": [13,14,15]
+        }
+    }
+}
+
+

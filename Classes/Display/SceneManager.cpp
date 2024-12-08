@@ -72,6 +72,7 @@ SceneManager* SceneManager::getInstance()
 
 void SceneManager::createMaps()
 {
+	TimeManager::getInstance();
 	if (DocumentManager::getInstance()->getArchiveDocument() != nullptr && map_.empty()){
 		DocumentManager* manager = DocumentManager::getInstance();
 		const rapidjson::Document* doc = manager->getDocument(manager->getPath("global"));

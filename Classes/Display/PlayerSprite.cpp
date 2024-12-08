@@ -113,6 +113,7 @@ PlayerSprite* PlayerSprite::create(const rapidjson::Document* doc, bool always_r
         sprite->setAnchorPoint(Vec2(0, 0));
         return sprite;
     }
+    //�����ʼ��ʧ��
     CC_SAFE_DELETE(sprite);
     return nullptr;
 }
