@@ -9,7 +9,7 @@
 
 class TimeManager {
 private:
-    const float MinuteOfOneDay = 10; // 现实MinuteOfOneDay分钟等于游戏1天
+    const float MinutesOfOneDay = 0.1; // 现实MinuteOfOneDay分钟等于游戏1天
     static TimeManager* instance_;//单例函数
 
     //现实时间10分钟，游戏时间一天24小时
@@ -47,7 +47,7 @@ public:
     void saveGameData(); // 在NewUrsArchive中存档
 
     //调试使用
-    /*/void logCurrentTime() {
+    /*void logCurrentTime() {
         CCLOG("Current Day: %d", current_day_);
         CCLOG("Current Time: %.1f", current_time_);
     }*/
