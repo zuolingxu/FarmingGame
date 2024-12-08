@@ -22,7 +22,7 @@
         "Example": {
             "12 13":{
                 "Type": "Land",
-              "Info": {
+                "Info": {
                 "CropName": "Potato",
                 "LiveDay": "1",
                 "MaturationDay": "5",
