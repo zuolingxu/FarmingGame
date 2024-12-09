@@ -7,7 +7,7 @@
 
 class Character {
 public:
-    // ÎïÆ·ÀàÐÍÃ¶¾Ù
+    // ï¿½ï¿½Æ·ï¿½ï¿½ï¿½ï¿½Ã¶ï¿½ï¿½
     enum class ItemType {
         FERTILIZER,
         SEED,
@@ -15,29 +15,75 @@ public:
         NONE
     };
 
-    // ÎïÆ·½á¹¹
+    // ï¿½ï¿½Æ·ï¿½á¹¹
     struct Item {
         ItemType type;
         std::string name;
     };
 
 private:
-    std::vector<Item> inventory; // ÈËÎï³ÖÓÐµÄÎïÆ·
-    static Character* instance;   // µ¥ÀýÊµÀý
+    std::vector<Item> inventory; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½Æ·
+    static Character* instance;   // ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½
 
-    // Ë½ÓÐ¹¹Ôìº¯Êý£¬·ÀÖ¹Íâ²¿ÊµÀý»¯
+    // Ë½ï¿½Ð¹ï¿½ï¿½ìº¯ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¹ï¿½â²¿Êµï¿½ï¿½ï¿½ï¿½
     Character() {
-        // ¿ÉÒÔÔÚÕâÀï½øÐÐÒ»Ð©³õÊ¼»¯²Ù×÷
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»Ð©ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     }
 
 public:
-    // »ñÈ¡µ¥ÀýÊµÀý
+    // ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½
     static Character* getInstance() {
         if (!instance) {
-            instance = new Character(); // ¶¯Ì¬ÄÚ´æ·ÖÅä
+            instance = new Character(); // ï¿½ï¿½Ì¬ï¿½Ú´ï¿½ï¿½ï¿½ï¿½
         }
         return instance;
     }
+//#include "cocos2d.h"
+//#include "UILayer.h"
+//
+//class UILogic
+//{
+//public:
+//    // ï¿½ï¿½È¡ UILogic Êµï¿½ï¿½
+//    static UILogic* getInstance();
+//
+//    // ï¿½ï¿½Ê¼ï¿½ï¿½ UILogic
+//    void init(UILayer* uiLayer);
+//
+//    //// ï¿½ï¿½ UI ï¿½Â¼ï¿½
+//    //void bindEvents();
+//
+//    //// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¥ï¿½ï¿½ï¿½
+//    //void onTaskButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+//
+//    //// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¥ï¿½ï¿½ï¿½
+//    //void onBagButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+//
+//    //// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½Å¥ï¿½ï¿½ï¿½
+//    //void onStartButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+//
+//    //// ï¿½ï¿½ï¿½ï¿½ï¿½Ø±Õ±ï¿½ï¿½ï¿½ï¿½ï¿½Å¥ï¿½ï¿½ï¿½
+//    //void onCloseBagButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+//
+//    //// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½
+//    //void onBagSlotClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+//
+//    //// ï¿½ï¿½ï¿½ï¿½ï¿½ÂµÄ°ï¿½Å¥ï¿½ï¿½ï¿½
+//    //void onNewButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+//    //void onLoadButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+//    void onExitButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+//
+//    //// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
+//    //bool onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
+//
+//private:
+//    // Ë½ï¿½Ð¹ï¿½ï¿½ìº¯ï¿½ï¿½
+//    UILogic();
+//    static UILogic* instance_;
+//
+//    UILayer* uiLayer_;
+//};
+
 
     void addItem(const Item& item) {
         inventory.push_back(item);
@@ -56,22 +102,22 @@ public:
         return false;
     }
 
-    // ÇåÀíµ¥ÀýÊµÀý£¨¿ÉÑ¡£©
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½
     static void cleanup() {
-        delete instance; // ÊÍ·Å¶¯Ì¬·ÖÅäµÄÄÚ´æ
+        delete instance; // ï¿½Í·Å¶ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½
         instance = nullptr;
     }
 
-    // ·ÀÖ¹¿½±´¹¹ÔìºÍ¸³Öµ²Ù×÷
+    // ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½Öµï¿½ï¿½ï¿½ï¿½
     Character(const Character&) = delete;
     Character& operator=(const Character&) = delete;
 
-    // Èç¹ûÐèÒªÖ§³ÖÒÆ¶¯²Ù×÷£¬¿ÉÒÔÌí¼ÓÒÆ¶¯¹¹Ôìº¯ÊýºÍÒÆ¶¯¸³ÖµÔËËã·û
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ÒªÖ§ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ìº¯ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½
     // Character(Character&&) = default;
     // Character& operator=(Character&&) = default;
 
-    // Îö¹¹º¯ÊýÉùÃ÷ÎªË½ÓÐ£¬·ÀÖ¹Íâ²¿É¾³ý
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÎªË½ï¿½Ð£ï¿½ï¿½ï¿½Ö¹ï¿½â²¿É¾ï¿½ï¿½
     ~Character() {
-        // ¿ÉÒÔÔÚÕâÀï½øÐÐÒ»Ð©ÇåÀí²Ù×÷
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»Ð©ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     }
 };

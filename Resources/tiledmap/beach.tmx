@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="30" height="24" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="33">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="30" height="24" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="36">
  <tileset firstgid="1" source="spring_beach..tsx"/>
  <layer id="2" name="sea" width="30" height="24">
   <data encoding="base64" compression="gzip">
@@ -13,7 +13,7 @@
  </layer>
  <layer id="1" name="beach" width="30" height="24">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAACu2TO07DQBCGx5HSAKmCeBhFoo5FOpsmRcqcIJDOR+EEXAFaulyBBpDoKHi1FLxaigQo+Bd7xWQ1Xq8TY1Iw0qeNbWW/+fcREFFQIlslzXNScl+LyOoC9OCnY7Pgtzwiol4I+BhZntuWuVqsFwcvhY7jbjJu66x+AU8WHbcej8PUK623xBpYBxtz9Ka8keCVuARDsMmQ9ijrnnYMr5RXscN+7zHnAzgCo/S5O0PekOXla2veO+58o6ROmb9L0+fZdlbz8nKnzqidvK7SntT3Q6MXl7wSWN+YZ5RK5zbfKfdAmNN3yIue47pnkeb0o937Pzm+7wPexYMkd09/4+cI/zuwZXVx67Xne3CGLOfgwkv66iO/ogxnVl3DdQNuwR2496b7+g2nqkd4nsAzeAGvM+5j0RrDMwHv4AN8VuRVtVQjWgYrteqcZjX+0P1f7vUFYWMHfUALAAA=
+   H4sIAAAAAAAACu2TP0/CQBiH35K4CE4a/pSYOEtka10YGP0EIFs/kV9BVja/gouauDkoujqIsjIgOvg724svl7ftFSow8CZPru0l97y/u16DiBo5Us9pnUHOfW0iBxvQgxuN+xnn0vCJ2h7go5/wfpyw1iHrxcJLnuV4Go5HOqubwRNH067Hvhd5pf2WKIMKqC7Rm/L6glfiHvRAjSGdUdw9bRpeKa/ihD13mfMVXIKr6L21QF6P5eV7a9477pxQWNfM36L5/znpX03Ly506o3byeoh6UvMXRi82eSWwvwHPKJXObX5T7o6wpmuRFz0HO06CNKUf7T7/y/F7H/At6IS523qO/0dpWW3ceu/5Gdwgyy24c8K+zpBfkYczrh7hegJD8AxenPm+/sOp6g2eEXgHH2C84DlmrSk8n2AGvsD3iryqdgtERVAqrM5p1t4a3duyrx+mX3ckQAsAAA==
   </data>
  </layer>
  <layer id="4" name="object" width="30" height="24">
@@ -36,11 +36,6 @@
   <object id="13" x="326" y="201.5" width="6" height="19"/>
   <object id="16" x="231" y="2.5" width="66" height="56.5"/>
   <object id="17" x="180.5" y="6.5" width="22.5" height="17"/>
-  <object id="18" x="340" y="4.33333" width="7.66667" height="23.3333"/>
-  <object id="19" x="356" y="22" width="8" height="52"/>
-  <object id="20" x="373" y="68.3333" width="19.6667" height="8"/>
-  <object id="21" x="387.667" y="84.6667" width="6.66667" height="21.6667"/>
-  <object id="22" x="405.667" y="102" width="70.6667" height="5.66667"/>
   <object id="23" x="359" y="180.667" width="17" height="7"/>
   <object id="24" x="371.667" y="162.667" width="20.6667" height="9.33333"/>
   <object id="25" x="388.667" y="151" width="35" height="5.66667"/>
@@ -50,5 +45,8 @@
   <object id="29" x="275" y="214.333" width="8.66667" height="21"/>
   <object id="31" x="40" y="20.5" width="18.5" height="21.5"/>
   <object id="32" x="71" y="150" width="20" height="21.5"/>
+  <object id="33" x="422" y="3.5" width="53" height="69"/>
+  <object id="34" x="4" y="3" width="165.5" height="9"/>
+  <object id="35" x="309.5" y="5.5" width="104.5" height="4.5"/>
  </objectgroup>
 </map>

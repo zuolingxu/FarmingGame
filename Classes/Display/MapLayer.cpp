@@ -1,7 +1,9 @@
 #include "MapLayer.h"
 #include "json/reader.h"
-#include "Object.h"
+#include "MapObject.h"
+#include "SceneManager.h"
 #include <functional>
+#include "Land.h"
 
 USING_NS_CC;
 #ifdef _MSC_VER
@@ -10,6 +12,14 @@ USING_NS_CC;
 
 static constexpr int BACKGROUND_ZORDER = -512;
 static constexpr int TMX_ZORDER = -256;
+static constexpr int MAP_MAX_LENGTH = 10;
+static constexpr float SCALE_FACTOR = 1.5f;
+
+template<typename T>
+static bool inVecRange(const std::vector<T>& vec, const Vec<int>& index)
+{
+    return index.X() >= 0 && index.X() < vec.size() && index.Y() >= 0 && index.Y() < vec[index.X()].size();
+}
 
 MapLayer::MapLayer(const std::string& tmx_path, const cocos2d::Color3B& background_color,
     rapidjson::Value* const_object, rapidjson::Value* archive_object) : background_color_(background_color)
@@ -29,7 +39,7 @@ MapLayer::MapLayer(const std::string& tmx_path, const cocos2d::Color3B& backgrou
         tiled_map_ = TMXTiledMap::create(tmx_name_);
         tiled_map_->retain();
         Vec<int> size = tiled_map_->getMapSize();
-        interact_map_ = std::vector(size.X(), std::vector<::Object*>(size.Y(), nullptr));
+        interact_map_ = std::vector(size.X(), std::vector<::MapObject*>(size.Y(), nullptr));
         collision_map_ = std::vector(size.X(), std::vector<bool>(size.Y(), false));
         addCollisions(); 
         tiled_map_->release();
@@ -72,17 +82,28 @@ void MapLayer::addTiledMap()
     {
         tiled_map_ = TMXTiledMap::create(tmx_name_);
         tiled_map_->setTileAnimEnabled(true);
-        // tiled_map_->setPosition3D({0, 0, 0});
         layer_->addChild(tiled_map_, TMX_ZORDER);
     }
 }
 
-void MapLayer::addObject(Vec<int> pos, rapidjson::Value& val)
+void MapLayer::addObject(const Vec<int>& pos, rapidjson::Value& val)
 {
-    focus_pos_ = std::move(pos);
-    ::Object* obj = ::Object::create(val, this);
+    ::MapObject* obj = ::MapObject::create(val, this, pos);
     obj->retain();
-    interact_map_[focus_pos_.X()][focus_pos_.Y()] = obj;
+    Vec<int> size = obj->getInfo().size;
+    Vec<int> pos2 = pos + size;
+    bool collision = obj->hasCollision();
+    for (int x = pos.X(); x < pos2.X(); x++)
+    {
+	    for (int y = pos.Y(); y < pos2.Y(); y++)
+	    {
+		    if (inVecRange(interact_map_, {x,y}))
+		    {
+			    interact_map_[x][y] = obj;
+                collision_map_[x][y] = collision_map_[x][y] == true || collision;
+		    }
+	    }
+    }
 }
 
 void MapLayer::addCollisions()
@@ -108,21 +129,6 @@ void MapLayer::addCollisions()
                 }
             }
         }
-    }
-    else {
-        CCLOG("Object layer not found!");
-    }
-
-    for (int i = 0; i < collision_map_.size(); i++)
-    {
-	    for (int j = 0; j < collision_map_[i].size(); j++)
-	    {
-            if (interact_map_[i][j] != nullptr)
-            {
-                
-                collision_map_[i][j] = collision_map_[i][j] == true || interact_map_[i][j]->hasCollision();
-            }
-	    }
     }
 }
 
@@ -176,22 +182,22 @@ void MapLayer::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Ev
     case cocos2d::EventKeyboard::KeyCode::KEY_UP_ARROW:
     case cocos2d::EventKeyboard::KeyCode::KEY_W:
     case cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_W:
-        main_player_->move(PlayerSprite::MOVEMENTS::W_UP);
+        main_player_->move(PlayerSprite::MOVEMENT::W_UP);
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_DOWN_ARROW:
     case cocos2d::EventKeyboard::KeyCode::KEY_S:
     case cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_S:
-        main_player_->move(PlayerSprite::MOVEMENTS::W_DOWN);
+        main_player_->move(PlayerSprite::MOVEMENT::W_DOWN);
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_LEFT_ARROW:
     case cocos2d::EventKeyboard::KeyCode::KEY_A:
     case cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_A:
-        main_player_->move(PlayerSprite::MOVEMENTS::W_LEFT);
+        main_player_->move(PlayerSprite::MOVEMENT::W_LEFT);
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
     case cocos2d::EventKeyboard::KeyCode::KEY_D:
     case cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_D:
-        main_player_->move(PlayerSprite::MOVEMENTS::W_RIGHT);
+        main_player_->move(PlayerSprite::MOVEMENT::W_RIGHT);
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_1:
     case cocos2d::EventKeyboard::KeyCode::KEY_2:
@@ -215,10 +221,41 @@ void MapLayer::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Ev
         changeHolding(12);
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_SHIFT:
-        main_player_->changeSpeed();
-        break;
     case cocos2d::EventKeyboard::KeyCode::KEY_CAPS_LOCK:
         main_player_->changeSpeed();
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_F1:
+        // TODO: Test Code 
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_F2:
+        // TODO: Test Code
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_F4:
+        // TODO: Test Code
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_F5:
+        // TODO: Test Code
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_F6:
+        // TODO: Test Code
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_F7:
+        // TODO: Test Code
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_F8:
+        // TODO: Test Code
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_F9:
+        // TODO: Test Code
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_F10:
+        // TODO: Test Code
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_F11:
+        // TODO: Test Code
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_F12:
+        // TODO: Test Code
         break;
     default: break;
     }
@@ -232,22 +269,22 @@ void MapLayer::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::E
     case cocos2d::EventKeyboard::KeyCode::KEY_UP_ARROW:
     case cocos2d::EventKeyboard::KeyCode::KEY_W:
     case cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_W:
-        main_player_ -> stop(PlayerSprite::MOVEMENTS::W_UP);
+        main_player_ -> stop(PlayerSprite::MOVEMENT::W_UP);
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_DOWN_ARROW:
     case cocos2d::EventKeyboard::KeyCode::KEY_S:
     case cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_S:
-        main_player_->stop(PlayerSprite::MOVEMENTS::W_DOWN);
+        main_player_->stop(PlayerSprite::MOVEMENT::W_DOWN);
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_LEFT_ARROW:
     case cocos2d::EventKeyboard::KeyCode::KEY_A:
     case cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_A:
-        main_player_->stop(PlayerSprite::MOVEMENTS::W_LEFT);
+        main_player_->stop(PlayerSprite::MOVEMENT::W_LEFT);
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
     case cocos2d::EventKeyboard::KeyCode::KEY_D:
     case cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_D:
-        main_player_->stop(PlayerSprite::MOVEMENTS::W_RIGHT);
+        main_player_->stop(PlayerSprite::MOVEMENT::W_RIGHT);
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_SHIFT:
         main_player_->changeSpeed();
@@ -260,22 +297,43 @@ void MapLayer::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::E
 
 void MapLayer::onMouseDown(cocos2d::Event* event)
 {
+    static const std::vector<Vec<int>> valid_pos = { {1,0} ,{1,1}, {0,0},
+        {0,1},{-1,1},{-1,0},{-1,-1},{0,-1},{1,-1}};
     cocos2d::EventMouse* e = dynamic_cast<cocos2d::EventMouse*>(event);
-
     if (e)
     {
         if (e->getMouseButton() == cocos2d::EventMouse::MouseButton::BUTTON_LEFT) 
         {
-            ::Object* focus = interact_map_[focus_pos_.X()][focus_pos_.Y()];
-            if (focus != nullptr)
+            try
             {
-                focus->interact();
+                ::MapObject* focus = interact_map_.at(focus_pos_.X()).at(focus_pos_.Y());
+                Vec<int> grid_pos = toGrid(main_player_->getPosition() + Vec2(GridSize / 2, 0));
+                for (auto& pos : valid_pos)
+                {
+                    if (focus_pos_ == grid_pos + pos) {
+                        main_player_->interact(pos);
+                        if (focus != nullptr)
+                        {
+                            focus->interact();
+                        }
+                        else if (true /* && holdings == "chutou"*/)
+                        {
+	                        //TODO: Land::create;
+                        }
+                    }
+                }
             }
+            catch (std::exception& exception)
+            {
+	            // nothing to do
+            }
+
         }
         else if (e->getMouseButton() == cocos2d::EventMouse::MouseButton::BUTTON_RIGHT) 
         {
             // TODO: interact with holdings
         }
+        
     }
     event->stopPropagation(); 
 }
@@ -285,11 +343,11 @@ void MapLayer::onMouseMove(cocos2d::Event* event)
     cocos2d::EventMouse* e = dynamic_cast<cocos2d::EventMouse*>(event);
     if (e)
     {
-        cocos2d::Vec2 mousePos = e->getLocation();
-        Size screenSize = Director::getInstance()->getWinSize();
-        float x = (2.0f * mousePos.x) / screenSize.width - 1.0f;
-        float y = 1.0f - (2.0f * mousePos.y) / screenSize.height;
-
+        Size win_size = Director::getInstance()->getWinSize();
+    	mouse_pos_ = e->getLocation();
+        mouse_pos_.y = win_size.height - mouse_pos_.y;
+        mouse_pos_ = (mouse_pos_ - win_size / 2) / SCALE_FACTOR;
+        refocus();
     }
     event->stopPropagation();
 }
@@ -300,21 +358,23 @@ void MapLayer::onMouseUp(cocos2d::Event* event)
     event->stopPropagation();
 }
 
-void MapLayer::changeFocus()
-{
-	// TODO: change focus
-}
-
 void MapLayer::changeHolding(const int num)
 {
-	// UILogic::changeHoldings(num);
+	// TODO: UILogic::changeHoldings(num);
 }
 
+void MapLayer::refocus()
+{
+    focus_pos_ = toGrid(mouse_pos_ + main_player_->getPosition());
+    focus_->setPosition(toPixel(focus_pos_));
+}
 
 Node* MapLayer::toFront(PlayerSprite* main_player)
 {
     layer_ = Node::create();
     layer_->retain();
+    is_front_ = true;
+
     addTiledMap();
 
     auto background = cocos2d::LayerColor::create(cocos2d::Color4B(background_color_));
@@ -329,36 +389,26 @@ Node* MapLayer::toFront(PlayerSprite* main_player)
 
 
     Vec2 pixel_pos = map_size_pixel / 2;
-    float scale_factor = 1.0f;
+    Size size = Director::getInstance()->getWinSize();
+    float scale_factor = 0.9f;
     if (main_player != nullptr)
     {
         main_player_ = main_player;
         pixel_pos = main_player_->getPosition();
         main_player_->setParentMapLayer(this);
         layer_->addChild(main_player_, pixel_pos.y);
-        pixel_pos += Vec2(GridSize / 2, GridSize);
-        scale_factor = ScaleFactor;
-        // 3d camera
-     //   Vec3 pos_3d(pixel_pos.x, pixel_pos.y, 0);
-     //   Vec3 pos_camera = pos_3d + Vec3(0, 0, 200);
-     //   Size view_size = Director::getInstance()->getOpenGLView()->getFrameSize();
-     //   const float aspect_ratio_ = view_size.width / view_size.height;
-    	//camera_ = Camera::createPerspective(60, aspect_ratio_, 0.1f, 1000.0f);
-    	//camera_->setPosition3D(pos_camera);
-     //   camera_->lookAt(pos_3d);
-
+		scale_factor = SCALE_FACTOR;
     }
-    auto size = Director::getInstance()->getWinSize() / scale_factor;
+    size = size / scale_factor;
     camera_ = Camera::createOrthographic(size.width, size.height, -1024, 1024);
-    camera_->setPosition(pixel_pos - size / scale_factor);
+    camera_->setPosition(pixel_pos - size / 2);
     camera_->setCameraFlag(CameraFlag::USER1);
     camera_->setDepth(10);
     layer_->addChild(camera_);
 
-    is_front_ = true;
     for (auto& row : interact_map_)
     {
-	    for (::Object* object: row)
+	    for (::MapObject* object: row)
 	    {
 		    if (object != nullptr)
 		    {
@@ -368,16 +418,20 @@ Node* MapLayer::toFront(PlayerSprite* main_player)
     }
 
     addEventListener();
+    focus_ = Sprite::create(DocumentManager::getInstance()->getPath("FocusPic"));
+    focus_->setPosition(toPixel(focus_pos_));
+    focus_->setAnchorPoint(Vec(0, 0));
+    layer_->addChild(focus_, 1000000);
     layer_->setCameraMask(static_cast<unsigned short>(CameraFlag::USER1));
     return layer_;
 }
 
 void MapLayer::pause() const
 {
-    main_player_->stop(PlayerSprite::MOVEMENTS::EVERY);
+    main_player_->stop(PlayerSprite::MOVEMENT::ALL);
     for (auto& row : interact_map_)
     {
-        for (::Object* object : row)
+        for (::MapObject* object : row)
         {
             if (object != nullptr)
             {
@@ -393,7 +447,7 @@ void MapLayer::resume() const
 	layer_->resume();
     for (auto& row : interact_map_)
     {
-	    for (::Object* object : row)
+	    for (::MapObject* object : row)
 	    {
 		    if (object != nullptr)
 		    {
@@ -405,15 +459,24 @@ void MapLayer::resume() const
 
 void MapLayer::toBack()
 {
-    is_front_ = false;
-    SpriteFrameCache::getInstance()->removeSpriteFrames();
+	if (is_front_){
+		is_front_ = false;
+        tiled_map_ = nullptr;
+        layer_ = nullptr;
+        camera_ = nullptr;
+        main_player_ = nullptr;
+        touch_listener_ = nullptr;
+        keyboard_Listener_ = nullptr;
+        mouse_listener_ = nullptr;
+        SpriteFrameCache::getInstance()->removeSpriteFrames();
+	}
 }
 
 void MapLayer::settle() const
 {
 	for (auto& row : interact_map_)
 	{
-		for (::Object* object : row)
+		for (::MapObject* object : row)
 		{
 			if (object != nullptr)
 			{
@@ -442,14 +505,14 @@ bool MapLayer::hasCollision(const cocos2d::Vec2& pos)
 {
 	Vec<int> grid = toGrid(pos);
     Vec<int> map_size = tiled_map_->getMapSize();
-    if (pos.x > 0 && pos.y > 0 && grid.X() < map_size.X() && grid.Y() < map_size.Y())
+    if (pos.x > 0 && grid.X() < map_size.X() && pos.y > 0 && grid.Y() < map_size.Y())
     {
-	    return collision_map_[grid.X()][grid.Y()];
-    } 
+        return collision_map_[grid.X()][grid.Y()];
+    }
     return true; 
 }
 
-void MapLayer::addPlayerSprite(PlayerSprite* player)
+void MapLayer::addPlayer(PlayerSprite* player)
 {
     layer_->addChild(player, player->getPosition().y);
     player->setParentMapLayer(this);
@@ -460,7 +523,7 @@ void MapLayer::clearObjects()
 {
     for (auto& row : interact_map_)
     {
-	    for (::Object* object : row)
+	    for (::MapObject* object : row)
 	    {
             object->clear();
             object->release();
@@ -468,39 +531,87 @@ void MapLayer::clearObjects()
     }
 }
 
-
-
-Sprite* MapLayer::addSpriteWithFrame(const std::string& frame_name) const
+void MapLayer::addSpriteWithFrame(MapObject::ObjectInfo& obj_info, const std::string& frame_name) const
 {
-    if (is_front_)
+    if (is_front_ && obj_info.sprite == nullptr)
     {
         SpriteFrame* spriteFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName(frame_name);
         if (spriteFrame != nullptr) 
         {
-            Sprite* sprite = Sprite::createWithSpriteFrame(spriteFrame);
+            obj_info.sprite = Sprite::createWithSpriteFrame(spriteFrame);
             toPixel(focus_pos_);
-            // sprite->setPosition3D({0,0,0});
-            sprite->setAnchorPoint(Vec2(0, 0));
-            sprite->setCameraMask(static_cast<unsigned short>(CameraFlag::USER1));
-            layer_->addChild(sprite, focus_pos_.Y() * GridSize);
-            return sprite;
+            obj_info.sprite->setAnchorPoint(Vec2(0, 0));
+            obj_info.sprite->setCameraMask(static_cast<unsigned short>(CameraFlag::USER1));
+            layer_->addChild(obj_info.sprite, focus_pos_.Y() * GridSize);
         }
     }
-	return nullptr;
 }
 
-void MapLayer::changeWithActionSequence(std::vector<int> sequence)
+void MapLayer::addPlayerSpriteWithDocument(MapObject::ObjectInfo& obj_info, const rapidjson::Document* sprite_document)
 {
-	if (is_front_)
+    if (is_front_ && obj_info.sprite == nullptr)
+    {
+        obj_info.sprite = PlayerSprite::create(sprite_document, obj_info.position, obj_info.size);
+        if (obj_info.sprite != nullptr)
+        {
+            obj_info.sprite->setPosition(toPixel(obj_info.position));
+            obj_info.sprite->setAnchorPoint(Vec2(0, 0));
+            obj_info.sprite->setCameraMask(static_cast<unsigned short>(CameraFlag::USER1));
+            players_.emplace_back(obj_info.sprite);
+            layer_->addChild(obj_info.sprite, obj_info.sprite->getPosition().y);
+        }
+    }
+}
+
+
+void MapLayer::changeWithSingleFrame(Sprite* stationary_sprite, const std::string& new_frame_name) const
+{
+	if (is_front_ && stationary_sprite != nullptr)
 	{
-		
+        SpriteFrame* new_frame = SpriteFrameCache::getInstance()->getSpriteFrameByName(new_frame_name);
+        if (new_frame != nullptr)
+        {
+            stationary_sprite->setSpriteFrame(new_frame);
+        }
 	}
 }
 
-void MapLayer::changeWithSingleFrame(int num)
+void MapLayer::updateMaps(const Vec<int>& old_pos, const Vec<int>& new_pos, const Vec<int>& size)
 {
 	if (is_front_)
 	{
-		
+		Vec<int> old_pos2 = old_pos + size;
+        ::MapObject* obj = interact_map_[old_pos.X()][old_pos.Y()];
+        bool collision = false;
+        if (obj != nullptr)
+        {
+            collision = obj->hasCollision();
+            obj->getInfo().position = new_pos;
+        }
+        
+        for (int i = old_pos.X(); i < old_pos2.X(); ++i)
+        {
+	        for (int j = old_pos.Y(); j < old_pos2.Y(); ++j)
+	        {
+                if (inVecRange(collision_map_, Vec<int>(i, j)))
+                {
+                    collision_map_[i][j] = false;
+                    interact_map_[i][j] = nullptr;
+                }
+	        }
+        }
+
+        Vec<int> new_pos2 = new_pos + size;
+        for (int i = old_pos.X(); i < old_pos2.X(); ++i)
+        {
+            for (int j = old_pos.Y(); j < old_pos2.Y(); ++j)
+            {
+                if (inVecRange(collision_map_, Vec<int>(i, j)))
+                {
+                    collision_map_[i][j] = collision;
+                    interact_map_[i][j] = obj;
+                }
+            }
+        }
 	}
 }

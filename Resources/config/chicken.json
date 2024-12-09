@@ -1,6 +1,7 @@
 {
     "chicken_move":{
         "plist": "chicken.plist",
+        "frame_format":"chicken-{}.png",
         "movement": {
             "DOWN": [0],
             "RIGHT": [3],

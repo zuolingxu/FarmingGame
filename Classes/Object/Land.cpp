@@ -2,14 +2,14 @@
 
 USING_NS_CC;
 
-Land::Land(MapLayer* parent) : parent_(parent),Water(false),Fertilizer(false)
+Land::Land(MapLayer* parent, const Vec<int>& pos) : MapObject(pos), parent_(parent),Water(false),Fertilizer(false)
 {
 	
 }
 
 Land::~Land()
 {
-	// ÇåÀí×÷Îï¶ÔÏó
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	if (crop_) {
 		delete crop_;
 		crop_ = nullptr;
@@ -17,21 +17,21 @@ Land::~Land()
 }
 
 
-::Object* Land::create(rapidjson::Value& val, MapLayer* parent)
+::MapObject* Land::create(rapidjson::Value& val, MapLayer* parent, const Vec<int>& pos)
 {
 	Land* land = new Land(parent);
 	
-	// ¼ì²é×÷ÎïÊÇ·ñ´æÔÚ
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½
 	if (val.HasMember("HasCrop") && val["HasCrop"].GetBool()) {
-		// ´´½¨×÷Îï¶ÔÏó
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		if (val.HasMember("CropInfo") && val["CropInfo"].IsObject()) {
-			// ´«Èë CropInfo µÄÖµ
+			// ï¿½ï¿½ï¿½ï¿½ CropInfo ï¿½ï¿½Öµ
 			rapidjson::Value& cropInfo = val["CropInfo"];
 			land->crop_ = Crop::create(cropInfo, parent);
 		}
 	}
 	else {
-		land->crop_ = nullptr; // Ã»ÓĞ×÷Îï
+		land->crop_ = nullptr; // Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	}
 
 	if (val.HasMember("Water")) {
@@ -46,9 +46,9 @@ Land::~Land()
 
 ::Object* Land::createByPlayer(const cocos2d::Vec2& position, MapLayer* parent) {
 	Land* land = new Land(parent);
-	land->crop_ = nullptr; // Ã»ÓĞ×÷Îï
+	land->crop_ = nullptr; // Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-	// ½«¸ûµØÎ»ÖÃºÍĞÅÏ¢¼ÓÈë´æµµ£¨ÄÚ´æ£©
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½Ãºï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½æµµï¿½ï¿½ï¿½Ú´æ£©
 	land->saveToArchive(position);
 
 	return land; 
@@ -104,60 +104,60 @@ void Land::init()
 
 
 void Land::interact() {
-	Character* character = Character::getInstance(); // »ñÈ¡Ö÷½ÇÊµÀı
+	Character* character = Character::getInstance(); // ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½
 
 	if (!character) {
 		CCLOG("No character instance available for interaction.");
 		return;
 	}
 
-	// »ñÈ¡µ±Ç°´æµµÎÄµµ
+	// ï¿½ï¿½È¡ï¿½ï¿½Ç°ï¿½æµµï¿½Äµï¿½
 	DocumentManager* docManager = DocumentManager::getInstance();
 	rapidjson::Document* archiveDoc = docManager->getArchiveDocument();
 
-	// ¼ì²éÈËÎï³ÖÓĞµÄÎïÆ·
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğµï¿½ï¿½ï¿½Æ·
 	if (character->hasItem(Character::ItemType::FERTILIZER)) {
-		// Ê©·ÊÂß¼­
+		// Ê©ï¿½ï¿½ï¿½ß¼ï¿½
 		CCLOG("Applying fertilizer to the land.");
-		Fertilizer = true; // ¸üĞÂ¸ûµØµÄÊ©·Ê×´Ì¬
+		Fertilizer = true; // ï¿½ï¿½ï¿½Â¸ï¿½ï¿½Øµï¿½Ê©ï¿½ï¿½×´Ì¬
 
-		// ¸üĞÂ JSON ´æµµ
+		// ï¿½ï¿½ï¿½ï¿½ JSON ï¿½æµµ
 		if (archiveDoc->HasMember("Map")) {
 			auto& map = (*archiveDoc)["Map"];
 			if (map.HasMember("Farm") && map["Farm"].HasMember("12 13")) {
 				auto& landInfo = map["Farm"]["12 13"]["Info"];
-				landInfo["Fertilizer"].SetBool(true); // ¸üĞÂ·ÊÁÏ×´Ì¬
+				landInfo["Fertilizer"].SetBool(true); // ï¿½ï¿½ï¿½Â·ï¿½ï¿½ï¿½×´Ì¬
 			}
 		}
 	}
 	else if (character->hasItem(Character::ItemType::SEED)) {
-		// ²¥ÖÖÂß¼­
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ß¼ï¿½
 		CCLOG("Planting seeds in the land.");
 		if (!crop_) {
-			crop_ = Crop::createByPlayer(cocos2d::Vec2(12, 13), parent_); // ´´½¨ĞÂµÄ×÷Îï¶ÔÏó
+			crop_ = Crop::createByPlayer(cocos2d::Vec2(12, 13), parent_); // ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		}
 
-		// ¸üĞÂ JSON ´æµµ
+		// ï¿½ï¿½ï¿½ï¿½ JSON ï¿½æµµ
 		if (archiveDoc->HasMember("Map")) {
 			auto& map = (*archiveDoc)["Map"];
 			if (map.HasMember("Farm") && map["Farm"].HasMember("12 13")) {
 				auto& landInfo = map["Farm"]["12 13"]["Info"];
-				landInfo["HasCrop"].SetBool(true); // ¸üĞÂ×÷Îï´æÔÚ×´Ì¬
+				landInfo["HasCrop"].SetBool(true); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬
 			}
 		}
 	}
 	else if (character->hasItem(Character::ItemType::WATERING_CAN)) {
-		// ½½Ë®Âß¼­
+		// ï¿½ï¿½Ë®ï¿½ß¼ï¿½
 		CCLOG("Watering the crops.");
 		if (crop_) {
-			crop_->Water = true; // ¸üĞÂ×÷ÎïµÄ½½Ë®×´Ì¬
+			crop_->Water = true; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä½ï¿½Ë®×´Ì¬
 
-			// ¸üĞÂ JSON ´æµµ
+			// ï¿½ï¿½ï¿½ï¿½ JSON ï¿½æµµ
 			if (archiveDoc->HasMember("Map")) {
 				auto& map = (*archiveDoc)["Map"];
 				if (map.HasMember("Farm") && map["Farm"].HasMember("12 13")) {
 					auto& landInfo = map["Farm"]["12 13"]["Info"];
-					landInfo["CropInfo"]["Water"].SetBool(true); // ¸üĞÂ½½Ë®×´Ì¬
+					landInfo["CropInfo"]["Water"].SetBool(true); // ï¿½ï¿½ï¿½Â½ï¿½Ë®×´Ì¬
 				}
 			}
 		}
@@ -184,7 +184,7 @@ void Land::resume()
 
 void Land::settle()
 {
-	//Èô¸ûµØÉÏÓĞ×÷ÎïÔòµ÷ÓÃ×÷ÎïµÄÃ¿ÈÕ½áËãsettle
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½Õ½ï¿½ï¿½ï¿½settle
 	if (this->crop_)
 		(this->crop_)->settle();
 }

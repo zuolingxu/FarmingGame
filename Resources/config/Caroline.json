@@ -1,6 +1,7 @@
 {
     "Caroline_move":{
         "plist": "Caroline.plist",
+        "frame_format":"Caroline-{}.png",
         "movement": {
             "DOWN": [0],
             "RIGHT": [3],

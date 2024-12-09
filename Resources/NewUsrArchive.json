@@ -1,8 +1,35 @@
 {
-  "key_info": {
-    "day": 1,
-    "money": 1000
-  },
+    "key_info": {
+        "day": 1,
+        "money": 1000
+    },
+    
+    "belongings": {
+        "axe": [
+            1, "wood"
+        ],
+        "sunflower_seed":[
+            10
+        ]
+    },
+    
+    "relationship": {
+        "Caroline": 0,
+        "Abigail": 0,
+        "Haley":0
+    },
+
+    "friendship":{
+        "Caroline": false,
+        "Abigail": false,
+        "Haley":false
+    },
+
+    "marriage":{
+        "Caroline": false,
+        "Abigail": false,
+        "Haley":false
+    },
 
   "belongings": {
     "axe": [

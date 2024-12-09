@@ -1,6 +1,7 @@
 #include "AppDelegate.h"
 #include "DocumentManager.h"
 #include "SceneManager.h"
+#include "UILayer.h"
 
 // #define USE_AUDIO_ENGINE 1
 // #define USE_SIMPLE_AUDIO_ENGINE 1
@@ -55,8 +56,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto glview = director->getOpenGLView();
     if (!glview) {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC) || (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
-        glview = GLViewImpl::createWithRect("FarmingGame", cocos2d::Rect(0, 0, mediumResolutionSize.width, mediumResolutionSize.height));
-        // glview = GLViewImpl::createWithFullScreen("FarmingGame");
+    	glview = GLViewImpl::createWithRect("FarmingGame", cocos2d::Rect(0, 0, mediumResolutionSize.width, mediumResolutionSize.height));
 #else
         glview = GLViewImpl::create("FarmingGame");
 #endif
@@ -71,6 +71,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     // Set the design resolution
     glview->setDesignResolutionSize(designResolutionSize.width, designResolutionSize.height, ResolutionPolicy::NO_BORDER);
+
     // auto frameSize = glview->getFrameSize();
     // // if the frame's height is larger than the height of medium size.
     // if (frameSize.height > mediumResolutionSize.height)
@@ -97,7 +98,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
         rapidjson::Document* global_document = manager->getDocument(manager->getPath("global"));
         CCLOG(manager->getPath("global").c_str());
         manager->loadArchiveDocument(19);
-        SceneManager::getInstance()->NextMap("test","10 10");
+        SceneManager::getInstance()->NextMap("introduction");
     }
     catch (const std::exception& e)
     {
@@ -116,7 +117,6 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
 // This function will be called when the app is inactive. Note, when receiving a phone call it is invoked.
 void AppDelegate::applicationDidEnterBackground() {
-    Director::getInstance()->stopAnimation();
 
 #if USE_AUDIO_ENGINE
     AudioEngine::pauseAll();

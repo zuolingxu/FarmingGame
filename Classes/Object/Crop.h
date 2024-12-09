@@ -14,22 +14,22 @@ class Crop{
 	int MaturationDay;
 
 	public:
-	explicit Crop(MapLayer* parent);
+	explicit Crop(MapLayer* parent, const Vec<int>& pos);
 	~Crop();
-	static Crop* create(rapidjson::Value& val, MapLayer* parent);
-	static Crop* createByPlayer(const cocos2d::Vec2& position, MapLayer* parent, Land* land); // ´«Èëµ÷ÓÃÖÖ×ÓµÄ Land ¶ÔÏó
+	static Crop* create(rapidjson::Value& val, MapLayer* parent, const Vec<int>& pos);
+	static Crop* createByPlayer(const cocos2d::Vec2& position, MapLayer* parent, Land* land); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½ Land ï¿½ï¿½ï¿½ï¿½
 
-	void saveToArchive(const cocos2d::Vec2& position, Land* land); // ´«Èë Land ¶ÔÏó
+	void saveToArchive(const cocos2d::Vec2& position, Land* land); // ï¿½ï¿½ï¿½ï¿½ Land ï¿½ï¿½ï¿½ï¿½
 	void init();
 	void interact();
 	void clear();
 	void settle();
 
-	// ÎªLandÀà´«ÈëÊý¾Ý
+	// ÎªLandï¿½à´«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	std::string getCropName() const { return CropName; }
 	int getLiveDay() const { return LiveDay; }
 	int getMaturationDay() const { return MaturationDay; }
 
 }; 
 
-//ÖÖ×Ó´ÓµÚ1Ìì¿ªÊ¼Éú³¤,Ê©·Êºó´ÓµÚ2Ìì¿ªÊ¼Éú³¤
+//ï¿½ï¿½ï¿½Ó´Óµï¿½1ï¿½ì¿ªÊ¼ï¿½ï¿½ï¿½ï¿½,Ê©ï¿½Êºï¿½Óµï¿½2ï¿½ì¿ªÊ¼ï¿½ï¿½ï¿½ï¿½

@@ -2,24 +2,24 @@
 #include "cocos2d.h"
 #include "Crop.h"
 #include "DocumentManager.h"
-#include "Object.h"
+#include "MapObject.h"
 #include "json/document.h"
 #include "MapLayer.h"
 #include "UILogic.h"
 
-class Land final: protected ::Object {
+class Land final: protected MapObject {
     private:
-	Crop* crop_ = nullptr;  // Ö¸Ïò×÷Îï¶ÔÏó
-    MapLayer* parent_;      // ¸¸µØÍ¼²ã
+	Crop* crop_ = nullptr;  // Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    MapLayer* parent_;      // ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½
 
     bool Water;
     bool Fertilizer;
 
     public:
-	explicit Land(MapLayer* parent);
+	explicit Land(MapLayer* parent, const Vec<int>& pos);
     ~Land() override;
-    static Object* create(rapidjson::Value& val, MapLayer* parent);//´Ó´æµµ´´½¨¸ûµØ
-    static Object* createByPlayer(const cocos2d::Vec2& position, MapLayer* parent); // Íæ¼Ò´´½¨¸ûµØ
+    static Object* create(rapidjson::Value& val, MapLayer* parent, const Vec<int>& pos);//ï¿½Ó´æµµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    static Object* createByPlayer(const cocos2d::Vec2& position, MapLayer* parent); // ï¿½ï¿½Ò´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     virtual void init() override;
     virtual void interact() override;
     virtual void clear() override;
@@ -28,9 +28,9 @@ class Land final: protected ::Object {
     virtual void settle() override;
     virtual bool hasCollision() override;
 
-    void saveToArchive(const cocos2d::Vec2& position); // ±£´æµ½´æµµµÄ·½·¨£¨ÄÚ´æ£©
+    void saveToArchive(const cocos2d::Vec2& position); // ï¿½ï¿½ï¿½æµ½ï¿½æµµï¿½Ä·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú´æ£©
 
-    // Getter ·½·¨
+    // Getter ï¿½ï¿½ï¿½ï¿½
     bool isWatered() const { return Water; }
     bool isFertilized() const { return Fertilizer; }
     void setWater(bool water) { Water = water; }

@@ -4,16 +4,17 @@
     "GameVersion": "v1.0",
     "Files": {
         "global": "global.json",
-        "test": "config/test.json",
-        "player": "config/player_movement.json",
+        "introduction": "config/introduction.json",
+        "player": "config/player.json",
         "playerpls": "plist/player.plist",
         "HelloPic": "image/hello_world.png",
         "CloseNormalPic":"image/close_normal.png",
         "CloseSeletedPic":"image/close_seleted.png",
         "loading_bar": "image/loading_bar.png",
         "ArialFon": "fonts/arial.ttf",
-        "MarkerFeltFon": "fonst/Marker Felt.ttf"
+        "MarkerFeltFon": "fonst/Marker Felt.ttf",
+        "FocusPic": "image/selected_tile.png"
     },
-    "UI": [ "ConfigUI" ],
-    "Map": [ "test"]
+    "UI": ["ConfigUI"],
+    "Map": []
 }

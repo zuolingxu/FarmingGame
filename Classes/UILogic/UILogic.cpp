@@ -1,4 +1,4 @@
 #include "UILogic.h"
 
-// ¶¨Òå¾²Ì¬³ÉÔ±
+// ï¿½ï¿½ï¿½å¾²Ì¬ï¿½ï¿½Ô±
 Character* Character::instance = new Character;

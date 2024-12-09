@@ -1,0 +1,36 @@
+#pragma once
+#include "cocos2d.h"
+#include "DocumentManager.h"
+#include "HelperClasses.h"
+#include "json/document.h"
+
+class MapLayer;
+
+class MapObject : public cocos2d::Ref {
+public:
+	struct ObjectInfo
+	{
+		cocos2d::Sprite* sprite;
+		Vec<int> size;           //��ײ�����С
+		Vec<int> position;
+	};
+
+protected:
+	ObjectInfo info_;
+
+public:
+	MapObject(const Vec<int>& pos);
+	virtual ~MapObject() = default;
+	MapObject(const MapObject& other) = delete;
+	MapObject& operator=(const MapObject& other) = delete;
+	
+	static MapObject* create(rapidjson::Value& val, MapLayer* parents, const Vec<int>& pos);
+	MapObject::ObjectInfo& getInfo();
+	virtual void init() = 0; 
+	virtual void interact() = 0;
+	virtual void settle() = 0;       //��Ϸ��һ�����ʱ����
+	virtual void clear() = 0;
+	virtual void pause() = 0;
+	virtual void resume() = 0;
+	virtual bool hasCollision() = 0;  //������ײ���
+};
