@@ -187,7 +187,7 @@ void SceneManager::NextMapCallBack::start()
 	loading_bar->setColor(Color3B(255, 165, 0));
 	loading_bar->setDirection(ui::LoadingBar::Direction::LEFT);
 	loading_bar->setScale(1.0f, 1.0f);
-	loading_bar->setPosition(Director::getInstance()->getWinSizeInPixels() / 2);
+	loading_bar->setPosition(Director::getInstance()->getWinSize() / 2);
 	loading_scene->addChild(loading_bar, 10);
 
 	if (Director::getInstance()->getRunningScene() == nullptr)

@@ -40,7 +40,7 @@ public:
 	void changeWithSingleFrame(int num);
 
 	// Repack PlayerSprite move method, for Object
-	void displayPlayerMovement(PlayerSprite::MOVEMENT move_e, int length);
+	// void displayPlayerMovement(PlayerSprite::MOVEMENT move_e, int length);
 
 
 	friend class SceneManager;
