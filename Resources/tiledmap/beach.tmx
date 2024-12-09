@@ -13,7 +13,7 @@
  </layer>
  <layer id="1" name="beach" width="30" height="24">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAACu2TO07DQBCGx5HSAKmCeBhFoo5FOpsmRcqcIJDOR+EEXAFaulyBBpDoKHi1FLxaigQo+Bd7xWQ1Xq8TY1Iw0qeNbWW/+fcREFFQIlslzXNScl+LyOoC9OCnY7Pgtzwiol4I+BhZntuWuVqsFwcvhY7jbjJu66x+AU8WHbcej8PUK623xBpYBxtz9Ka8keCVuARDsMmQ9ijrnnYMr5RXscN+7zHnAzgCo/S5O0PekOXla2veO+58o6ROmb9L0+fZdlbz8nKnzqidvK7SntT3Q6MXl7wSWN+YZ5RK5zbfKfdAmNN3yIue47pnkeb0o937Pzm+7wPexYMkd09/4+cI/zuwZXVx67Xne3CGLOfgwkv66iO/ogxnVl3DdQNuwR2496b7+g2nqkd4nsAzeAGvM+5j0RrDMwHv4AN8VuRVtVQjWgYrteqcZjX+0P1f7vUFYWMHfUALAAA=
+   H4sIAAAAAAAACu2TP0/CQBiH35K4CE4a/pSYOEtka10YGP0EIFs/kV9BVja/gouauDkoujqIsjIgOvg724svl7ftFSow8CZPru0l97y/u16DiBo5Us9pnUHOfW0iBxvQgxuN+xnn0vCJ2h7go5/wfpyw1iHrxcJLnuV4Go5HOqubwRNH067Hvhd5pf2WKIMKqC7Rm/L6glfiHvRAjSGdUdw9bRpeKa/ihD13mfMVXIKr6L21QF6P5eV7a9477pxQWNfM36L5/znpX03Ly506o3byeoh6UvMXRi82eSWwvwHPKJXObX5T7o6wpmuRFz0HO06CNKUf7T7/y/F7H/At6IS523qO/0dpWW3ceu/5Gdwgyy24c8K+zpBfkYczrh7hegJD8AxenPm+/sOp6g2eEXgHH2C84DlmrSk8n2AGvsD3iryqdgtERVAqrM5p1t4a3duyrx+mX3ckQAsAAA==
   </data>
  </layer>
  <layer id="4" name="object" width="30" height="24">

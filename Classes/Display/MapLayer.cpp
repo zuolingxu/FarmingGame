@@ -1,6 +1,7 @@
 #include "MapLayer.h"
 #include "json/reader.h"
 #include "Object.h"
+#include "SceneManager.h"
 #include <functional>
 
 USING_NS_CC;
@@ -10,6 +11,8 @@ USING_NS_CC;
 
 static constexpr int BACKGROUND_ZORDER = -512;
 static constexpr int TMX_ZORDER = -256;
+static constexpr int MAP_MAX_LENGTH = 10;
+static constexpr float SCALE_FACTOR = 1.5f;
 
 MapLayer::MapLayer(const std::string& tmx_path, const cocos2d::Color3B& background_color,
     rapidjson::Value* const_object, rapidjson::Value* archive_object) : background_color_(background_color)
@@ -72,7 +75,6 @@ void MapLayer::addTiledMap()
     {
         tiled_map_ = TMXTiledMap::create(tmx_name_);
         tiled_map_->setTileAnimEnabled(true);
-        // tiled_map_->setPosition3D({0, 0, 0});
         layer_->addChild(tiled_map_, TMX_ZORDER);
     }
 }
@@ -176,22 +178,22 @@ void MapLayer::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Ev
     case cocos2d::EventKeyboard::KeyCode::KEY_UP_ARROW:
     case cocos2d::EventKeyboard::KeyCode::KEY_W:
     case cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_W:
-        main_player_->move(PlayerSprite::MOVEMENTS::W_UP);
+        main_player_->move(PlayerSprite::MOVEMENT::W_UP);
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_DOWN_ARROW:
     case cocos2d::EventKeyboard::KeyCode::KEY_S:
     case cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_S:
-        main_player_->move(PlayerSprite::MOVEMENTS::W_DOWN);
+        main_player_->move(PlayerSprite::MOVEMENT::W_DOWN);
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_LEFT_ARROW:
     case cocos2d::EventKeyboard::KeyCode::KEY_A:
     case cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_A:
-        main_player_->move(PlayerSprite::MOVEMENTS::W_LEFT);
+        main_player_->move(PlayerSprite::MOVEMENT::W_LEFT);
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
     case cocos2d::EventKeyboard::KeyCode::KEY_D:
     case cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_D:
-        main_player_->move(PlayerSprite::MOVEMENTS::W_RIGHT);
+        main_player_->move(PlayerSprite::MOVEMENT::W_RIGHT);
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_1:
     case cocos2d::EventKeyboard::KeyCode::KEY_2:
@@ -215,10 +217,41 @@ void MapLayer::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Ev
         changeHolding(12);
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_SHIFT:
-        main_player_->changeSpeed();
-        break;
     case cocos2d::EventKeyboard::KeyCode::KEY_CAPS_LOCK:
         main_player_->changeSpeed();
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_F1:
+        // TODO: Test Code 
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_F2:
+        // TODO: Test Code
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_F4:
+        // TODO: Test Code
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_F5:
+        // TODO: Test Code
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_F6:
+        // TODO: Test Code
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_F7:
+        // TODO: Test Code
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_F8:
+        // TODO: Test Code
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_F9:
+        // TODO: Test Code
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_F10:
+        // TODO: Test Code
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_F11:
+        // TODO: Test Code
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_F12:
+        // TODO: Test Code
         break;
     default: break;
     }
@@ -232,22 +265,22 @@ void MapLayer::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::E
     case cocos2d::EventKeyboard::KeyCode::KEY_UP_ARROW:
     case cocos2d::EventKeyboard::KeyCode::KEY_W:
     case cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_W:
-        main_player_ -> stop(PlayerSprite::MOVEMENTS::W_UP);
+        main_player_ -> stop(PlayerSprite::MOVEMENT::W_UP);
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_DOWN_ARROW:
     case cocos2d::EventKeyboard::KeyCode::KEY_S:
     case cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_S:
-        main_player_->stop(PlayerSprite::MOVEMENTS::W_DOWN);
+        main_player_->stop(PlayerSprite::MOVEMENT::W_DOWN);
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_LEFT_ARROW:
     case cocos2d::EventKeyboard::KeyCode::KEY_A:
     case cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_A:
-        main_player_->stop(PlayerSprite::MOVEMENTS::W_LEFT);
+        main_player_->stop(PlayerSprite::MOVEMENT::W_LEFT);
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
     case cocos2d::EventKeyboard::KeyCode::KEY_D:
     case cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_D:
-        main_player_->stop(PlayerSprite::MOVEMENTS::W_RIGHT);
+        main_player_->stop(PlayerSprite::MOVEMENT::W_RIGHT);
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_SHIFT:
         main_player_->changeSpeed();
@@ -260,22 +293,39 @@ void MapLayer::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::E
 
 void MapLayer::onMouseDown(cocos2d::Event* event)
 {
+    static const std::vector<Vec<int>> valid_pos = { {1,0} ,{1,1}, {0,0},
+        {0,1},{-1,1},{-1,0},{-1,-1},{0,-1},{1,-1}};
     cocos2d::EventMouse* e = dynamic_cast<cocos2d::EventMouse*>(event);
-
     if (e)
     {
         if (e->getMouseButton() == cocos2d::EventMouse::MouseButton::BUTTON_LEFT) 
         {
-            ::Object* focus = interact_map_[focus_pos_.X()][focus_pos_.Y()];
-            if (focus != nullptr)
+            try
             {
-                focus->interact();
+                ::Object* focus = interact_map_.at(focus_pos_.X()).at(focus_pos_.Y());
+                Vec<int> grid_pos = toGrid(main_player_->getPosition() + Vec2(GridSize / 2, 0));
+                for (auto& pos : valid_pos)
+                {
+                    if (focus_pos_ == grid_pos + pos) {
+                        main_player_->interact(pos);
+                        if (focus != nullptr)
+                        {
+                            focus->interact();
+                        }
+                    }
+                }
             }
+            catch (std::exception& exception)
+            {
+	            
+            }
+
         }
         else if (e->getMouseButton() == cocos2d::EventMouse::MouseButton::BUTTON_RIGHT) 
         {
             // TODO: interact with holdings
         }
+        
     }
     event->stopPropagation(); 
 }
@@ -285,11 +335,11 @@ void MapLayer::onMouseMove(cocos2d::Event* event)
     cocos2d::EventMouse* e = dynamic_cast<cocos2d::EventMouse*>(event);
     if (e)
     {
-        cocos2d::Vec2 mousePos = e->getLocation();
-        Size screenSize = Director::getInstance()->getWinSize();
-        float x = (2.0f * mousePos.x) / screenSize.width - 1.0f;
-        float y = 1.0f - (2.0f * mousePos.y) / screenSize.height;
-
+        Size win_size = Director::getInstance()->getWinSize();
+    	mouse_pos_ = e->getLocation();
+        mouse_pos_.y = win_size.height - mouse_pos_.y;
+        mouse_pos_ = (mouse_pos_ - win_size / 2) / SCALE_FACTOR;
+        refocus();
     }
     event->stopPropagation();
 }
@@ -300,21 +350,23 @@ void MapLayer::onMouseUp(cocos2d::Event* event)
     event->stopPropagation();
 }
 
-void MapLayer::changeFocus()
-{
-	// TODO: change focus
-}
-
 void MapLayer::changeHolding(const int num)
 {
-	// UILogic::changeHoldings(num);
+	// TODO: UILogic::changeHoldings(num);
 }
 
+void MapLayer::refocus()
+{
+    focus_pos_ = toGrid(mouse_pos_ + main_player_->getPosition());
+    focus_->setPosition(toPixel(focus_pos_));
+}
 
 Node* MapLayer::toFront(PlayerSprite* main_player)
 {
     layer_ = Node::create();
     layer_->retain();
+    is_front_ = true;
+
     addTiledMap();
 
     auto background = cocos2d::LayerColor::create(cocos2d::Color4B(background_color_));
@@ -329,6 +381,7 @@ Node* MapLayer::toFront(PlayerSprite* main_player)
 
 
     Vec2 pixel_pos = map_size_pixel / 2;
+    Size size = Director::getInstance()->getWinSize();
     float scale_factor = 1.0f;
     if (main_player != nullptr)
     {
@@ -336,26 +389,15 @@ Node* MapLayer::toFront(PlayerSprite* main_player)
         pixel_pos = main_player_->getPosition();
         main_player_->setParentMapLayer(this);
         layer_->addChild(main_player_, pixel_pos.y);
-        pixel_pos += Vec2(GridSize / 2, GridSize);
-        scale_factor = ScaleFactor;
-        // 3d camera
-     //   Vec3 pos_3d(pixel_pos.x, pixel_pos.y, 0);
-     //   Vec3 pos_camera = pos_3d + Vec3(0, 0, 200);
-     //   Size view_size = Director::getInstance()->getOpenGLView()->getFrameSize();
-     //   const float aspect_ratio_ = view_size.width / view_size.height;
-    	//camera_ = Camera::createPerspective(60, aspect_ratio_, 0.1f, 1000.0f);
-    	//camera_->setPosition3D(pos_camera);
-     //   camera_->lookAt(pos_3d);
-
+		scale_factor = SCALE_FACTOR;
     }
-    auto size = Director::getInstance()->getWinSize() / scale_factor;
+    size = size / scale_factor;
     camera_ = Camera::createOrthographic(size.width, size.height, -1024, 1024);
-    camera_->setPosition(pixel_pos - size / scale_factor);
+    camera_->setPosition(pixel_pos - size / 2);
     camera_->setCameraFlag(CameraFlag::USER1);
     camera_->setDepth(10);
     layer_->addChild(camera_);
 
-    is_front_ = true;
     for (auto& row : interact_map_)
     {
 	    for (::Object* object: row)
@@ -368,13 +410,17 @@ Node* MapLayer::toFront(PlayerSprite* main_player)
     }
 
     addEventListener();
+    focus_ = Sprite::create(DocumentManager::getInstance()->getPath("FocusPic"));
+    focus_->setPosition(toPixel(focus_pos_));
+    focus_->setAnchorPoint(Vec(0, 0));
+    layer_->addChild(focus_, 512);
     layer_->setCameraMask(static_cast<unsigned short>(CameraFlag::USER1));
     return layer_;
 }
 
 void MapLayer::pause() const
 {
-    main_player_->stop(PlayerSprite::MOVEMENTS::EVERY);
+    main_player_->stop(PlayerSprite::MOVEMENT::ALL);
     for (auto& row : interact_map_)
     {
         for (::Object* object : row)
@@ -405,8 +451,17 @@ void MapLayer::resume() const
 
 void MapLayer::toBack()
 {
-    is_front_ = false;
-    SpriteFrameCache::getInstance()->removeSpriteFrames();
+	if (is_front_){
+		is_front_ = false;
+        tiled_map_ = nullptr;
+        layer_ = nullptr;
+        camera_ = nullptr;
+        main_player_ = nullptr;
+        touch_listener_ = nullptr;
+        keyboard_Listener_ = nullptr;
+        mouse_listener_ = nullptr;
+        SpriteFrameCache::getInstance()->removeSpriteFrames();
+	}
 }
 
 void MapLayer::settle() const
@@ -449,7 +504,7 @@ bool MapLayer::hasCollision(const cocos2d::Vec2& pos)
     return true; 
 }
 
-void MapLayer::addPlayerSprite(PlayerSprite* player)
+void MapLayer::addPlayer(PlayerSprite* player)
 {
     layer_->addChild(player, player->getPosition().y);
     player->setParentMapLayer(this);
@@ -468,9 +523,7 @@ void MapLayer::clearObjects()
     }
 }
 
-
-
-Sprite* MapLayer::addSpriteWithFrame(const std::string& frame_name) const
+Sprite* MapLayer::addSpriteWithFrame(const std::string& frame_name)
 {
     if (is_front_)
     {
@@ -489,13 +542,13 @@ Sprite* MapLayer::addSpriteWithFrame(const std::string& frame_name) const
 	return nullptr;
 }
 
-void MapLayer::changeWithActionSequence(std::vector<int> sequence)
+PlayerSprite* MapLayer::addPlayerSpriteWithDocument(const rapidjson::Document* sprite_document)
 {
-	if (is_front_)
-	{
-		
-	}
+	PlayerSprite* player = PlayerSprite::create(sprite_document);
+    players_.emplace_back(player);
+    return player;
 }
+
 
 void MapLayer::changeWithSingleFrame(int num)
 {

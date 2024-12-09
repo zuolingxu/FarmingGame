@@ -4,40 +4,40 @@
 //class UILogic
 //{
 //public:
-//    // »ñÈ¡ UILogic ÊµÀý
+//    // ï¿½ï¿½È¡ UILogic Êµï¿½ï¿½
 //    static UILogic* getInstance();
 //
-//    // ³õÊ¼»¯ UILogic
+//    // ï¿½ï¿½Ê¼ï¿½ï¿½ UILogic
 //    void init(UILayer* uiLayer);
 //
-//    //// °ó¶¨ UI ÊÂ¼þ
+//    //// ï¿½ï¿½ UI ï¿½Â¼ï¿½
 //    //void bindEvents();
 //
-//    //// ´¦ÀíÈÎÎñ°´Å¥µã»÷
+//    //// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¥ï¿½ï¿½ï¿½
 //    //void onTaskButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 //
-//    //// ´¦Àí±³°ü°´Å¥µã»÷
+//    //// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¥ï¿½ï¿½ï¿½
 //    //void onBagButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 //
-//    //// ´¦Àí¿ªÊ¼°´Å¥µã»÷
+//    //// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½Å¥ï¿½ï¿½ï¿½
 //    //void onStartButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 //
-//    //// ´¦Àí¹Ø±Õ±³°ü°´Å¥µã»÷
+//    //// ï¿½ï¿½ï¿½ï¿½ï¿½Ø±Õ±ï¿½ï¿½ï¿½ï¿½ï¿½Å¥ï¿½ï¿½ï¿½
 //    //void onCloseBagButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 //
-//    //// ´¦Àí±³°ü¸ñ×Óµã»÷
+//    //// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½
 //    //void onBagSlotClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 //
-//    //// ´¦ÀíÐÂµÄ°´Å¥µã»÷
+//    //// ï¿½ï¿½ï¿½ï¿½ï¿½ÂµÄ°ï¿½Å¥ï¿½ï¿½ï¿½
 //    //void onNewButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 //    //void onLoadButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 //    void onExitButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 //
-//    //// ´¦Àí¼üÅÌÊÂ¼þ
+//    //// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
 //    //bool onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
 //
 //private:
-//    // Ë½ÓÐ¹¹Ôìº¯Êý
+//    // Ë½ï¿½Ð¹ï¿½ï¿½ìº¯ï¿½ï¿½
 //    UILogic();
 //    static UILogic* instance_;
 //

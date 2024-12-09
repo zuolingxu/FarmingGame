@@ -1,0 +1,18 @@
+{
+    "plist": "playerpls",
+    "frame_format": "player-{}.png",
+    "movement": {
+        "DOWN": [0],
+        "RIGHT": [3],
+        "LEFT": [6],
+        "UP": [9],
+        "W_DOWN": [1,2],
+        "W_RIGHT": [4,5],
+        "W_LEFT": [7,8],
+        "W_UP": [10,11],
+        "I_DOWN": [12,13,14,15,16,17],
+        "I_RIGHT": [18,19,20,21,22,23],
+        "I_LEFT": [24,25,26,27,28,29],
+        "I_UP": [30,31,32,33,34,35]
+    }
+}
