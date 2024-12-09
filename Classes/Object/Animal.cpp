@@ -7,7 +7,7 @@ Animal::Animal(MapLayer* parent, const Vec<int>& pos) : MapObject(pos), parent_(
 
 Animal::~Animal()
 {
-	
+
 }
 
 
@@ -18,7 +18,7 @@ MapObject* Animal::create(rapidjson::Value& val, MapLayer* parent, const Vec<int
 
 void Animal::init()
 {
-	info_.sprite = nullptr;
+	
 }
 
 void Animal::interact()
@@ -28,7 +28,7 @@ void Animal::interact()
 
 void Animal::clear()
 {
-	info_.sprite = nullptr;
+
 }
 
 void Animal::pause()

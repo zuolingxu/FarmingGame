@@ -2,6 +2,7 @@
 
     "Haley_move_festival":{
         "plist": "Haley.plist",
+        "frame_format":"Haley-{}.png",
         "movement": {
             "STAY":[34,38,39,40,41,42,43,44,45]
         }

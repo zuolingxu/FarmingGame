@@ -5,10 +5,7 @@
         "2 8":{
             "Type":"npc",
             "Info":{
-                "Name":"Caroline",
-                "favorability":0,
-                "marriage":false,
-                "friendship":false
+                "Name":"Caroline"
             }
         }
     }

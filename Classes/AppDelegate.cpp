@@ -1,6 +1,7 @@
 #include "AppDelegate.h"
 #include "DocumentManager.h"
 #include "SceneManager.h"
+#include "UILayer.h"
 
 // #define USE_AUDIO_ENGINE 1
 // #define USE_SIMPLE_AUDIO_ENGINE 1
@@ -97,7 +98,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
         rapidjson::Document* global_document = manager->getDocument(manager->getPath("global"));
         CCLOG(manager->getPath("global").c_str());
         manager->loadArchiveDocument(19);
-        SceneManager::getInstance()->NextMap("test","10 10");
+        SceneManager::getInstance()->NextMap("introduction");
     }
     catch (const std::exception& e)
     {

@@ -5,15 +5,13 @@
         "12 7":{
             "Type":"Animal",
             "Info":{
-                "Name":"chicken",
-                "Sold":false
+                "Name":"chicken"
             }
         },
         "12 4":{
             "Type":"Animal",
             "Info":{
-                "Name":"cow",
-                "Sold":false
+                "Name":"cow"
             }
         }
     }
