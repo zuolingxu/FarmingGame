@@ -4,7 +4,7 @@
     "GameVersion": "v1.0",
     "Files": {
         "global": "global.json",
-        "test": "config/test.json",
+        "introduction": "config/introduction.json",
         "player": "config/player.json",
         "playerpls": "plist/player.plist",
         "HelloPic": "image/hello_world.png",
@@ -16,5 +16,5 @@
         "FocusPic": "image/selected_tile.png"
     },
     "UI": ["ConfigUI"],
-    "Map": ["test"]
+    "Map": []
 }

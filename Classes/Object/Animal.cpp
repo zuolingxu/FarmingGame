@@ -1,24 +1,24 @@
 #include "Animal.h"
 
-Animal::Animal(MapLayer* parent) : parent_(parent)
-{
+Animal::Animal(MapLayer* parent)
+	: parent_(parent), name(""), isSold(false), position(0, 0){
 	
 }
 
 Animal::~Animal()
 {
-	
+
 }
 
 
 Object* Animal::create(rapidjson::Value& val, MapLayer* parent)
 {
-	return new Animal(parent);
+	return nullptr;
 }
 
 void Animal::init()
 {
-	info_.sprite = nullptr;
+	
 }
 
 void Animal::interact()
@@ -28,7 +28,7 @@ void Animal::interact()
 
 void Animal::clear()
 {
-	info_.sprite = nullptr;
+
 }
 
 void Animal::pause()

@@ -8,6 +8,9 @@
 class Animal final: protected Object {
 private:
 	MapLayer* parent_;
+	std::string name;
+	bool isSold;
+	cocos2d::Vec2 position;
 
 public:
 	explicit Animal(MapLayer* parent);

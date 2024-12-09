@@ -382,7 +382,7 @@ Node* MapLayer::toFront(PlayerSprite* main_player)
 
     Vec2 pixel_pos = map_size_pixel / 2;
     Size size = Director::getInstance()->getWinSize();
-    float scale_factor = 1.0f;
+    float scale_factor = 0.9f;
     if (main_player != nullptr)
     {
         main_player_ = main_player;
