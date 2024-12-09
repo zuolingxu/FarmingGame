@@ -93,11 +93,12 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     try
     {
-        Scene* scene = Scene::create();
-        auto background = LayerColor::create(Color4B(Color3B(255, 255, 255), 255));
-        scene->addChild(background, -1000);
-        scene->addChild(UILayer::createUILayer(UILayerType::TASK_BAR), 1000);
-        Director::getInstance()->runWithScene(scene);
+        // load ALL_UI UI_ need fast reaction
+        auto manager = DocumentManager::getInstance();
+        rapidjson::Document* global_document = manager->getDocument(manager->getPath("global"));
+        CCLOG(manager->getPath("global").c_str());
+        manager->loadArchiveDocument(19);
+        SceneManager::getInstance()->NextMap("introduction");
     }
     catch (const std::exception& e)
     {
