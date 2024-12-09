@@ -1,29 +1,31 @@
 #pragma once
 #include "cocos2d.h"
 #include "DocumentManager.h"
+#include "HelperClasses.h"
 #include "json/document.h"
-#include "MapLayer.h"
 
 class MapLayer;
 
-class Object : public cocos2d::Ref {
+class MapObject : public cocos2d::Ref {
 public:
 	struct ObjectInfo
 	{
 		cocos2d::Sprite* sprite;
 		Vec<int> size;           //碰撞体积大小
+		Vec<int> position;
 	};
 
 protected:
 	ObjectInfo info_;
 
 public:
-	Object() = default;
-	virtual ~Object() = default;
-	Object(const Object& other) = delete;
-	Object& operator=(const Object& other) = delete;
+	MapObject(const Vec<int>& pos);
+	virtual ~MapObject() = default;
+	MapObject(const MapObject& other) = delete;
+	MapObject& operator=(const MapObject& other) = delete;
 	
-	static Object* create(rapidjson::Value& val, MapLayer* parents);
+	static MapObject* create(rapidjson::Value& val, MapLayer* parents, const Vec<int>& pos);
+	MapObject::ObjectInfo& getInfo();
 	virtual void init() = 0; 
 	virtual void interact() = 0;
 	virtual void settle() = 0;       //游戏内一天结束时调用

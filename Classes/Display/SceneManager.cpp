@@ -1,7 +1,4 @@
 #include "SceneManager.h"
-
-#include <poly2tri/sweep/advancing_front.h>
-
 #include "HelperClasses.h"
 #include "audio/include/AudioEngine.h"
 #include "ui/UILoadingBar.h"
@@ -226,8 +223,7 @@ void SceneManager::NextMapCallBack::render()
 			DocumentManager* manager = DocumentManager::getInstance();
 			rapidjson::Document* doc = manager->getDocument(manager->getPath("player"));
 			main_player = PlayerSprite::create
-			(doc, (*manager->getConfigDocument())["always_run"].GetBool());
-			main_player->setPosition(toPixel(toVec2(pos)));
+			(doc, toVec2(pos), {1,2}, (*manager->getConfigDocument())["always_run"].GetBool());
 		}
 
 		next_map = getInstance()->map_.at(map_name)->toFront(main_player);

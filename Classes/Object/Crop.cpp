@@ -1,6 +1,6 @@
 #include "Crop.h"
 
-Crop::Crop(MapLayer* parent) : parent_(parent)
+Crop::Crop(MapLayer* parent, const Vec<int>& pos) : parent_(parent)
 {
 	
 }
@@ -11,9 +11,9 @@ Crop::~Crop()
 }
 
 
-Crop* Crop::create(rapidjson::Value& val, MapLayer* parent)
+Crop* Crop::create(rapidjson::Value& val, MapLayer* parent, const Vec<int>& pos)
 {
-	return new Crop(parent);
+	return new Crop(parent, pos);
 }
 
 void Crop::interact()

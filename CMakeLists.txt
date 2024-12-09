@@ -57,10 +57,13 @@ list(APPEND GAME_SOURCE
      Classes/HelperClasses/TimeManager.cpp
      Classes/Object/Animal.cpp
      Classes/Object/Crop.cpp
+     Classes/Object/Gate.cpp
      Classes/Object/Land.cpp
      Classes/Object/NPC.cpp
-     Classes/Object/Object.cpp
+     Classes/Object/Mineral.cpp
+     Classes/Object/MapObject.cpp
      Classes/UILogic/UILogic.cpp
+     Classes/UILogic/MainCharacter.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
@@ -73,10 +76,13 @@ list(APPEND GAME_HEADER
      Classes/HelperClasses/TimeManager.h
      Classes/Object/Animal.h
      Classes/Object/Crop.h
+     Classes/Object/Gate.h
      Classes/Object/Land.h
      Classes/Object/NPC.h
-     Classes/Object/Object.h
+     Classes/Object/Mineral.cpp
+     Classes/Object/MapObject.h
      Classes/UILogic/UILogic.h
+     Classes/UILogic/MainCharacter.h
      )
 
 if(ANDROID)

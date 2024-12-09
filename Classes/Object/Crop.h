@@ -10,9 +10,9 @@ class Crop{
 	MapLayer* parent_;
 
 	public:
-	explicit Crop(MapLayer* parent);
+	explicit Crop(MapLayer* parent, const Vec<int>& pos);
 	~Crop();
-	static Crop* create(rapidjson::Value& val, MapLayer* parent);
+	static Crop* create(rapidjson::Value& val, MapLayer* parent, const Vec<int>& pos);
 	void init();
 	void interact();
 	void clear();

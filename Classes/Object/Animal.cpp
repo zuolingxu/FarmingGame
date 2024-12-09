@@ -1,6 +1,6 @@
 #include "Animal.h"
 
-Animal::Animal(MapLayer* parent) : parent_(parent)
+Animal::Animal(MapLayer* parent, const Vec<int>& pos) : MapObject(pos), parent_(parent)
 {
 	
 }
@@ -11,9 +11,9 @@ Animal::~Animal()
 }
 
 
-Object* Animal::create(rapidjson::Value& val, MapLayer* parent)
+MapObject* Animal::create(rapidjson::Value& val, MapLayer* parent, const Vec<int>& pos)
 {
-	return new Animal(parent);
+	return new Animal(parent, pos);
 }
 
 void Animal::init()

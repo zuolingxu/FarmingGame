@@ -1,6 +1,6 @@
 #include "NPC.h"
 
-NPC::NPC(MapLayer* parent) : parent_(parent)
+NPC::NPC(MapLayer* parent, const Vec<int>& pos) : MapObject(pos), parent_(parent)
 {
 }
 
@@ -9,9 +9,9 @@ NPC::~NPC()
 	
 }
 
-Object* NPC::create(rapidjson::Value& val, MapLayer* parent)
+MapObject* NPC::create(rapidjson::Value& val, MapLayer* parent, const Vec<int>& pos)
 {
-	return new NPC(parent);
+	return new NPC(parent, pos);
 }
 
 void NPC::interact()

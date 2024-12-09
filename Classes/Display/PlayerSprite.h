@@ -23,9 +23,9 @@ public:
     };
 
     // static factory method
-    // doc is the json file which contains movements and plist file name
-    // always_run is a flag to indicate whether the player should run at first
-    static PlayerSprite* create(const rapidjson::Document* doc, bool always_run = false);
+    // doc is the json file of PlayerSprite, which should contain movements, frame_format and plist file path
+    // start_gird_pos is the start position, size is the size of the sprite, always_run represents speed of moving
+    static PlayerSprite* create(const rapidjson::Document* doc, const Vec<int>& start_grid_pos, const Vec<int>& size, bool always_run = false);
 
     // move method, move_e can be W_UP, W_DOWN, W_LEFT, W_RIGHT, STAY
     // for W_**, length is the grid you walk, e_move is the direction you move towards
@@ -53,11 +53,11 @@ public:
 
     // setParentMapLayer method, set the parent MapLayer of this PlayerSprite
     // this method should be called before any movement and interaction
-    void setParentMapLayer(MapLayer* parent);
+    void setParentMapLayer(MapLayer* parent) { parent_ = parent; }
 
 private:
     // constructor and destructor
-    PlayerSprite(bool always_run, const rapidjson::Document* doc);
+    PlayerSprite(const rapidjson::Document* doc,const Vec<int>& start_grid_pos, const Vec<int>& size, bool always_run);
     ~PlayerSprite() override;
 
     // Helper function, convert "DOWN" into MOVEMENT::DOWN
@@ -70,6 +70,8 @@ private:
     MapLayer* parent_ = nullptr; //  the MapLayer which this PlayerSprite belongs to
     cocos2d::ActionInterval* repeat_action_ = nullptr; //  current repeat action of the player
     cocos2d::Vec2 destination = { -1,-1 }; //  the destination of the player
+    Vec<int> grid_pos_ = { -1,-1 }; //  the grid position of the player
+    Vec<int> size_ = { 1, 2 };
     MOVEMENT stand_direction_ = MOVEMENT::DOWN; //  the direction the player is facing
     bool run_ = false; //  if the player is running, changeSpeed Method will change this
     bool is_moving = false; //  if the player is moving, stay movements is considered as moving
