@@ -220,6 +220,16 @@ void MapLayer::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Ev
     case cocos2d::EventKeyboard::KeyCode::KEY_CAPS_LOCK:
         main_player_->changeSpeed();
         break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_F1:
+        main_player_->move(PlayerSprite::MOVEMENT::W_DOWN, 1);
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_F2:
+        main_player_->move(PlayerSprite::MOVEMENT::W_RIGHT, 3);
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_F3:
+        main_player_->move(PlayerSprite::MOVEMENT::STAY, 3);
+        break;
+
     default: break;
     }
     event->stopPropagation();
@@ -268,7 +278,7 @@ void MapLayer::onMouseDown(cocos2d::Event* event)
         if (e->getMouseButton() == cocos2d::EventMouse::MouseButton::BUTTON_LEFT) 
         {
             ::Object* focus = interact_map_[focus_pos_.X()][focus_pos_.Y()];
-            Vec<int> grid_pos = toGrid(main_player_->getPosition());
+            Vec<int> grid_pos = toGrid(main_player_->getPosition() + Vec2(GridSize/2,0));
             for (auto& pos : valid_pos)
             {
 				if (focus_pos_ == grid_pos + pos) {
@@ -311,7 +321,7 @@ void MapLayer::onMouseUp(cocos2d::Event* event)
 
 void MapLayer::changeHolding(const int num)
 {
-	// UILogic::changeHoldings(num);
+	// TODO: UILogic::changeHoldings(num);
 }
 
 void MapLayer::refocus()
@@ -412,7 +422,14 @@ void MapLayer::toBack()
 {
 	if (is_front_){
 		is_front_ = false;
-		SpriteFrameCache::getInstance()->removeSpriteFrames();
+        tiled_map_ = nullptr;
+        layer_ = nullptr;
+        camera_ = nullptr;
+        main_player_ = nullptr;
+        touch_listener_ = nullptr;
+        keyboard_Listener_ = nullptr;
+        mouse_listener_ = nullptr;
+        SpriteFrameCache::getInstance()->removeSpriteFrames();
 	}
 }
 
@@ -456,7 +473,7 @@ bool MapLayer::hasCollision(const cocos2d::Vec2& pos)
     return true; 
 }
 
-void MapLayer::addPlayerSprite(PlayerSprite* player)
+void MapLayer::addPlayer(PlayerSprite* player)
 {
     layer_->addChild(player, player->getPosition().y);
     player->setParentMapLayer(this);
