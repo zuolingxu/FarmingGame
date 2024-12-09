@@ -1,8 +1,9 @@
 #include "MapLayer.h"
 #include "json/reader.h"
-#include "Object.h"
+#include "MapObject.h"
 #include "SceneManager.h"
 #include <functional>
+#include "Land.h"
 
 USING_NS_CC;
 #ifdef _MSC_VER
@@ -13,6 +14,12 @@ static constexpr int BACKGROUND_ZORDER = -512;
 static constexpr int TMX_ZORDER = -256;
 static constexpr int MAP_MAX_LENGTH = 10;
 static constexpr float SCALE_FACTOR = 1.5f;
+
+template<typename T>
+static bool inVecRange(const std::vector<T>& vec, const Vec<int>& index)
+{
+    return index.X() >= 0 && index.X() < vec.size() && index.Y() >= 0 && index.Y() < vec[index.X()].size();
+}
 
 MapLayer::MapLayer(const std::string& tmx_path, const cocos2d::Color3B& background_color,
     rapidjson::Value* const_object, rapidjson::Value* archive_object) : background_color_(background_color)
@@ -32,7 +39,7 @@ MapLayer::MapLayer(const std::string& tmx_path, const cocos2d::Color3B& backgrou
         tiled_map_ = TMXTiledMap::create(tmx_name_);
         tiled_map_->retain();
         Vec<int> size = tiled_map_->getMapSize();
-        interact_map_ = std::vector(size.X(), std::vector<::Object*>(size.Y(), nullptr));
+        interact_map_ = std::vector(size.X(), std::vector<::MapObject*>(size.Y(), nullptr));
         collision_map_ = std::vector(size.X(), std::vector<bool>(size.Y(), false));
         addCollisions(); 
         tiled_map_->release();
@@ -79,12 +86,24 @@ void MapLayer::addTiledMap()
     }
 }
 
-void MapLayer::addObject(Vec<int> pos, rapidjson::Value& val)
+void MapLayer::addObject(const Vec<int>& pos, rapidjson::Value& val)
 {
-    focus_pos_ = std::move(pos);
-    ::Object* obj = ::Object::create(val, this);
+    ::MapObject* obj = ::MapObject::create(val, this, pos);
     obj->retain();
-    interact_map_[focus_pos_.X()][focus_pos_.Y()] = obj;
+    Vec<int> size = obj->getInfo().size;
+    Vec<int> pos2 = pos + size;
+    bool collision = obj->hasCollision();
+    for (int x = pos.X(); x < pos2.X(); x++)
+    {
+	    for (int y = pos.Y(); y < pos2.Y(); y++)
+	    {
+		    if (inVecRange(interact_map_, {x,y}))
+		    {
+			    interact_map_[x][y] = obj;
+                collision_map_[x][y] = collision_map_[x][y] == true || collision;
+		    }
+	    }
+    }
 }
 
 void MapLayer::addCollisions()
@@ -110,21 +129,6 @@ void MapLayer::addCollisions()
                 }
             }
         }
-    }
-    else {
-        CCLOG("Object layer not found!");
-    }
-
-    for (int i = 0; i < collision_map_.size(); i++)
-    {
-	    for (int j = 0; j < collision_map_[i].size(); j++)
-	    {
-            if (interact_map_[i][j] != nullptr)
-            {
-                
-                collision_map_[i][j] = collision_map_[i][j] == true || interact_map_[i][j]->hasCollision();
-            }
-	    }
     }
 }
 
@@ -302,7 +306,7 @@ void MapLayer::onMouseDown(cocos2d::Event* event)
         {
             try
             {
-                ::Object* focus = interact_map_.at(focus_pos_.X()).at(focus_pos_.Y());
+                ::MapObject* focus = interact_map_.at(focus_pos_.X()).at(focus_pos_.Y());
                 Vec<int> grid_pos = toGrid(main_player_->getPosition() + Vec2(GridSize / 2, 0));
                 for (auto& pos : valid_pos)
                 {
@@ -312,12 +316,16 @@ void MapLayer::onMouseDown(cocos2d::Event* event)
                         {
                             focus->interact();
                         }
+                        else if (true /* && holdings == "chutou"*/)
+                        {
+	                        //TODO: Land::create;
+                        }
                     }
                 }
             }
             catch (std::exception& exception)
             {
-	            
+	            // nothing to do
             }
 
         }
@@ -400,7 +408,7 @@ Node* MapLayer::toFront(PlayerSprite* main_player)
 
     for (auto& row : interact_map_)
     {
-	    for (::Object* object: row)
+	    for (::MapObject* object: row)
 	    {
 		    if (object != nullptr)
 		    {
@@ -413,7 +421,7 @@ Node* MapLayer::toFront(PlayerSprite* main_player)
     focus_ = Sprite::create(DocumentManager::getInstance()->getPath("FocusPic"));
     focus_->setPosition(toPixel(focus_pos_));
     focus_->setAnchorPoint(Vec(0, 0));
-    layer_->addChild(focus_, 512);
+    layer_->addChild(focus_, 1000000);
     layer_->setCameraMask(static_cast<unsigned short>(CameraFlag::USER1));
     return layer_;
 }
@@ -423,7 +431,7 @@ void MapLayer::pause() const
     main_player_->stop(PlayerSprite::MOVEMENT::ALL);
     for (auto& row : interact_map_)
     {
-        for (::Object* object : row)
+        for (::MapObject* object : row)
         {
             if (object != nullptr)
             {
@@ -439,7 +447,7 @@ void MapLayer::resume() const
 	layer_->resume();
     for (auto& row : interact_map_)
     {
-	    for (::Object* object : row)
+	    for (::MapObject* object : row)
 	    {
 		    if (object != nullptr)
 		    {
@@ -468,7 +476,7 @@ void MapLayer::settle() const
 {
 	for (auto& row : interact_map_)
 	{
-		for (::Object* object : row)
+		for (::MapObject* object : row)
 		{
 			if (object != nullptr)
 			{
@@ -497,10 +505,10 @@ bool MapLayer::hasCollision(const cocos2d::Vec2& pos)
 {
 	Vec<int> grid = toGrid(pos);
     Vec<int> map_size = tiled_map_->getMapSize();
-    if (pos.x > 0 && pos.y > 0 && grid.X() < map_size.X() && grid.Y() < map_size.Y())
+    if (pos.x > 0 && grid.X() < map_size.X() && pos.y > 0 && grid.Y() < map_size.Y())
     {
-	    return collision_map_[grid.X()][grid.Y()];
-    } 
+        return collision_map_[grid.X()][grid.Y()];
+    }
     return true; 
 }
 
@@ -515,7 +523,7 @@ void MapLayer::clearObjects()
 {
     for (auto& row : interact_map_)
     {
-	    for (::Object* object : row)
+	    for (::MapObject* object : row)
 	    {
             object->clear();
             object->release();
@@ -523,37 +531,87 @@ void MapLayer::clearObjects()
     }
 }
 
-Sprite* MapLayer::addSpriteWithFrame(const std::string& frame_name)
+void MapLayer::addSpriteWithFrame(MapObject::ObjectInfo& obj_info, const std::string& frame_name) const
 {
-    if (is_front_)
+    if (is_front_ && obj_info.sprite == nullptr)
     {
         SpriteFrame* spriteFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName(frame_name);
         if (spriteFrame != nullptr) 
         {
-            Sprite* sprite = Sprite::createWithSpriteFrame(spriteFrame);
+            obj_info.sprite = Sprite::createWithSpriteFrame(spriteFrame);
             toPixel(focus_pos_);
-            // sprite->setPosition3D({0,0,0});
-            sprite->setAnchorPoint(Vec2(0, 0));
-            sprite->setCameraMask(static_cast<unsigned short>(CameraFlag::USER1));
-            layer_->addChild(sprite, focus_pos_.Y() * GridSize);
-            return sprite;
+            obj_info.sprite->setAnchorPoint(Vec2(0, 0));
+            obj_info.sprite->setCameraMask(static_cast<unsigned short>(CameraFlag::USER1));
+            layer_->addChild(obj_info.sprite, focus_pos_.Y() * GridSize);
         }
     }
-	return nullptr;
 }
 
-PlayerSprite* MapLayer::addPlayerSpriteWithDocument(const rapidjson::Document* sprite_document)
+void MapLayer::addPlayerSpriteWithDocument(MapObject::ObjectInfo& obj_info, const rapidjson::Document* sprite_document)
 {
-	PlayerSprite* player = PlayerSprite::create(sprite_document);
-    players_.emplace_back(player);
-    return player;
+    if (is_front_ && obj_info.sprite == nullptr)
+    {
+        obj_info.sprite = PlayerSprite::create(sprite_document, obj_info.position, obj_info.size);
+        if (obj_info.sprite != nullptr)
+        {
+            obj_info.sprite->setPosition(toPixel(obj_info.position));
+            obj_info.sprite->setAnchorPoint(Vec2(0, 0));
+            obj_info.sprite->setCameraMask(static_cast<unsigned short>(CameraFlag::USER1));
+            players_.emplace_back(obj_info.sprite);
+            layer_->addChild(obj_info.sprite, obj_info.sprite->getPosition().y);
+        }
+    }
 }
 
 
-void MapLayer::changeWithSingleFrame(int num)
+void MapLayer::changeWithSingleFrame(Sprite* stationary_sprite, const std::string& new_frame_name) const
+{
+	if (is_front_ && stationary_sprite != nullptr)
+	{
+        SpriteFrame* new_frame = SpriteFrameCache::getInstance()->getSpriteFrameByName(new_frame_name);
+        if (new_frame != nullptr)
+        {
+            stationary_sprite->setSpriteFrame(new_frame);
+        }
+	}
+}
+
+void MapLayer::updateMaps(const Vec<int>& old_pos, const Vec<int>& new_pos, const Vec<int>& size)
 {
 	if (is_front_)
 	{
-		
+		Vec<int> old_pos2 = old_pos + size;
+        ::MapObject* obj = interact_map_[old_pos.X()][old_pos.Y()];
+        bool collision = false;
+        if (obj != nullptr)
+        {
+            collision = obj->hasCollision();
+            obj->getInfo().position = new_pos;
+        }
+        
+        for (int i = old_pos.X(); i < old_pos2.X(); ++i)
+        {
+	        for (int j = old_pos.Y(); j < old_pos2.Y(); ++j)
+	        {
+                if (inVecRange(collision_map_, Vec<int>(i, j)))
+                {
+                    collision_map_[i][j] = false;
+                    interact_map_[i][j] = nullptr;
+                }
+	        }
+        }
+
+        Vec<int> new_pos2 = new_pos + size;
+        for (int i = old_pos.X(); i < old_pos2.X(); ++i)
+        {
+            for (int j = old_pos.Y(); j < old_pos2.Y(); ++j)
+            {
+                if (inVecRange(collision_map_, Vec<int>(i, j)))
+                {
+                    collision_map_[i][j] = collision;
+                    interact_map_[i][j] = obj;
+                }
+            }
+        }
 	}
 }

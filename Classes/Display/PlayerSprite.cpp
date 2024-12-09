@@ -77,7 +77,8 @@ PlayerSprite::MOVEMENT PlayerSprite::getMovementFromString(const std::string& na
     }
 }
 
-PlayerSprite::PlayerSprite(bool always_run, const rapidjson::Document* doc) : run_(always_run)
+PlayerSprite::PlayerSprite(const rapidjson::Document* doc, const Vec<int>& start_grid_pos, const Vec<int>& size, bool always_run)
+	: grid_pos_(start_grid_pos), size_(size), run_(always_run)
 {
     std::string plist_name_ = (*doc)["plist"].GetString();
     frame_format_ = (*doc)["frame_format"].GetString();
@@ -104,14 +105,15 @@ PlayerSprite::~PlayerSprite()
     }
 }
 
-PlayerSprite* PlayerSprite::create(const rapidjson::Document* doc, bool always_run)
+PlayerSprite* PlayerSprite::create(const rapidjson::Document* doc, const Vec<int>& start_grid_pos, const Vec<int>& size, bool always_run)
 {
-    PlayerSprite* sprite = new PlayerSprite(always_run, doc);
+    PlayerSprite* sprite = new PlayerSprite(doc, start_grid_pos, size, always_run);
     const std::string first_frame = getFrameName(sprite->frame_format_, sprite->movements_[static_cast<int>(MOVEMENT::DOWN)][0]);
     if (sprite && sprite->initWithSpriteFrameName(first_frame))
     {
         sprite->autorelease();
         sprite->setAnchorPoint(Vec2(0, 0));
+        sprite->setPosition(toPixel(sprite->grid_pos_));
         return sprite;
     }
     CC_SAFE_DELETE(sprite);
@@ -251,11 +253,6 @@ void PlayerSprite::changeSpeed()
     }
 }
 
-void PlayerSprite::setParentMapLayer(MapLayer* parent)
-{
-	parent_ = parent;
-}
-
 void PlayerSprite::update(float delta)
 {
 	Node::update(delta);
@@ -267,9 +264,13 @@ void PlayerSprite::update(float delta)
         int dire = static_cast<int>(move_e) - 4;
 
         Vec2 next_pos = getPosition() + Vec2(directions_[dire]) * displacement;
-        Vec2 next_pos1 = next_pos + Vec2(2, 0);
-        Vec2 next_pos2 = next_pos + Vec2(GridSize - 2,0);
+        if (toGrid(getPosition()) != grid_pos_)
+        {
+             parent_->updateMaps( grid_pos_, toGrid(getPosition()), size_);
+        }
 
+        Vec2 next_pos1 = next_pos + Vec2(2, 0);
+        Vec2 next_pos2 = next_pos + Vec2(size_.X() * GridSize - 2, 4);
         if (parent_->hasCollision(next_pos1) || parent_->hasCollision(next_pos2)
             || (getPosition() - destination).length() < delta * 20)
         {
