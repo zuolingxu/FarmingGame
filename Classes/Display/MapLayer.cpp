@@ -220,6 +220,39 @@ void MapLayer::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Ev
     case cocos2d::EventKeyboard::KeyCode::KEY_CAPS_LOCK:
         main_player_->changeSpeed();
         break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_F1:
+        // TODO: Test Code 
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_F2:
+        // TODO: Test Code
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_F4:
+        // TODO: Test Code
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_F5:
+        // TODO: Test Code
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_F6:
+        // TODO: Test Code
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_F7:
+        // TODO: Test Code
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_F8:
+        // TODO: Test Code
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_F9:
+        // TODO: Test Code
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_F10:
+        // TODO: Test Code
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_F11:
+        // TODO: Test Code
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_F12:
+        // TODO: Test Code
+        break;
     default: break;
     }
     event->stopPropagation();
@@ -267,18 +300,26 @@ void MapLayer::onMouseDown(cocos2d::Event* event)
     {
         if (e->getMouseButton() == cocos2d::EventMouse::MouseButton::BUTTON_LEFT) 
         {
-            ::Object* focus = interact_map_[focus_pos_.X()][focus_pos_.Y()];
-            Vec<int> grid_pos = toGrid(main_player_->getPosition());
-            for (auto& pos : valid_pos)
+            try
             {
-				if (focus_pos_ == grid_pos + pos) {
-                    main_player_->interact(pos);
-                    if (focus != nullptr)
-                    {
-                        focus->interact();
+                ::Object* focus = interact_map_.at(focus_pos_.X()).at(focus_pos_.Y());
+                Vec<int> grid_pos = toGrid(main_player_->getPosition() + Vec2(GridSize / 2, 0));
+                for (auto& pos : valid_pos)
+                {
+                    if (focus_pos_ == grid_pos + pos) {
+                        main_player_->interact(pos);
+                        if (focus != nullptr)
+                        {
+                            focus->interact();
+                        }
                     }
-				}
+                }
             }
+            catch (std::exception& exception)
+            {
+	            
+            }
+
         }
         else if (e->getMouseButton() == cocos2d::EventMouse::MouseButton::BUTTON_RIGHT) 
         {
@@ -311,7 +352,7 @@ void MapLayer::onMouseUp(cocos2d::Event* event)
 
 void MapLayer::changeHolding(const int num)
 {
-	// UILogic::changeHoldings(num);
+	// TODO: UILogic::changeHoldings(num);
 }
 
 void MapLayer::refocus()
@@ -412,7 +453,14 @@ void MapLayer::toBack()
 {
 	if (is_front_){
 		is_front_ = false;
-		SpriteFrameCache::getInstance()->removeSpriteFrames();
+        tiled_map_ = nullptr;
+        layer_ = nullptr;
+        camera_ = nullptr;
+        main_player_ = nullptr;
+        touch_listener_ = nullptr;
+        keyboard_Listener_ = nullptr;
+        mouse_listener_ = nullptr;
+        SpriteFrameCache::getInstance()->removeSpriteFrames();
 	}
 }
 
@@ -456,7 +504,7 @@ bool MapLayer::hasCollision(const cocos2d::Vec2& pos)
     return true; 
 }
 
-void MapLayer::addPlayerSprite(PlayerSprite* player)
+void MapLayer::addPlayer(PlayerSprite* player)
 {
     layer_->addChild(player, player->getPosition().y);
     player->setParentMapLayer(this);

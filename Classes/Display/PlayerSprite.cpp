@@ -9,7 +9,8 @@ USING_NS_CC;
 static constexpr float SCALE_FACTOR = 1.5f;
 static constexpr float FRAME_LENGTH_WALK = 0.3f; // 18 frames
 static constexpr float FRAME_LENGTH_RUN = 0.2f; // 12 frames
-static constexpr float FRAME_LENGTH_INTERACT = 0.08f; // 7 frames, 6 duration
+static constexpr float FRAME_LENGTH_INTERACT = 0.08f; // 4.8frames
+static constexpr float FRAME_LENGTH_STAY = 0.1f; // 6 frames
 static constexpr int SPEED_WALK = 12; // 1.8 pixel / frame
 static constexpr int SPEED_RUN = 16; // 1.25 pixel / frame
 static constexpr float DISPLACEMENT_WALK = SPEED_WALK / (FRAME_LENGTH_WALK * 60);
@@ -78,7 +79,7 @@ PlayerSprite::MOVEMENT PlayerSprite::getMovementFromString(const std::string& na
 
 PlayerSprite::PlayerSprite(bool always_run, const rapidjson::Document* doc) : run_(always_run)
 {
-    plist_name_ = (*doc)["plist"].GetString();
+    std::string plist_name_ = (*doc)["plist"].GetString();
     frame_format_ = (*doc)["frame_format"].GetString();
     MapLayer::loadPlist(plist_name_);
     for (auto& i : (*doc)["movement"].GetObject())
@@ -90,7 +91,7 @@ PlayerSprite::PlayerSprite(bool always_run, const rapidjson::Document* doc) : ru
             auto it = movements_[move_i].begin();
             for (auto& value : i.value.GetArray())
             {
-                movements_[move_i].emplace_back(value.GetInt() - 1);
+                movements_[move_i].emplace_back(value.GetInt());
             }
         }
     }
@@ -113,19 +114,11 @@ PlayerSprite* PlayerSprite::create(const rapidjson::Document* doc, bool always_r
         sprite->setAnchorPoint(Vec2(0, 0));
         return sprite;
     }
-    //�����ʼ��ʧ��
     CC_SAFE_DELETE(sprite);
     return nullptr;
 }
 
-void PlayerSprite::moveBy(MOVEMENT direction, int length)
-{
-	move(direction);
-    destination = getPosition() + Vec2(directions_[static_cast<int>(direction) - 4]) * length * GridSize;
-}
-
-
-void PlayerSprite::move(MOVEMENT move_e)
+void PlayerSprite::move(MOVEMENT move_e, const int length)
 {
     if (repeat_action_ != nullptr)
     {
@@ -137,17 +130,46 @@ void PlayerSprite::move(MOVEMENT move_e)
     Animation* animation = Animation::create();
     float frame_duration = run_ ? FRAME_LENGTH_RUN : FRAME_LENGTH_WALK;
     int move_speed = run_ ? SPEED_RUN : SPEED_WALK;
+
+	if (MOVEMENT::STAY == move_e)
+    {
+        frame_duration = FRAME_LENGTH_STAY;
+        stand_direction_ = MOVEMENT::DOWN;
+    }
+    else
+    {
+        stand_direction_ = static_cast<MOVEMENT>(static_cast<int>(move_e) - 4);
+	    if (length > 0)
+	    {
+            destination = getPosition() + Vec2(directions_[static_cast<int>(move_e) - 4]) * length * GridSize;
+	    }
+    }
+
     animation->setDelayPerUnit(frame_duration);
     for (int i : movements_[static_cast<int>(move_e)])
     {
     	auto frame = SpriteFrameCache::getInstance()->getSpriteFrameByName(getFrameName(frame_format_, i));
         animation->addSpriteFrame(frame);
     }
-    stand_direction_ = static_cast<MOVEMENT>(static_cast<int>(move_e) - 4);
-
     Animate* animate = Animate::create(animation);
-    MoveBy* moveBy = MoveBy::create(frame_duration * 2, Vec2(directions_[static_cast<int>(move_e) - 4]) * move_speed * 2);
-    repeat_action_ = RepeatForever::create(Spawn::create(moveBy, animate, nullptr));
+   
+   	if (move_e == MOVEMENT::STAY)
+    {
+        if (length > 0)
+        {
+            repeat_action_ = Repeat::create(animate, length);
+        }
+        else
+        {
+            repeat_action_ = RepeatForever::create(animate);
+        }
+    }
+    else
+    {
+        MoveBy* moveBy = MoveBy::create(frame_duration * 2, Vec2(directions_[static_cast<int>(move_e) - 4]) * move_speed * 2);
+        repeat_action_ = RepeatForever::create(Spawn::create(moveBy, animate, nullptr));
+    }
+
     repeat_action_->retain();
     runAction(repeat_action_);
     scheduleUpdate();
@@ -164,12 +186,13 @@ void PlayerSprite::stop(MOVEMENT move_e)
             getFrameName(frame_format_, movements_[static_cast<int>(stand_direction_)][0])));
         repeat_action_->release();
         repeat_action_ = nullptr;
-        unscheduleUpdate();
         is_moving = false;
+        destination = { -1,-1 };
+        unscheduleUpdate();
     }
 }
 
-void PlayerSprite::interact(Vec<int> pos)
+void PlayerSprite::interact(const Vec<int>& pos)
 {
     if (repeat_action_ != nullptr)
     {
@@ -195,6 +218,8 @@ void PlayerSprite::interact(Vec<int> pos)
     {
 	    stand_direction_ = MOVEMENT::UP;
     }
+
+    // TODO: holdings animation
 
     Animation* animation = Animation::create();
     animation->setDelayPerUnit(FRAME_LENGTH_INTERACT);

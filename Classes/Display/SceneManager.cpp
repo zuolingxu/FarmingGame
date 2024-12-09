@@ -117,8 +117,12 @@ void SceneManager::hideUILayer() const
 	permanent_node_->setLocalZOrder(BACK_UI_ZORDER);
 }
 
-void SceneManager::changeUILayer(const std::string& UI_name) const
+void SceneManager::showUILayer(const std::string& UI_name) const 
 {
+	permanent_node_->setVisible(true);
+	map_.at(current_map_name_)->pause();
+
+	permanent_node_->setLocalZOrder(FRONT_UI_ZORDER);
 	for (auto layer : permanent_node_->getChildren())
 	{
 		if (layer->getName() != UI_name)
@@ -133,19 +137,6 @@ void SceneManager::changeUILayer(const std::string& UI_name) const
 			layer->resume();
 			layer->setLocalZOrder(FRONT_UI_ZORDER);
 		}
-	}
-}
-
-void SceneManager::showUILayer(const std::string& UI_name) const 
-{
-	permanent_node_->setVisible(true);
-	Node* layer = permanent_node_->getChildByName(UI_name);
-	map_.at(current_map_name_)->pause();
-	if (layer != nullptr){
-		layer->setVisible(true);
-		layer->resume();
-		layer->setLocalZOrder(FRONT_UI_ZORDER);
-		permanent_node_->setLocalZOrder(FRONT_UI_ZORDER);
 	}
 }
 
@@ -188,7 +179,7 @@ void SceneManager::NextMapCallBack::operator()()
 
 void SceneManager::NextMapCallBack::start()
 {
-	loading_scene = Scene::create();
+	Scene* loading_scene = Scene::create();
 	auto background = cocos2d::LayerColor::create(cocos2d::Color4B(Color3B(255, 248, 220)));
 	loading_scene->addChild(background, BACKGROUND_ZORDER);
 
@@ -196,7 +187,7 @@ void SceneManager::NextMapCallBack::start()
 	loading_bar->setColor(Color3B(255, 165, 0));
 	loading_bar->setDirection(ui::LoadingBar::Direction::LEFT);
 	loading_bar->setScale(1.0f, 1.0f);
-	loading_bar->setPosition(Director::getInstance()->getWinSizeInPixels() / 2);
+	loading_bar->setPosition(Director::getInstance()->getWinSize() / 2);
 	loading_scene->addChild(loading_bar, 10);
 
 	if (Director::getInstance()->getRunningScene() == nullptr)
