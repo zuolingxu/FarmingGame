@@ -1,6 +1,6 @@
 {
     "Name": "chicken_house",
-    "TMX": "tiledMap/chicken_house.tmx",
+    "TMX": "tiledmap/chicken_house.tmx",
     "ObjectList": {
         "12 7":{
             "Type":"Animal",

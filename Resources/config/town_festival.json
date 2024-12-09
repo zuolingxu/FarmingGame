@@ -1,9 +1,9 @@
 {
     "Name": "town_festival",
-    "TMX": "tiledMap/town_festival.tmx",
+    "TMX": "tiledmap/town-festival.tmx",
     "ObjectList": {
         "40 2":{
-            "Type":"npc",
+            "Type":"NPC",
             "Info":{
                 "Name":"Haley",
                 "favorability":0,

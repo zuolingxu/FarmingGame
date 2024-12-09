@@ -79,7 +79,7 @@ list(APPEND GAME_HEADER
      Classes/Object/Gate.h
      Classes/Object/Land.h
      Classes/Object/NPC.h
-     Classes/Object/Mineral.cpp
+     Classes/Object/Mineral.h
      Classes/Object/MapObject.h
      Classes/UILogic/UILogic.h
      Classes/UILogic/MainCharacter.h

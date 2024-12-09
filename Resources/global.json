@@ -4,17 +4,33 @@
     "GameVersion": "v1.0",
     "Files": {
         "global": "global.json",
+
         "introduction": "config/introduction.json",
+        "town": "config/town.json",
+        "town_festival": "config/town_festival.json",
+        "npc1house": "config/npc1house.json",
+        "npc2house": "config/npc2house.json",
+        "chicken_house": "config/chicken_house.json",
+
         "player": "config/player.json",
+        "Abigail": "config/Abigail.json",
+        "Abigail_festival": "config/Abigail_festival.json",
+        "Caroline": "config/Caroline.json",
+        "chicken": "config/chicken.json",
+        "cow": "config/cow.json",
+        "Haley": "config/Haley.json",
+        "Haley_festival": "config/Haley_festival",
+
         "playerpls": "plist/player.plist",
         "HelloPic": "image/hello_world.png",
         "CloseNormalPic":"image/close_normal.png",
         "CloseSeletedPic":"image/close_seleted.png",
         "loading_bar": "image/loading_bar.png",
+        "FocusPic": "image/selected_tile.png",
+        
         "ArialFon": "fonts/arial.ttf",
-        "MarkerFeltFon": "fonst/Marker Felt.ttf",
-        "FocusPic": "image/selected_tile.png"
+        "MarkerFeltFon": "fonst/Marker Felt.ttf"
     },
     "UI": ["ConfigUI"],
-    "Map": []
+    "Map": ["town", "town_festival" , "npc1house", "npc2house","chicken_house"]
 }
