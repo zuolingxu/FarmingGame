@@ -1,36 +1,40 @@
 {
-    "key_info": {
-        "day": 1,
-        "money": 1000
-    },
-    
-    "belongings": {
-        "axe": [
-            1, "wood"
-        ],
-        "sunflower_seed":[
-            10
-        ]
-    },
-    
-    "relationship": {
-        "Tom": 0,
-        "Alice": 0
-    },
+  "key_info": {
+    "day": 1,
+    "money": 1000
+  },
 
-    "Map":{
-        "Example": {
-            "12 13":{
-                "Type": "Land",
-                "Info": {
-                "CropName": "Potato",
-                "LiveDay": "1",
-                "MaturationDay": "5",
-                "Water": true,
-                "Fertilizer": 1
-              }
-            }    
+  "belongings": {
+    "axe": [
+      1,
+      "wood"
+    ],
+    "sunflower_seed": [
+      10
+    ]
+  },
+
+  "relationship": {
+    "Tom": 0,
+    "Alice": 0
+  },
+
+  "Map": {
+    "Farm": {
+      "12 13": {
+        "Type": "Land",
+        "Info": {
+          "HasCrop": true,
+          "Water": true,
+          "Fertilizer": true,
+          "CropInfo": {
+            "CropName": "Potato",
+            "LiveDay": 1,
+            "MaturationDay": 7
+          }
         }
+      }
     }
+  }
 
 }

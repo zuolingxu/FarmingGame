@@ -24,6 +24,7 @@ public:
 	Object& operator=(const Object& other) = delete;
 	
 	static Object* create(rapidjson::Value& val, MapLayer* parents);
+
 	virtual void init() = 0; 
 	virtual void interact() = 0;
 	virtual void settle() = 0;       //游戏内一天结束时调用
