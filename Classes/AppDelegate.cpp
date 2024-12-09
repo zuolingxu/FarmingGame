@@ -94,9 +94,10 @@ bool AppDelegate::applicationDidFinishLaunching() {
     try
     {
         Scene* scene = Scene::create();
-
-            scene->addChild(UILayer::createUILayer(UILayerType::BAG));
-            Director::getInstance()->runWithScene(scene);
+        auto background = LayerColor::create(Color4B(Color3B(255, 255, 255), 255));
+        scene->addChild(background, -1000);
+        scene->addChild(UILayer::createUILayer(UILayerType::TASK_BAR), 1000);
+        Director::getInstance()->runWithScene(scene);
     }
     catch (const std::exception& e)
     {
