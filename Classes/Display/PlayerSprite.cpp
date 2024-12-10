@@ -6,6 +6,7 @@ USING_NS_CC;
 #undef GetObject
 #endif
 
+static constexpr int OBJECT_BASE_ZORDER = 131072;
 static constexpr float SCALE_FACTOR = 1.5f;
 static constexpr float FRAME_LENGTH_WALK = 0.3f; // 18 frames
 static constexpr float FRAME_LENGTH_RUN = 0.2f; // 12 frames
@@ -277,10 +278,12 @@ void PlayerSprite::update(float delta)
             destination = {-1,-1};
             stop(MOVEMENT::ALL);
         }
-        setLocalZOrder(getPosition().y);
+        setLocalZOrder(OBJECT_BASE_ZORDER - getPosition().y);
     }
 
-    parent_->getCamera()->setPosition(getPosition()
-        - Director::getInstance()->getWinSize() / SCALE_FACTOR / 2);
+	if (is_main_character){
+		parent_->getCamera()->setPosition(getPosition()
+		   - Director::getInstance()->getWinSize() / SCALE_FACTOR / 2);
+	}
     parent_->refocus();
 }

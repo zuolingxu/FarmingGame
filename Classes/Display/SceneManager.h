@@ -1,5 +1,4 @@
 #pragma once
-#define CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL 1
 #include <string>
 #include <unordered_map>
 #include "DocumentManager.h"

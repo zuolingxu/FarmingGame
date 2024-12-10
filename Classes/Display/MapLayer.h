@@ -1,5 +1,4 @@
 #pragma once
-#define CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL 1
 #include "json/document.h"
 #include "cocos2d.h"
 #include "PlayerSprite.h"
@@ -30,6 +29,7 @@ public:
 
 	// frame_name is name of frame in .plist file.
 	// pos is GRID position of sprite, the anchor is (0,0) (bottom left).
+	// You should call loadPlist method first, if the sprite set has not been loaded.
 	void addSpriteWithFrame(MapObject::ObjectInfo& obj_info, const std::string& frame_name) const;
 
 	// add a PlayerSprite into the Map, sprite_document is a json document that contains all information of the sprite.
