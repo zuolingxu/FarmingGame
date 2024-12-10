@@ -1,0 +1,5 @@
+{
+    "Name": "mine",
+    "TMX": "TiledMap/mine.tmx",
+    "BackGroundColor":[51,102,153]
+}

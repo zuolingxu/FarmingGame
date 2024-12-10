@@ -93,15 +93,12 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     try
     {
-        //// load ALL_UI UI_ need fast reaction
-        //auto manager = DocumentManager::getInstance();
-        //rapidjson::Document* global_document = manager->getDocument(manager->getPath("global"));
-        //CCLOG(manager->getPath("global").c_str());
-        //manager->loadArchiveDocument(19);
-        //SceneManager::getInstance()->NextMap("introduction");
-
-        DocumentManager::getInstance()->loadArchiveDocument(19);
-        SceneManager::getInstance()->NextMap("town_festival", "10 14");
+        // load ALL_UI UI_ need fast reaction
+        auto manager = DocumentManager::getInstance();
+        rapidjson::Document* global_document = manager->getDocument(manager->getPath("global"));
+        CCLOG(manager->getPath("global").c_str());
+        manager->loadArchiveDocument(19);
+        SceneManager::getInstance()->NextMap("introduction");
     }
     catch (const std::exception& e)
     {

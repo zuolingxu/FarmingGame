@@ -32,7 +32,7 @@ public:
 	void showUILayer(const std::string& UI_name) const;
 
 	// hideUILayer will hide all UI and Display the map
-	void hideUILayer() const;
+	// void hideUILayer() const;
 
 	// Go to Next Map. If pos is not specified, it won't add a player and all Listener will be removed(for start UI)
 	// If the map cannot be found, it will throw an exception
@@ -43,7 +43,7 @@ private:
 	std::string current_map_name_; //  the name of the current map
 	cocos2d::Director* director_; //  the director of the game
 	std::unordered_map<std::string, MapLayer*> map_; //  the maps of the game
-	cocos2d::Node* permanent_node_; //  the node that will be permanent in the game, used to store UILayers
+	cocos2d::Node* permanent_node_ = nullptr; //  the node that will be permanent in the game, used to store UILayers
 
 	// hide Constructor and Destructor
 	SceneManager();
