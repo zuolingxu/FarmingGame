@@ -11,8 +11,8 @@ Crop::~Crop()
 }
 
 
-Crop* Crop::create(rapidjson::Value& val, MapLayer* parent) {
-    Crop* crop = new Crop(parent);
+Crop* Crop::create(rapidjson::Value& val, MapLayer* parent, const Vec<int>& pos) {
+    Crop* crop = new Crop(parent,pos);
 
     if (val.HasMember("CropName")) {
         crop->CropName = val["CropName"].GetString();
@@ -28,7 +28,7 @@ Crop* Crop::create(rapidjson::Value& val, MapLayer* parent) {
 }
 
 Crop* Crop::createByPlayer(const cocos2d::Vec2& position, MapLayer* parent, Land* land) {
-    Crop* crop = new Crop(parent);
+    Crop* crop = new Crop(parent,position);
     crop->saveToArchive(position, land); // ���� Land ����
     return crop;
 }
@@ -43,8 +43,8 @@ void Crop::saveToArchive(const cocos2d::Vec2& position, Land* land) {
     cropInfo.AddMember("CropName", rapidjson::Value(CropName.c_str(), archiveDoc->GetAllocator()), archiveDoc->GetAllocator());
     cropInfo.AddMember("LiveDay", LiveDay, archiveDoc->GetAllocator());
     cropInfo.AddMember("MaturationDay", MaturationDay, archiveDoc->GetAllocator());
-    cropInfo.AddMember("Water", land->isWatered(), archiveDoc->GetAllocator()); // ʹ�� Land �� Water ״̬
-    cropInfo.AddMember("Fertilizer", land->isFertilized(), archiveDoc->GetAllocator()); // ʹ�� Land �� Fertilizer ״̬
+    //cropInfo.AddMember("Water", land->isWatered(), archiveDoc->GetAllocator()); // ʹ�� Land �� Water ״̬
+    //cropInfo.AddMember("Fertilizer", land->isFertilized(), archiveDoc->GetAllocator()); // ʹ�� Land �� Fertilizer ״̬
 
     if (archiveDoc->HasMember("Map")) {
         rapidjson::Value& map = (*archiveDoc)["Map"];
