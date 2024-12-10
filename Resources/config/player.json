@@ -1,5 +1,5 @@
 {
-    "plist": "playerpls",
+    "plist": "PlayerPls",
     "frame_format": "player-{}.png",
     "movement": {
         "DOWN": [0],

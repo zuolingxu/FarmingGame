@@ -24,7 +24,7 @@
  </layer>
  <layer id="1" name="house" width="50" height="30">
   <data encoding="base64" compression="gzip">
-   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
+   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
   </data>
  </layer>
  <layer id="8" name="road" width="50" height="30">
@@ -52,7 +52,7 @@
   <object id="18" x="149" y="406" width="22" height="20.5"/>
   <object id="21" x="647" y="265" width="130" height="95.5"/>
   <object id="23" x="691.5" y="245" width="40.5" height="7.5"/>
-  <object id="24" x="712.5" y="116" width="73.5" height="20.5"/>
+  <object id="24" x="712.5" y="116" width="73.5" height="54.5"/>
   <object id="25" x="743.5" y="144" width="16" height="40"/>
   <object id="26" x="725.5" y="97" width="56" height="11.5"/>
   <object id="27" x="740" y="85.5" width="24.5" height="6"/>

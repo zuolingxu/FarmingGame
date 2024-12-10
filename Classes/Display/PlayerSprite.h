@@ -1,6 +1,4 @@
 #pragma once
-#define CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL 1
-#include <bitset>
 #include "HelperClasses.h"
 #include "cocos2d.h"
 #include "MapLayer.h"
@@ -53,7 +51,8 @@ public:
 
     // setParentMapLayer method, set the parent MapLayer of this PlayerSprite
     // this method should be called before any movement and interaction
-    void setParentMapLayer(MapLayer* parent) { parent_ = parent; }
+    void setParentMapLayer(MapLayer* parent, bool is_main = false)
+		{ parent_ = parent; is_main_character = is_main; }
 
 private:
     // constructor and destructor
@@ -75,5 +74,6 @@ private:
     MOVEMENT stand_direction_ = MOVEMENT::DOWN; //  the direction the player is facing
     bool run_ = false; //  if the player is running, changeSpeed Method will change this
     bool is_moving = false; //  if the player is moving, stay movements is considered as moving
+    bool is_main_character = false; //  if the player is the main character
 };
 

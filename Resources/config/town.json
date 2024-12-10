@@ -1,9 +1,9 @@
 {
     "Name": "town",
-    "TMX": "tiledMap/town.tmx",
+    "TMX": "tiledmap/town.tmx",
     "ObjectList": {
         "40 2":{
-            "Type":"npc",
+            "Type":"NPC",
             "Info":{
                 "Name":"Haley",
                 "favorability":0,

@@ -1,17 +1,15 @@
 {
-    "Abigail_move":{
-        "plist": "Abigail.plist",
-        "frame_format":"Abigail-{}.png",
-        "movement": {
-            "DOWN": [0],
-            "RIGHT": [4],
-            "UP": [7],
-            "LEFT": [11],
-            "W_DOWN": [1,2,3],
-            "W_RIGHT": [5,6],
-            "W_UP": [8,9,10],
-            "W_LEFT": [12,13]
-        }
+    "plist": "plist/Abigail.plist",
+    "frame_format":"Abigail-{}.png",
+    "movement": {
+        "DOWN": [0],
+        "RIGHT": [4],
+        "UP": [7],
+        "LEFT": [11],
+        "W_DOWN": [1,2,3],
+        "W_RIGHT": [5,6],
+        "W_UP": [8,9,10],
+        "W_LEFT": [12,13]
     }
 }
 
