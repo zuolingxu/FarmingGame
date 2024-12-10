@@ -1,0 +1,5 @@
+{
+    "Name": "beach",
+    "TMX": "TiledMap/beach.tmx",
+    "BackGroundColor":[51,102,153]
+}

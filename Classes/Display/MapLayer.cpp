@@ -415,7 +415,7 @@ Node* MapLayer::toFront(PlayerSprite* main_player)
     camera_ = Camera::createOrthographic(size.width, size.height, -1024, 1024);
     camera_->setPosition(pixel_pos - size / 2);
     camera_->setCameraFlag(CameraFlag::USER1);
-    camera_->setDepth(10);
+    camera_->setDepth(-10);
     layer_->addChild(camera_);
 
     for (auto& row : interact_map_)

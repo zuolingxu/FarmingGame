@@ -1,47 +1,91 @@
-//#include "cocos2d.h"
-//#include "UILayer.h"
-//
-//class UILogic
-//{
-//public:
-//    // ï¿½ï¿½È¡ UILogic Êµï¿½ï¿½
-//    static UILogic* getInstance();
-//
-//    // ï¿½ï¿½Ê¼ï¿½ï¿½ UILogic
-//    void init(UILayer* uiLayer);
-//
-//    //// ï¿½ï¿½ UI ï¿½Â¼ï¿½
-//    //void bindEvents();
-//
-//    //// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¥ï¿½ï¿½ï¿½
-//    //void onTaskButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
-//
-//    //// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¥ï¿½ï¿½ï¿½
-//    //void onBagButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
-//
-//    //// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½Å¥ï¿½ï¿½ï¿½
-//    //void onStartButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
-//
-//    //// ï¿½ï¿½ï¿½ï¿½ï¿½Ø±Õ±ï¿½ï¿½ï¿½ï¿½ï¿½Å¥ï¿½ï¿½ï¿½
-//    //void onCloseBagButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
-//
-//    //// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½
-//    //void onBagSlotClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
-//
-//    //// ï¿½ï¿½ï¿½ï¿½ï¿½ÂµÄ°ï¿½Å¥ï¿½ï¿½ï¿½
-//    //void onNewButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
-//    //void onLoadButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
-//    void onExitButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
-//
-//    //// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
-//    //bool onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
-//
-//private:
-//    // Ë½ï¿½Ð¹ï¿½ï¿½ìº¯ï¿½ï¿½
-//    UILogic();
-//    static UILogic* instance_;
-//
-//    UILayer* uiLayer_;
-//};
+#pragma once
+#include "cocos2d.h"
+#include "ui/CocosGUI.h"
+#include <string>
+#include <vector>
+
+// ¼òµ¥µÄÎïÆ·½á¹¹Ìå£¬ÓëUILayer¶¨Òå±£³ÖÒ»ÖÂ
+struct Item {
+    std::string name;
+    int quantity;
+    std::string iconPath;
+    Item(const std::string& n = "", int q = 0, const std::string& icon = "")
+        : name(n), quantity(q), iconPath(icon) {}
+};
+
+// ¼òµ¥µÄÈÎÎñ½á¹¹Ìå
+struct Task {
+    std::string description;
+    bool completed;
+    Task(const std::string& desc = "", bool done = false)
+        : description(desc), completed(done) {}
+};
+
+
+class UILogic : public cocos2d::Ref
+{
+public:
+    // »ñÈ¡µ¥ÀýÊµÀý
+    static UILogic* getInstance();
+
+    // ÉèÖÃ¿ªÊ¼½çÃæ½Úµã£¨START_SCREENÀàÐÍ£©£¬NodeÓÉUILayer·µ»Ø
+    void initStartScreenNode(cocos2d::Node* startScreenNode);
+
+    // ÉèÖÃ±³°ü½Úµã£¨BAGÀàÐÍ£©£¬NodeÓÉUILayer·µ»Ø
+    void initBagNode(cocos2d::Node* bagNode);
+
+    // ÉèÖÃÈÎÎñÀ¸½Úµã£¨TASK_BARÀàÐÍ£©£¬NodeÓÉUILayer·µ»Ø
+    void initTaskBarNode(cocos2d::Node* taskBarNode);
+
+    // Ë¢ÐÂ±³°üUI
+    void refreshBagUI();
+
+    // Ë¢ÐÂÈÎÎñUI
+    void updateTaskUI();
+
+    // Ìí¼ÓÎïÆ·µ½±³°ü
+    void addItemToBag(const Item& item);
+
+    // Ê¹ÓÃÎïÆ·/ÒÆ³ýÎïÆ·
+    // ÔÚµã»÷¸ñ×ÓÊ±µ÷ÓÃ
+    void useItemFromBag(int slotIndex);
+
+    //// ±ê¼ÇÈÎÎñÍê³É
+    void completeTask(int taskIndex);
+
+    // ¼ÙÉèÐèÒª´Ó DocumentManager ¼ÓÔØ/±£´æ±³°üºÍÈÎÎñÊý¾Ý
+    void loadDataFromSave();
+    void saveDataToSave();
+
+private:
+    UILogic();
+    ~UILogic();
+
+    // ³õÊ¼»¯ÊÂ¼þ°ó¶¨º¯Êý
+    void bindStartScreenEvents();
+    void bindBagEvents();
+    void bindTaskBarEvents();
+
+     //°´Å¥µã»÷ÊÂ¼þ»Øµ÷º¯Êý
+    void onNewButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+    void onLoadButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+    void onExitButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+
+    void onCloseBagButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+    void onBagSlotClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+
+    void onTaskItemClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+
+    static UILogic* instance_;
+
+    cocos2d::Node* startScreenNode_;
+    cocos2d::Node* bagNode_;
+    cocos2d::Node* taskBarNode_;
+
+    std::vector<Item> bagItems_;
+    std::vector<Task> tasks_;
+
+};
+
 
 
