@@ -44,7 +44,7 @@ Land::~Land()
 	return land;
 }
 
-::Object* Land::createByPlayer(const cocos2d::Vec2& position, MapLayer* parent) {
+MapObject* Land::createByPlayer(const cocos2d::Vec2& position, MapLayer* parent) {
 	Land* land = new Land(parent);
 	land->crop_ = nullptr; // û������
 

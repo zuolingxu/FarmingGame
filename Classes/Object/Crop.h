@@ -4,7 +4,9 @@
 #include "json/document.h"
 #include "MapLayer.h"
 #include <string>
-#include "Land.h"
+
+class Land;
+
 class Crop{
 	private:
 	cocos2d::Sprite* sprite_ = nullptr;

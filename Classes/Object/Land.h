@@ -7,6 +7,8 @@
 #include "MapLayer.h"
 #include "UILogic.h"
 
+class Crop;
+
 class Land final: protected MapObject {
     private:
 	Crop* crop_ = nullptr;  // ָ���������
@@ -18,8 +20,8 @@ class Land final: protected MapObject {
     public:
 	explicit Land(MapLayer* parent, const Vec<int>& pos);
     ~Land() override;
-    static Object* create(rapidjson::Value& val, MapLayer* parent, const Vec<int>& pos);//�Ӵ浵��������
-    static Object* createByPlayer(const cocos2d::Vec2& position, MapLayer* parent); // ��Ҵ�������
+    static MapObject* create(rapidjson::Value& val, MapLayer* parent, const Vec<int>& pos);//�Ӵ浵��������
+    static MapObject* createByPlayer(const cocos2d::Vec2& position, MapLayer* parent); // ��Ҵ�������
     virtual void init() override;
     virtual void interact() override;
     virtual void clear() override;
