@@ -1,5 +1,5 @@
 {
     "Name": "introduction",
-    "TMX": "TiledMap/introduction.tmx",
+    "TMX": "tiledmap/introduction.tmx",
     "BackGroundColor":[51,102,153]
 }

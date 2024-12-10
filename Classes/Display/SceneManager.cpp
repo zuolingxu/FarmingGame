@@ -221,7 +221,7 @@ void SceneManager::NextMapCallBack::render()
 		if (pos != "default")
 		{
 			DocumentManager* manager = DocumentManager::getInstance();
-			rapidjson::Document* doc = manager->getDocument(manager->getPath("player"));
+			rapidjson::Document* doc = manager->getDocument(manager->getPath("Player"));
 			main_player = PlayerSprite::create
 			(doc, toVec2(pos), {1,2}, (*manager->getConfigDocument())["always_run"].GetBool());
 		}

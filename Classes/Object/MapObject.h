@@ -10,9 +10,9 @@ class MapObject : public cocos2d::Ref {
 public:
 	struct ObjectInfo
 	{
-		cocos2d::Sprite* sprite;
-		Vec<int> size;           //��ײ�����С
-		Vec<int> position;
+		cocos2d::Sprite* sprite; //  pointer to the sprite, if not loaded then nullptr
+		Vec<int> size;           //  Size of the Sprite
+		Vec<int> position;       //  Grid position of the Sprite
 	};
 
 protected:

@@ -12,6 +12,7 @@ USING_NS_CC;
 
 static constexpr int BACKGROUND_ZORDER = -512;
 static constexpr int TMX_ZORDER = -256;
+static constexpr int OBJECT_BASE_ZORDER = 131072;
 static constexpr int MAP_MAX_LENGTH = 10;
 static constexpr float SCALE_FACTOR = 1.5f;
 
@@ -88,7 +89,7 @@ void MapLayer::addTiledMap()
 
 void MapLayer::addObject(const Vec<int>& pos, rapidjson::Value& val)
 {
-    ::MapObject* obj = ::MapObject::create(val, this, pos);
+    MapObject* obj = ::MapObject::create(val, this, pos);
     obj->retain();
     Vec<int> size = obj->getInfo().size;
     Vec<int> pos2 = pos + size;
@@ -177,6 +178,12 @@ void MapLayer::onTouchesEnded(const std::vector<cocos2d::Touch*>& touches, cocos
 
 void MapLayer::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event)
 {
+    // TODO: delete test example
+    static MapObject::ObjectInfo obj{ nullptr, { 2,2 }, { 1,1 } };
+    static MapObject::ObjectInfo obj2{ nullptr, { 2,2 }, { 3,3 } };
+    DocumentManager* manager = DocumentManager::getInstance();
+    PlayerSprite* player;
+    
     switch (keyCode)
     {
     case cocos2d::EventKeyboard::KeyCode::KEY_UP_ARROW:
@@ -225,16 +232,21 @@ void MapLayer::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Ev
         main_player_->changeSpeed();
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F1:
-        // TODO: Test Code 
+        loadPlist(manager->getPath("CowPls"));
+        addSpriteWithFrame(obj, "cow-0.png");
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F2:
+        changeWithSingleFrame(obj.sprite, "cow-1.png");
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_F3:
         // TODO: Test Code
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F4:
-        // TODO: Test Code
+        addPlayerSpriteWithDocument(obj2, manager->getDocument(manager->getPath("Cow")));
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F5:
-        // TODO: Test Code
+    	player = dynamic_cast<PlayerSprite*>(obj2.sprite);
+        player->move(PlayerSprite::MOVEMENT::W_RIGHT, 12);
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F6:
         // TODO: Test Code
@@ -395,8 +407,8 @@ Node* MapLayer::toFront(PlayerSprite* main_player)
     {
         main_player_ = main_player;
         pixel_pos = main_player_->getPosition();
-        main_player_->setParentMapLayer(this);
-        layer_->addChild(main_player_, pixel_pos.y);
+        main_player_->setParentMapLayer(this, true);
+        layer_->addChild(main_player_, OBJECT_BASE_ZORDER - pixel_pos.y);
 		scale_factor = SCALE_FACTOR;
     }
     size = size / scale_factor;
@@ -421,7 +433,7 @@ Node* MapLayer::toFront(PlayerSprite* main_player)
     focus_ = Sprite::create(DocumentManager::getInstance()->getPath("FocusPic"));
     focus_->setPosition(toPixel(focus_pos_));
     focus_->setAnchorPoint(Vec(0, 0));
-    layer_->addChild(focus_, 1000000);
+    layer_->addChild(focus_, OBJECT_BASE_ZORDER + 128);
     layer_->setCameraMask(static_cast<unsigned short>(CameraFlag::USER1));
     return layer_;
 }
@@ -514,9 +526,9 @@ bool MapLayer::hasCollision(const cocos2d::Vec2& pos)
 
 void MapLayer::addPlayer(PlayerSprite* player)
 {
-    layer_->addChild(player, player->getPosition().y);
-    player->setParentMapLayer(this);
-    player->setCameraMask(static_cast<unsigned short>(CameraFlag::USER1));
+    //layer_->addChild(player, OBJECT_BASE_ZORDER - player->getPosition().y);
+    //player->setParentMapLayer(this);
+    //player->setCameraMask(static_cast<unsigned short>(CameraFlag::USER1));
 }
 
 void MapLayer::clearObjects()
@@ -539,10 +551,10 @@ void MapLayer::addSpriteWithFrame(MapObject::ObjectInfo& obj_info, const std::st
         if (spriteFrame != nullptr) 
         {
             obj_info.sprite = Sprite::createWithSpriteFrame(spriteFrame);
-            toPixel(focus_pos_);
+            obj_info.sprite->setPosition(toPixel(obj_info.position));
             obj_info.sprite->setAnchorPoint(Vec2(0, 0));
             obj_info.sprite->setCameraMask(static_cast<unsigned short>(CameraFlag::USER1));
-            layer_->addChild(obj_info.sprite, focus_pos_.Y() * GridSize);
+            layer_->addChild(obj_info.sprite, OBJECT_BASE_ZORDER - obj_info.position.Y() * GridSize);
         }
     }
 }
@@ -551,14 +563,16 @@ void MapLayer::addPlayerSpriteWithDocument(MapObject::ObjectInfo& obj_info, cons
 {
     if (is_front_ && obj_info.sprite == nullptr)
     {
-        obj_info.sprite = PlayerSprite::create(sprite_document, obj_info.position, obj_info.size);
-        if (obj_info.sprite != nullptr)
+        PlayerSprite* player = PlayerSprite::create(sprite_document, obj_info.position, obj_info.size);
+        if (player != nullptr)
         {
-            obj_info.sprite->setPosition(toPixel(obj_info.position));
-            obj_info.sprite->setAnchorPoint(Vec2(0, 0));
-            obj_info.sprite->setCameraMask(static_cast<unsigned short>(CameraFlag::USER1));
-            players_.emplace_back(obj_info.sprite);
-            layer_->addChild(obj_info.sprite, obj_info.sprite->getPosition().y);
+            player->setPosition(toPixel(obj_info.position));
+            player->setAnchorPoint(Vec2(0, 0));
+            player->setCameraMask(static_cast<unsigned short>(CameraFlag::USER1));
+            player->setParentMapLayer(this);
+            players_.emplace_back(player);
+            layer_->addChild(player, OBJECT_BASE_ZORDER - player->getPosition().y);
+            obj_info.sprite =  player;
         }
     }
 }
@@ -581,7 +595,7 @@ void MapLayer::updateMaps(const Vec<int>& old_pos, const Vec<int>& new_pos, cons
 	if (is_front_)
 	{
 		Vec<int> old_pos2 = old_pos + size;
-        ::MapObject* obj = interact_map_[old_pos.X()][old_pos.Y()];
+        MapObject* obj = interact_map_[old_pos.X()][old_pos.Y()];
         bool collision = false;
         if (obj != nullptr)
         {

@@ -1,9 +1,9 @@
 {
     "Name": "npc1house",
-    "TMX": "tiledMap/npc1house.tmx",
+    "TMX": "tiledmap/npc1house.tmx",
     "ObjectList": {
         "11 8":{
-            "Type":"npc",
+            "Type":"NPC",
             "Info":{
                 "Name":"Abigail"
             }

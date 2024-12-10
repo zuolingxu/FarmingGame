@@ -1,9 +1,8 @@
 {
-    "Haley_move_festival":{
-        "plist": "Haley.plist",
-        "movement":{
-            "STAY":[37,38,39,40,41,42,43,44]
-        }
+    "plist": "plist/Haley.plist",
+    "movement":{
+        "DOWN": [37],
+        "STAY": [37,38,39,40,41,42,43,44]
     }
 }
 
