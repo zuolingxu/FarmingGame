@@ -2,6 +2,8 @@
 #include "HelperClasses.h"
 #include "audio/include/AudioEngine.h"
 #include "ui/UILoadingBar.h"
+#include "UILogic.h"
+#include "UILayer.h"
 
 USING_NS_CC;
 
@@ -12,16 +14,7 @@ static constexpr int MAP_ZORDER = 0;
 
 SceneManager* SceneManager::instance_ = new SceneManager;
 
-SceneManager::SceneManager() : director_(Director::getInstance())
-{
-	// TODO: load StartUI
-
-	permanent_node_ = Node::create();
-	permanent_node_->retain();
-	permanent_node_->setName("UI");
-	// TODO: createUILayer();
-
-}
+SceneManager::SceneManager() : director_(Director::getInstance()) {}
 
 SceneManager::~SceneManager()
 {
@@ -64,6 +57,19 @@ void SceneManager::createMapWithDocument(rapidjson::Document* doc)
 
 SceneManager* SceneManager::getInstance()
 {
+	if (instance_->permanent_node_ == nullptr) {
+		instance_->permanent_node_ = Node::create();
+		instance_->permanent_node_->retain();
+		instance_->permanent_node_->setName("UI");
+		Node* start_screen = UILayer::createUILayer(UILayerType::START_SCREEN);
+		instance_->permanent_node_->addChild(start_screen, BACK_UI_ZORDER);
+		instance_->permanent_node_->addChild(UILayer::createUILayer(UILayerType::TASK_BAR), BACK_UI_ZORDER);
+		instance_->permanent_node_->addChild(UILayer::createUILayer(UILayerType::BAG), BACK_UI_ZORDER);
+		UILogic* uilogic = UILogic::getInstance();
+		uilogic->initStartScreenNode(start_screen);
+
+
+	}
 	return instance_;
 }
 
@@ -102,37 +108,37 @@ void SceneManager::settle()
 }
 
 
-void SceneManager::hideUILayer() const
-{
-	for (auto layer : permanent_node_->getChildren())
-	{
-		layer->setVisible(false);
-		layer->pause();
-		layer->setLocalZOrder(BACK_UI_ZORDER);
-	}
-	permanent_node_->setVisible(false);
-	permanent_node_->setLocalZOrder(BACK_UI_ZORDER);
-}
+//void SceneManager::hideUILayer() const
+//{
+//	for (auto layer : permanent_node_->getChildren())
+//	{
+//		layer->setVisible(false);
+//		layer->pause();
+//		layer->setLocalZOrder(BACK_UI_ZORDER);
+//	}
+//	permanent_node_->setVisible(false);
+//	permanent_node_->setLocalZOrder(BACK_UI_ZORDER);
+//}
 
 void SceneManager::showUILayer(const std::string& UI_name) const 
 {
 	permanent_node_->setVisible(true);
-	map_.at(current_map_name_)->pause();
+	// map_.at(current_map_name_)->pause();
 
 	permanent_node_->setLocalZOrder(FRONT_UI_ZORDER);
 	for (auto layer : permanent_node_->getChildren())
 	{
-		if (layer->getName() != UI_name)
-		{
-			layer->setVisible(false);
-			layer->pause();
-			layer->setLocalZOrder(BACK_UI_ZORDER);
-		}
-		else
+		if (layer->getName() == UI_name)
 		{
 			layer->setVisible(true);
 			layer->resume();
 			layer->setLocalZOrder(FRONT_UI_ZORDER);
+		}
+		else
+		{
+			layer->setVisible(false);
+			layer->pause();
+			layer->setLocalZOrder(BACK_UI_ZORDER);
 		}
 	}
 }
@@ -249,6 +255,14 @@ void SceneManager::NextMapCallBack::assemble()
 	next_map->release();
 	getInstance()->permanent_node_->setParent(nullptr);
 	next->addChild(getInstance()->permanent_node_, BACK_UI_ZORDER);
+	if (map_name == "introduction") 
+	{
+		getInstance()->showUILayer("startscreen");
+	}
+	else 
+	{
+		getInstance()->showUILayer("bag");
+	}
 
 	Director::getInstance()->replaceScene(TransitionFade::create(0.5f, next));
 	loading_per = 100.0f;
