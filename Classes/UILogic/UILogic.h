@@ -1,17 +1,11 @@
 #pragma once
 #include "cocos2d.h"
 #include "ui/CocosGUI.h"
+#include"HelperClasses.h"
+#include"MainCharacter.h"
 #include <string>
 #include <vector>
 
-// 简单的物品结构体，与UILayer定义保持一致
-struct Item {
-    std::string name;
-    int quantity;
-    std::string iconPath;
-    Item(const std::string& n = "", int q = 0, const std::string& icon = "")
-        : name(n), quantity(q), iconPath(icon) {}
-};
 
 // 简单的任务结构体
 struct Task {
@@ -53,9 +47,6 @@ public:
     //// 标记任务完成
     void completeTask(int taskIndex);
 
-    // 假设需要从 DocumentManager 加载/保存背包和任务数据
-    void loadDataFromSave();
-    void saveDataToSave();
 
 private:
     UILogic();
@@ -68,10 +59,13 @@ private:
 
      //按钮点击事件回调函数
     void onNewButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+
     void onLoadButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+
     void onExitButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 
     void onCloseBagButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+
     void onBagSlotClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 
     void onTaskItemClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
@@ -85,6 +79,9 @@ private:
     std::vector<Item> bagItems_;
     std::vector<Task> tasks_;
 
+    DocumentManager* saveManager_;
+    SceneManager* sceneManager_;
+    MainCharacter* mainCharacter_;
 };
 
 

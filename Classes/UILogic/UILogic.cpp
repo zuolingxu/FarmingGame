@@ -17,26 +17,22 @@ UILogic* UILogic::getInstance()
 }
 
 UILogic::UILogic()
-//    : startScreenNode_(nullptr)
-//    , bagNode_(nullptr)
-//    , taskBarNode_(nullptr)
-//    , saveManager_(nullptr)
-//    , sceneManager_(nullptr)
-//    , mainCharacter_(nullptr)
+    : startScreenNode_(nullptr)
+    , bagNode_(nullptr)
+    , taskBarNode_(nullptr)
+    , saveManager_(nullptr)
+    , sceneManager_(nullptr)
+    , mainCharacter_(nullptr)
 {
-//    // 获取其他管理器实例（假设皆为单例）
-//    saveManager_ = SaveManager::getInstance();
-//    sceneManager_ = SceneManager::getInstance();
-//    mainCharacter_ = MainCharacter::getInstance();
-//
-//    // 从存档加载初始数据（如果需要）
-//    loadDataFromSave();
+    // 获取其他管理器实例（假设皆为单例）
+    saveManager_ = DocumentManager::getInstance();
+    sceneManager_ = SceneManager::getInstance();
+    mainCharacter_ = MainCharacter::getInstance();
 }
 
 UILogic::~UILogic()
 {
-    // 析构时保存数据（可选）
-    //saveDataToSave();
+
 }
 
 void UILogic::initStartScreenNode(cocos2d::Node* startScreenNode)
@@ -201,17 +197,9 @@ void UILogic::useItemFromBag(int slotIndex)
         return;
     }
 
-    // TODO:将该物品返回给MainCharacter
-
-
-    // 使用后减少数量
-    item.quantity -= 1;
-    if (item.quantity <= 0) {
-        bagItems_.erase(bagItems_.begin() + slotIndex);
-    }
-
     // 刷新背包UI
     refreshBagUI();
+    // TODO:将该物品返回给MainCharacter
 }
 
 void UILogic::onTaskItemClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
