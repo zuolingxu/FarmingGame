@@ -3,17 +3,12 @@
 #include "ui/CocosGUI.h"
 #include <string>
 #include <vector>
+#include "HelperClasses.h"
 
-// ¼òµ¥µÄÎïÆ·½á¹¹Ìå£¬ÓëUILayer¶¨Òå±£³ÖÒ»ÖÂ
-struct Item {
-    std::string name;
-    int quantity;
-    std::string iconPath;
-    Item(const std::string& n = "", int q = 0, const std::string& icon = "")
-        : name(n), quantity(q), iconPath(icon) {}
-};
+// ï¿½òµ¥µï¿½ï¿½ï¿½Æ·ï¿½á¹¹ï¿½å£¬ï¿½ï¿½UILayerï¿½ï¿½ï¿½å±£ï¿½ï¿½Ò»ï¿½ï¿½
 
-// ¼òµ¥µÄÈÎÎñ½á¹¹Ìå
+
+// ï¿½òµ¥µï¿½ï¿½ï¿½ï¿½ï¿½á¹¹ï¿½ï¿½
 struct Task {
     std::string description;
     bool completed;
@@ -25,35 +20,35 @@ struct Task {
 class UILogic : public cocos2d::Ref
 {
 public:
-    // »ñÈ¡µ¥ÀýÊµÀý
+    // ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½
     static UILogic* getInstance();
 
-    // ÉèÖÃ¿ªÊ¼½çÃæ½Úµã£¨START_SCREENÀàÐÍ£©£¬NodeÓÉUILayer·µ»Ø
+    // ï¿½ï¿½ï¿½Ã¿ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½Úµã£¨START_SCREENï¿½ï¿½ï¿½Í£ï¿½ï¿½ï¿½Nodeï¿½ï¿½UILayerï¿½ï¿½ï¿½ï¿½
     void initStartScreenNode(cocos2d::Node* startScreenNode);
 
-    // ÉèÖÃ±³°ü½Úµã£¨BAGÀàÐÍ£©£¬NodeÓÉUILayer·µ»Ø
+    // ï¿½ï¿½ï¿½Ã±ï¿½ï¿½ï¿½ï¿½Úµã£¨BAGï¿½ï¿½ï¿½Í£ï¿½ï¿½ï¿½Nodeï¿½ï¿½UILayerï¿½ï¿½ï¿½ï¿½
     void initBagNode(cocos2d::Node* bagNode);
 
-    // ÉèÖÃÈÎÎñÀ¸½Úµã£¨TASK_BARÀàÐÍ£©£¬NodeÓÉUILayer·µ»Ø
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úµã£¨TASK_BARï¿½ï¿½ï¿½Í£ï¿½ï¿½ï¿½Nodeï¿½ï¿½UILayerï¿½ï¿½ï¿½ï¿½
     void initTaskBarNode(cocos2d::Node* taskBarNode);
 
-    // Ë¢ÐÂ±³°üUI
+    // Ë¢ï¿½Â±ï¿½ï¿½ï¿½UI
     void refreshBagUI();
 
-    // Ë¢ÐÂÈÎÎñUI
+    // Ë¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½UI
     void updateTaskUI();
 
-    // Ìí¼ÓÎïÆ·µ½±³°ü
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     void addItemToBag(const Item& item);
 
-    // Ê¹ÓÃÎïÆ·/ÒÆ³ýÎïÆ·
-    // ÔÚµã»÷¸ñ×ÓÊ±µ÷ÓÃ
+    // Ê¹ï¿½ï¿½ï¿½ï¿½Æ·/ï¿½Æ³ï¿½ï¿½ï¿½Æ·
+    // ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½
     void useItemFromBag(int slotIndex);
 
-    //// ±ê¼ÇÈÎÎñÍê³É
+    //// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     void completeTask(int taskIndex);
 
-    // ¼ÙÉèÐèÒª´Ó DocumentManager ¼ÓÔØ/±£´æ±³°üºÍÈÎÎñÊý¾Ý
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ DocumentManager ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½æ±³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     void loadDataFromSave();
     void saveDataToSave();
 
@@ -61,12 +56,12 @@ private:
     UILogic();
     ~UILogic();
 
-    // ³õÊ¼»¯ÊÂ¼þ°ó¶¨º¯Êý
+    // ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ó¶¨ºï¿½ï¿½ï¿½
     void bindStartScreenEvents();
     void bindBagEvents();
     void bindTaskBarEvents();
 
-     //°´Å¥µã»÷ÊÂ¼þ»Øµ÷º¯Êý
+     //ï¿½ï¿½Å¥ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½
     void onNewButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
     void onLoadButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
     void onExitButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);

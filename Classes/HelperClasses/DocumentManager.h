@@ -35,6 +35,7 @@ public:
 	// Singleton mode, there's only one instance
 	static DocumentManager* getInstance();
 
+	// explain the key of global,return the value
 	// Get the file path with name, you can use it like :
 	// DocumentManager* manager = DocumentManager::getInstance();
 	// manager->getDocument(manager->getPath("global"));

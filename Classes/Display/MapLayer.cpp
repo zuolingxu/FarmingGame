@@ -184,6 +184,11 @@ void MapLayer::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Ev
     DocumentManager* manager = DocumentManager::getInstance();
     PlayerSprite* player;
     
+    // TODO: delete test example
+    MapLayer* parent = nullptr;
+    Vec<int> position(5, 10);
+    MapObject* land = nullptr;
+
     switch (keyCode)
     {
     case cocos2d::EventKeyboard::KeyCode::KEY_UP_ARROW:
@@ -239,7 +244,9 @@ void MapLayer::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Ev
         changeWithSingleFrame(obj.sprite, "cow-1.png");
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F3:
-        // TODO: Test Code
+        // µ÷ÓÃ createByPlayer º¯Êý
+        land = Land::createByPlayer(position, parent);
+        manager->saveArchiveDocument();
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F4:
         addPlayerSpriteWithDocument(obj2, manager->getDocument(manager->getPath("Cow")));
@@ -330,7 +337,7 @@ void MapLayer::onMouseDown(cocos2d::Event* event)
                         }
                         else if (true /* && holdings == "chutou"*/)
                         {
-	                        //TODO: Land::create;
+                            //Land::createByPlayer();
                         }
                     }
                 }

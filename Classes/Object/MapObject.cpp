@@ -2,8 +2,10 @@
 #include "Animal.h"
 #include "NPC.h"
 #include "Land.h"
+#include "Mineral.h"
+#include "Gate.h"
 
-MapObject::MapObject(const Vec<int>& pos) : info_(nullptr, {}, pos) { }
+MapObject::MapObject(const Vec<int>& pos) : info_{ nullptr, {}, pos } { }
 
 MapObject::ObjectInfo& MapObject::getInfo()
 {
@@ -26,6 +28,14 @@ MapObject* MapObject::create(rapidjson::Value& val, MapLayer* parents, const Vec
     else if (type == "Land")
     {
         ref = Land::create(SubVal,parents, pos);
+    }
+    else if (type == "Mineral") 
+    {
+        //ref = Mineral::create(SubVal, parents, pos);
+    }
+    else if (type == "Gate") 
+    {
+        //ref = Mineral::create(SubVal, parents, pos);
     }
     else
     {
