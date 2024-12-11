@@ -28,13 +28,11 @@ UILogic::UILogic()
     , saveManager_(nullptr)
     , mainCharacter_(nullptr)
 {
-//    // 获取其他管理器实例（假设皆为单例）
-//    saveManager_ = SaveManager::getInstance();
-//    sceneManager_ = SceneManager::getInstance();
-//    mainCharacter_ = MainCharacter::getInstance();
-//
-//    // 从存档加载初始数据（如果需要）
-//    loadDataFromSave();
+//    // 获取其他管理器实例
+    saveManager_ = DocumentManager::getInstance();
+    mainCharacter_ = MainCharacter::getInstance();
+
+
 }
 
 UILogic::~UILogic()
@@ -330,26 +328,6 @@ void UILogic::updateTaskUI()
     }
 }
 
-void UILogic::addItemToBag(const Item& item)
-{
-    // 检查是否有相同物品堆叠
-    bool found = false;
-    for (auto& bItem : bagItems_) {
-        if (bItem.name == item.name && bItem.iconPath == item.iconPath)
-        {
-            bItem.quantity += item.quantity;
-            found = true;
-            break;
-        }
-    }
-
-    if (!found) {
-        bagItems_.push_back(item);
-    }
-
-    refreshBagUI();
-}
-
 void UILogic::completeTask(int taskIndex)
 {
     if (taskIndex < 0 || taskIndex >= (int)tasks_.size()) {
@@ -360,18 +338,4 @@ void UILogic::completeTask(int taskIndex)
     updateTaskUI();
 }
 
-void UILogic::loadDataFromSave()
-{
-    //TODO: 从存档管理器加载背包和任务数据
-    //bagItems_ = saveManager_->getBagItems();
-    //tasks_ = saveManager_->getTasks();
-    // 如果需要更新UI则可以在初始化结束后调用refreshBagUI和updateTaskUI
-}
 
-void UILogic::saveDataToSave()
-{
-    // TODO:将当前背包和任务数据保存到存档
-    // saveManager_->setBagItems(bagItems_);
-    // saveManager_->setTasks(tasks_);
-    // saveManager_->saveArchive();
-}
