@@ -1,7 +1,7 @@
 #include"UILogic.h"
 #include "DocumentManager.h"
 #include "SceneManager.h"
-#include "HelperClasses.h"
+
 USING_NS_CC;
 
 // ��̬ʵ����ʼ��
@@ -314,7 +314,7 @@ void UILogic::addItemToBag(const Item& item)
     // ����Ƿ�����ͬ��Ʒ�ѵ�
     bool found = false;
     for (auto& bItem : bagItems_) {
-        if (bItem.name == item.name && bItem.iconPath == item.iconPath)
+        if (bItem.type == item.type && bItem.iconPath == item.iconPath)
         {
             bItem.quantity += item.quantity;
             found = true;

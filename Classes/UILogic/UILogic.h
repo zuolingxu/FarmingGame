@@ -3,6 +3,7 @@
 #include "ui/CocosGUI.h"
 #include <string>
 #include <vector>
+#include "HelperClasses.h"
 
 // �򵥵���Ʒ�ṹ�壬��UILayer���屣��һ��
 
