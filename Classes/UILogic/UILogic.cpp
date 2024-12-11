@@ -9,8 +9,8 @@ USING_NS_CC;
 #undef GetObject
 #endif
 
-// ¾²Ì¬ÊµÀı³õÊ¼»¯
-UILogic* UILogic::instance_ = nullptr;
+// é™æ€å®ä¾‹åˆå§‹åŒ–
+UILogic* UILogic::instance_ = new UILogic();
 
 UILogic* UILogic::getInstance()
 {
@@ -28,35 +28,39 @@ UILogic::UILogic()
     , saveManager_(nullptr)
     , mainCharacter_(nullptr)
 {
-    // »ñÈ¡ÆäËû¹ÜÀíÆ÷ÊµÀı
-    saveManager_ = DocumentManager::getInstance();
-    mainCharacter_ = MainCharacter::getInstance();
-    initTasks();
+//    // è·å–å…¶ä»–ç®¡ç†å™¨å®ä¾‹ï¼ˆå‡è®¾çš†ä¸ºå•ä¾‹ï¼‰
+//    saveManager_ = SaveManager::getInstance();
+//    sceneManager_ = SceneManager::getInstance();
+//    mainCharacter_ = MainCharacter::getInstance();
+//
+//    // ä»å­˜æ¡£åŠ è½½åˆå§‹æ•°æ®ï¼ˆå¦‚æœéœ€è¦ï¼‰
+//    loadDataFromSave();
 }
 
 UILogic::~UILogic()
 {
-
+    // ææ„æ—¶ä¿å­˜æ•°æ®ï¼ˆå¯é€‰ï¼‰
+    //saveDataToSave();
 }
 
 void UILogic::initStartScreenNode(cocos2d::Node* startScreenNode)
 {
     startScreenNode_ = startScreenNode;
-    bindStartScreenEvents(); // °ó¶¨¿ªÊ¼½çÃæ°´Å¥ÊÂ¼ş
+    bindStartScreenEvents(); // ï¿½ó¶¨¿ï¿½Ê¼ï¿½ï¿½ï¿½æ°´Å¥ï¿½Â¼ï¿½
 }
 
 void UILogic::initBagNode(cocos2d::Node* bagNode)
 {
     bagNode_ = bagNode;
-    bindBagEvents(); // °ó¶¨±³°üUIÊÂ¼ş
-    refreshBagUI();  // Ë¢ĞÂ±³°üÏÔÊ¾
+    bindBagEvents(); // ï¿½ó¶¨±ï¿½ï¿½ï¿½UIï¿½Â¼ï¿½
+    refreshBagUI();  // Ë¢ï¿½Â±ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾
 }
 
 void UILogic::initTaskBarNode(cocos2d::Node* taskBarNode)
 {
     taskBarNode_ = taskBarNode;
-    bindTaskBarEvents(); // °ó¶¨ÈÎÎñ°´Å¥ÊÂ¼ş
-    updateTaskUI();      // Ë¢ĞÂÈÎÎñÏÔÊ¾
+    bindTaskBarEvents(); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¥ï¿½Â¼ï¿½
+    updateTaskUI();      // Ë¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾
 }
 
 void UILogic::bindStartScreenEvents()
@@ -83,7 +87,7 @@ void UILogic::bindBagEvents()
 {
     if (!bagNode_) return;
 
-    // ±³°ü¸ñ×Óµã»÷ÊÂ¼ş
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½Â¼ï¿½
     const int numSlots = 24;
     for (int i = 0; i < numSlots; ++i)
     {
@@ -99,29 +103,65 @@ void UILogic::bindTaskBarEvents()
 {
     if (!taskBarNode_) return;
 
-    // ¹Ø±Õ±³°ü°´Å¥
+    // ï¿½Ø±Õ±ï¿½ï¿½ï¿½ï¿½ï¿½Å¥
     auto closeButton = dynamic_cast<ui::Button*>(bagNode_->getChildByName("CloseButton"));
     if (closeButton)
     {
         closeButton->addTouchEventListener(CC_CALLBACK_2(UILogic::onCloseBagButtonClicked, this));
     }
-    // ÈÎÎñ°´Å¥Ò»°ãÔÚupdateTaskUIÖĞ´´½¨£¬ÕâÀïÖ»ĞèÔÚupdateTaskUIÖĞ°ó¶¨¼´¿É
+    // ï¿½ï¿½ï¿½ï¿½Å¥Ò»ï¿½ï¿½ï¿½ï¿½updateTaskUIï¿½Ğ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½updateTaskUIï¿½Ğ°ó¶¨¼ï¿½ï¿½ï¿½
 }
 
 void UILogic::onNewButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
 {
-    int i = 1;
-    while (!DocumentManager::getInstance()->createArchiveDocument(i)) { i++; }
-    //rapidjson::Value& val = (*DocumentManager::getInstance()->getConfigDocument())["Archive"];
-    //for (auto& i : val.GetObject()) {
-    //    i.name.GetString();
-    //    i.value.GetObject();
-    //}
+//    if (type != ui::Widget::TouchEventType::ENDED) return;
+//
+//    CCLOG("New Button Clicked");
+//    bool success = saveManager_->createNewSave();
+//    if (success)
+//    {
+//        CCLOG("New save created.");
+//        // åˆ‡æ¢åœ°å›¾ï¼Œæ¯”å¦‚ "Map1"
+//        sceneManager_->switchToMap("Map1", "default");
+//        // éšè—å¼€å§‹ç•Œé¢èŠ‚ç‚¹
+//        startScreenNode_->setVisible(false);
+//    }
+//    else
+//    {
+//        CCLOG("Failed to create new save.");
+//    }
 }
 
 void UILogic::onLoadButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
 {
-
+//    if (type != ui::Widget::TouchEventType::ENDED) return;
+//
+//    CCLOG("Load Button Clicked");
+//    if (saveManager_->hasSave())
+//    {
+//        bool loaded = saveManager_->loadSave();
+//        if (loaded)
+//        {
+//            CCLOG("Save loaded.");
+//            std::string mapName = saveManager_->getSavedMapName();
+//            std::string playerPos = saveManager_->getSavedPlayerPosition();
+//            sceneManager_->switchToMap(mapName, playerPos);
+//            startScreenNode_->setVisible(false);
+//
+//            // é‡æ–°åŠ è½½æ•°æ®å¹¶åˆ·æ–°UI
+//            loadDataFromSave();
+//            refreshBagUI();
+//            updateTaskUI();
+//        }
+//        else
+//        {
+//            CCLOG("Failed to load save.");
+//        }
+//    }
+//    else
+//    {
+//        CCLOG("No save found.");
+//    }
 }
 
 void UILogic::onExitButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
@@ -159,11 +199,25 @@ void UILogic::useItemFromBag(int slotIndex)
 {
 
     auto& item = bagItems_[slotIndex];
+    if (item.quantity <= 0)
+    {
+        CCLOG("This slot is empty.");
+        return;
+    }
 
-    // Ë¢ĞÂ±³°üUI
+    // TODO:å°†è¯¥ç‰©å“è¿”å›ç»™MainCharacter
+
+
+    // ä½¿ç”¨åå‡å°‘æ•°é‡
+    item.quantity -= 1;
+    if (item.quantity <= 0) {
+        bagItems_.erase(bagItems_.begin() + slotIndex);
+    }
+
+    // Ë¢ï¿½Â±ï¿½ï¿½ï¿½UI
     refreshBagUI();
 
-    // TODO:½«¸ÃÎïÆ··µ»Ø¸øMainCharacter
+    // TODO:å°†è¯¥ç‰©å“è¿”å›ç»™MainCharacter
     mainCharacter_->setCurrentItem(item.type);
 }
 
@@ -177,7 +231,7 @@ void UILogic::onTaskItemClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType
     std::string taskName = button->getName(); // "Task_x"
     int taskIndex = std::stoi(taskName.substr(5));
 
-    // ÈÎÎñÓ¦ÒÑÍê³É²Å¿Éµã
+    // ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½É²Å¿Éµï¿½
     if (!tasks_[taskIndex].completed) {
         return;
     }
@@ -192,14 +246,16 @@ void UILogic::updateBagItems(std::vector<Item> bagitem) {
 
 void UILogic::refreshBagUI()
 {
+    // TODO:ä»saveManagerè·å–æœ€æ–°çš„èƒŒåŒ…æ•°æ®ï¼ˆè‹¥å­˜æ¡£ä¸­ä¿å­˜äº†ç‰©å“ä¿¡æ¯ï¼‰
+    //bagItems_ = saveManager_->getBagItems();
 
     if (!bagNode_) return;
 
-    // Çå³ıÊıÁ¿ÏÔÊ¾ºÍÍ¼±ê£¬ÕâÀïÖ±½ÓË¢ĞÂ
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½Í¼ï¿½ê£¬ï¿½ï¿½ï¿½ï¿½Ö±ï¿½ï¿½Ë¢ï¿½ï¿½
     const int numSlots = 24;
-    const int columns = 12; // Ã¿ĞĞ12¸ö
-    const int rows = 2; // 2ĞĞ
-    const float slotSize = 20.0f; // Ã¿¸ö¸ñ×ÓµÄ´óĞ¡
+    const int columns = 12; // æ¯è¡Œ12ä¸ª
+    const int rows = 2; // 2è¡Œ
+    const float slotSize = 20.0f; // æ¯ä¸ªæ ¼å­çš„å¤§å°
 
     for (int i = 0; i < numSlots; ++i)
     {
@@ -209,7 +265,7 @@ void UILogic::refreshBagUI()
         auto slot = dynamic_cast<ui::Button*>(bagNode_->getChildByName("Slot_" + std::to_string(i)));
         if (!slot) continue;
 
-        slot->removeAllChildren(); // ÒÆ³ı¾ÉµÄÍ¼±êºÍÊıÁ¿ÎÄ±¾
+        slot->removeAllChildren(); // ï¿½Æ³ï¿½ï¿½Éµï¿½Í¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½
 
         if (i < (int)bagItems_.size())
         {
@@ -239,7 +295,7 @@ void UILogic::refreshBagUI()
 
 void UILogic::updateTaskUI()
 {
-    // TODO:´Ó saveManager »ñÈ¡×îĞÂÈÎÎñÊı¾İ
+    // TODO:ï¿½ï¿½ saveManager ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     //tasks_ = saveManager_->getTasks();
 
     if (!taskBarNode_) return;
@@ -274,6 +330,26 @@ void UILogic::updateTaskUI()
     }
 }
 
+void UILogic::addItemToBag(const Item& item)
+{
+    // æ£€æŸ¥æ˜¯å¦æœ‰ç›¸åŒç‰©å“å †å 
+    bool found = false;
+    for (auto& bItem : bagItems_) {
+        if (bItem.name == item.name && bItem.iconPath == item.iconPath)
+        {
+            bItem.quantity += item.quantity;
+            found = true;
+            break;
+        }
+    }
+
+    if (!found) {
+        bagItems_.push_back(item);
+    }
+
+    refreshBagUI();
+}
+
 void UILogic::completeTask(int taskIndex)
 {
     if (taskIndex < 0 || taskIndex >= (int)tasks_.size()) {
@@ -284,11 +360,18 @@ void UILogic::completeTask(int taskIndex)
     updateTaskUI();
 }
 
-void UILogic::initTasks() {
-    tasks_.push_back(Task("TASK:Plant a seed by yourself!",true));
-    tasks_.push_back(Task("TASK:Say hello to Haley in the town!",true));
-    tasks_.push_back(Task("TASK:Join a festival with the residents in the town!",true));
-    tasks_.push_back(Task("TASK:Catch a fish by the beach!",true));
+void UILogic::loadDataFromSave()
+{
+    //TODO: ä»å­˜æ¡£ç®¡ç†å™¨åŠ è½½èƒŒåŒ…å’Œä»»åŠ¡æ•°æ®
+    //bagItems_ = saveManager_->getBagItems();
+    //tasks_ = saveManager_->getTasks();
+    // å¦‚æœéœ€è¦æ›´æ–°UIåˆ™å¯ä»¥åœ¨åˆå§‹åŒ–ç»“æŸåè°ƒç”¨refreshBagUIå’ŒupdateTaskUI
 }
 
-
+void UILogic::saveDataToSave()
+{
+    // TODO:å°†å½“å‰èƒŒåŒ…å’Œä»»åŠ¡æ•°æ®ä¿å­˜åˆ°å­˜æ¡£
+    // saveManager_->setBagItems(bagItems_);
+    // saveManager_->setTasks(tasks_);
+    // saveManager_->saveArchive();
+}

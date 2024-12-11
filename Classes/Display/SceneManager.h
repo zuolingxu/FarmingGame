@@ -34,6 +34,8 @@ public:
 	// hideUILayer will hide all UI and Display the map
 	// void hideUILayer() const;
 
+	// pos (string)x y init position of playsprite ,default in the middle of the map
+	// in the archive pos is the key
 	// Go to Next Map. If pos is not specified, it won't add a player and all Listener will be removed(for start UI)
 	// If the map cannot be found, it will throw an exception
 	void NextMap(const std::string& map_name, const std::string& pos = "default") const;

@@ -9,10 +9,9 @@
 
 class TimeManager {
 private:
-    const float MinutesOfOneDay = 0.1; // 现实MinuteOfOneDay分钟等于游戏1天
+    const float MinutesOfOneDay = 10; // 现实MinuteOfOneDay分钟等于游戏1天
     static TimeManager* instance_;//单例函数
 
-    //现实时间10分钟，游戏时间一天24小时
     int current_day_; // 当前游戏天数
     float current_time_; // 当前时间（以游戏时间小时为单位）
 
