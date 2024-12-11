@@ -110,3 +110,33 @@ inline std::string getFrameName(std::string frame_format, int i)
 {
 	return frame_format.replace(frame_format.find("{}"), 2, std::to_string(i));
 }
+
+enum class ItemType {
+	// Different types of seeds
+	CAULIFLOWER_SEED,  // Cauliflower Seed
+	PUMPKIN_SEED,      // Pumpkin Seed
+	POTATO_SEED,       // Potato Seed
+
+	// Mature crops
+	CAULIFLOWER,       // Cauliflower
+	PUMPKIN,           // Pumpkin
+	POTATO,            // Potato
+
+	// Tools
+	FERTILIZER,        // Fertilizer
+	FISHING_ROD,       // Fishing Rod
+	HOE,               // Hoe
+	PICKAXE,           // Pickaxe
+	WATERING_CAN,      // Watering Can
+
+	// Default (no item)
+	NONE               // No Item
+};
+
+
+struct Item {
+	ItemType type;
+	int quantity;
+	std::string iconPath;
+	Item(ItemType t, int q = 1, const std::string& icon = "") : type(t), quantity(1), iconPath(icon) {}
+};

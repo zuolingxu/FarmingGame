@@ -1,7 +1,7 @@
 #include"UILogic.h"
 #include "DocumentManager.h"
 #include "SceneManager.h"
-
+#include "HelperClasses.h"
 USING_NS_CC;
 
 // ��̬ʵ����ʼ��

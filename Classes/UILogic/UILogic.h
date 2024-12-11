@@ -5,13 +5,7 @@
 #include <vector>
 
 // �򵥵���Ʒ�ṹ�壬��UILayer���屣��һ��
-struct Item {
-    std::string name;
-    int quantity;
-    std::string iconPath;
-    Item(const std::string& n = "", int q = 0, const std::string& icon = "")
-        : name(n), quantity(q), iconPath(icon) {}
-};
+
 
 // �򵥵�����ṹ��
 struct Task {
