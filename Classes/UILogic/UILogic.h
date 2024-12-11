@@ -1,10 +1,10 @@
 #pragma once
-#include "cocos2d.h"
 #include "ui/CocosGUI.h"
 #include"HelperClasses.h"
 #include"MainCharacter.h"
 #include <string>
 #include <vector>
+#include "cocos2d.h"
 
 
 // 简单的任务结构体
@@ -37,10 +37,9 @@ public:
     // 刷新任务UI
     void updateTaskUI();
 
-    // 添加物品到背包
-    void addItemToBag(const Item& item);
+    //refresh bag items
+    void updateBagItems(std::vector<Item> bagitem);
 
-    // 使用物品/移除物品
     // 在点击格子时调用
     void useItemFromBag(int slotIndex);
 
@@ -54,7 +53,9 @@ private:
 
     // 初始化事件绑定函数
     void bindStartScreenEvents();
+
     void bindBagEvents();
+
     void bindTaskBarEvents();
 
      //按钮点击事件回调函数
@@ -70,6 +71,9 @@ private:
 
     void onTaskItemClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 
+    //the logic of tasks
+    void initTasks();
+
     static UILogic* instance_;
 
     cocos2d::Node* startScreenNode_;
@@ -80,7 +84,6 @@ private:
     std::vector<Task> tasks_;
 
     DocumentManager* saveManager_;
-    SceneManager* sceneManager_;
     MainCharacter* mainCharacter_;
 };
 

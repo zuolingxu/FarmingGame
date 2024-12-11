@@ -1,3 +1,4 @@
+
 #pragma once
 #include "DocumentManager.h"
 #include "cocos2d.h"
@@ -20,9 +21,9 @@ public:
 	~Vec() = default;
 	Vec(const cocos2d::Vec2& vec) : x(static_cast<T>(vec.x)), y(static_cast<T>(vec.y)) {}
 	Vec(const cocos2d::Size& vec) : x(static_cast<T>(vec.width)), y(static_cast<T>(vec.height)) {}
-	Vec(const T x,const T y) : x(x), y(y) {}
+	Vec(const T x, const T y) : x(x), y(y) {}
 	Vec(const Vec& other) : x(other.x), y(other.y) {}
-	Vec(Vec&& other) noexcept: x(std::move(other.x)), y(std::move(other.y)) {}
+	Vec(Vec&& other) noexcept : x(std::move(other.x)), y(std::move(other.y)) {}
 	Vec& operator=(const Vec& other)
 	{
 		if (this != &other)
@@ -48,9 +49,9 @@ public:
 	bool operator==(const Vec& other) const { return x == other.x && y == other.y; }
 	bool operator!=(const Vec& other) const { return x != other.x || y != other.y; }
 	Vec& operator+=(const Vec& other) { x += other.x; y += other.y; return *this; }
-	[[nodiscard]] Vec operator+(const Vec& other) const { return Vec(x + other.x , y + other.y); }
+	[[nodiscard]] Vec operator+(const Vec& other) const { return Vec(x + other.x, y + other.y); }
 	Vec& operator-=(const Vec& other) { x -= other.x; y -= other.y; return *this; }
-	[[nodiscard]] Vec operator-(const Vec& other) const { return Vec( x - other.x , y - other.y); }
+	[[nodiscard]] Vec operator-(const Vec& other) const { return Vec(x - other.x, y - other.y); }
 	[[nodiscard]] double length() const { return std::sqrt(x * x + y * y); }
 	[[nodiscard]] double distance(const Vec& other) const {
 		T dx = other.x - x;
@@ -73,7 +74,7 @@ public:
 
 // Vec2 is the 2D vector class provided by cocos2dx
 // press ctrl and click Vec2 to see class code
-inline Vec<int> toGrid(const cocos2d::Vec2& vec){
+inline Vec<int> toGrid(const cocos2d::Vec2& vec) {
 	const Vec<int> vecInt(vec);
 	return { vecInt.X() / GridSize, vecInt.Y() / GridSize };
 }
@@ -86,7 +87,7 @@ inline Vec<int> toGrid(const Vec<T>& vec) {
 
 inline cocos2d::Vec2 toPixel(const Vec<int>& vec)
 {
-	return Vec<int>{vec.X() * GridSize, vec.Y() * GridSize};
+	return Vec<int>{vec.X()* GridSize, vec.Y()* GridSize};
 }
 
 
@@ -110,3 +111,33 @@ inline std::string getFrameName(std::string frame_format, int i)
 {
 	return frame_format.replace(frame_format.find("{}"), 2, std::to_string(i));
 }
+
+enum class ItemType {
+	// Different types of seeds
+	CAULIFLOWER_SEED,  // Cauliflower Seed
+	PUMPKIN_SEED,      // Pumpkin Seed
+	POTATO_SEED,       // Potato Seed
+
+	// Mature crops
+	CAULIFLOWER,       // Cauliflower
+	PUMPKIN,           // Pumpkin
+	POTATO,            // Potato
+
+	// Tools
+	FERTILIZER,        // Fertilizer
+	FISHING_ROD,       // Fishing Rod
+	HOE,               // Hoe
+	PICKAXE,           // Pickaxe
+	WATERING_CAN,      // Watering Can
+
+	// Default (no item)
+	NONE               // No Item
+};
+
+
+struct Item {
+	ItemType type;
+	int quantity;
+	std::string iconPath;
+	Item(ItemType t, int q = 1, const std::string& icon = "") : type(t), quantity(1), iconPath(icon) {}
+};

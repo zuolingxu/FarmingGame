@@ -1,11 +1,10 @@
 #include "MainCharacter.h"
 
-// 初始化静态成员
+// Initialize static member
 MainCharacter* MainCharacter::instance = nullptr;
 
-
 MainCharacter::MainCharacter() : currentItem(nullptr) {
-    // 可以在此处初始化任何需要的成员
+    // Initialize any required members here
 }
 
 MainCharacter* MainCharacter::getInstance() {
@@ -15,75 +14,70 @@ MainCharacter* MainCharacter::getInstance() {
     return instance;
 }
 
-void MainCharacter::addItem(const Item& item) {
-    inventory.push_back(item);
-}
 
-const std::vector<MainCharacter::Item>& MainCharacter::getInventory() const {
-    return inventory;
+const std::vector<Item>& MainCharacter::getInventory() const {
+    return inventory;  // Return the list of items in the inventory
 }
 
 bool MainCharacter::hasItem(ItemType type) const {
     for (const auto& item : inventory) {
         if (item.type == type) {
-            return true;
+            return true;  // Return true if the item type is found
         }
     }
-    return false;
+    return false;  // Return false if the item type is not found
 }
 
 void MainCharacter::setCurrentItem(ItemType type) {
     for (auto& item : inventory) {
         if (item.type == type) {
-            currentItem = &item; // 设置当前持有的物品
+            currentItem = &item;  // Set the current held item
             return;
         }
     }
-    currentItem = nullptr; // 如果没有找到对应类型的物品，设置为 nullptr
+    currentItem = nullptr;  // If no matching item type is found, set to nullptr
 }
 
-const MainCharacter::Item* MainCharacter::getCurrentItem() const {
-    return currentItem;
+const Item* MainCharacter::getCurrentItem() const {
+    return currentItem;  // Return the current held item
 }
 
 bool MainCharacter::modifyItemQuantity(ItemType type, int delta) {
-    // 如果delta为0，直接返回
-    if (delta == 0) return 1;  // 1 表示操作成功，数量没有变化
+    // If delta is 0, return immediately (no change)
+    if (delta == 0) return 1;  // 1 indicates success, quantity is unchanged
 
-    // 遍历背包中的物品，找到指定类型的物品
+    // Traverse the inventory to find the specified item type
     for (auto it = inventory.begin(); it != inventory.end(); ++it) {
         if (it->type == type) {
-            // 修改物品数量
+            // Modify the item quantity
             if (it->quantity + delta < 0) {
-                return 0;  // 如果修改后的数量小于零，返回错误
+                return 0;  // If the resulting quantity is less than zero, return an error
             }
 
             it->quantity += delta;
 
-            // 如果物品数量变为零或更少，删除该物品
+            // If the item quantity becomes zero or less, remove the item from inventory
             if (it->quantity == 0) {
                 inventory.erase(it);
             }
-            return 1;  // 操作成功
+            return 1;  // Operation successful
         }
     }
 
-    // 如果没有找到该物品类型，且 delta 大于零，添加该物品到背包
+    // If the item is not found, and delta is positive, add the item to the inventory
     if (delta > 0) {
-        inventory.push_back(Item(type, delta));
-        return 1;  // 添加物品成功
+        inventory.push_back(Item(type, delta));  // Add new item with quantity
+        return 1;  // Item added successfully
     }
 
-    return 0;  // 如果没有找到物品，且 delta 为负，返回错误
+    return 0;  // If the item is not found and delta is negative, return an error
 }
-
 
 void MainCharacter::cleanup() {
     delete instance;
-    instance = nullptr;
+    instance = nullptr;  // Clean up the singleton instance
 }
 
-MainCharacter::~MainCharacter()
-{
-
+MainCharacter::~MainCharacter() {
+    // Destructor
 }

@@ -62,13 +62,15 @@ SceneManager* SceneManager::getInstance()
 		instance_->permanent_node_->retain();
 		instance_->permanent_node_->setName("UI");
 		Node* start_screen = UILayer::createUILayer(UILayerType::START_SCREEN);
+		Node* bag = UILayer::createUILayer(UILayerType::BAG);
+		Node* task_bar = UILayer::createUILayer(UILayerType::TASK_BAR);
 		instance_->permanent_node_->addChild(start_screen, BACK_UI_ZORDER);
-		instance_->permanent_node_->addChild(UILayer::createUILayer(UILayerType::TASK_BAR), BACK_UI_ZORDER);
-		instance_->permanent_node_->addChild(UILayer::createUILayer(UILayerType::BAG), BACK_UI_ZORDER);
+		instance_->permanent_node_->addChild(bag, BACK_UI_ZORDER);
+		instance_->permanent_node_->addChild(task_bar, BACK_UI_ZORDER);
 		UILogic* uilogic = UILogic::getInstance();
 		uilogic->initStartScreenNode(start_screen);
-
-
+		uilogic->initStartScreenNode(bag);
+		uilogic->initStartScreenNode(task_bar);
 	}
 	return instance_;
 }
@@ -257,7 +259,7 @@ void SceneManager::NextMapCallBack::assemble()
 	next->addChild(getInstance()->permanent_node_, BACK_UI_ZORDER);
 	if (map_name == "introduction") 
 	{
-		getInstance()->showUILayer("startscreen");
+		getInstance()->showUILayer("taskbar");
 	}
 	else 
 	{
