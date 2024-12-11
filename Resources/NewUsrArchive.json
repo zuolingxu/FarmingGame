@@ -52,10 +52,10 @@
         "Type": "Land",
         "Info": {
           "HasCrop": true,
-          "Water": true,
           "Fertilizer": true,
           "CropInfo": {
-            "CropName": "Potato",
+            "CropName": "potato",
+            "Water": true,
             "LiveDay": 1,
             "MaturationDay": 7
           }

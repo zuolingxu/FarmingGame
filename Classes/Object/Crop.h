@@ -5,33 +5,35 @@
 #include "MapLayer.h"
 #include <string>
 
+USING_NS_CC;
+
 class Land;
 
 class Crop{
 	private:
-	cocos2d::Sprite* sprite_ = nullptr;
-	MapLayer* parent_;
+	MapObject::ObjectInfo info;
+	MapLayer* parent;
 	std::string CropName;
+
+	bool Water;
 	int LiveDay;
-	int MaturationDay;
+	const int MaturationDay;
 
 	public:
-	explicit Crop(MapLayer* parent, const Vec<int>& pos);
+	explicit Crop(Vec<int> position, MapLayer* parent, std::string CropName, bool Water, int LiveDay, int MaturationDay);
 	~Crop();
 	static Crop* create(rapidjson::Value& val, MapLayer* parent, const Vec<int>& pos);
-	static Crop* createByPlayer(const cocos2d::Vec2& position, MapLayer* parent, Land* land); // ����������ӵ� Land ����
+	static Crop* createByPlayer(const Vec<int>& position, MapLayer* parent, Land* land, const std::string& CropName,bool Fertilizer);
 
-	void saveToArchive(const cocos2d::Vec2& position, Land* land); // ���� Land ����
 	void init();
 	void interact();
 	void clear();
 	void settle();
 
-	// ΪLand�ഫ������
 	std::string getCropName() const { return CropName; }
+	bool getWater() const { return Water; }
 	int getLiveDay() const { return LiveDay; }
 	int getMaturationDay() const { return MaturationDay; }
 
 }; 
 
-//���Ӵӵ�1�쿪ʼ����,ʩ�ʺ�ӵ�2�쿪ʼ����

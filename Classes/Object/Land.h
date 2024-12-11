@@ -11,30 +11,36 @@ class Crop;
 
 class Land final: protected MapObject {
     private:
-	Crop* crop_ = nullptr; 
-    MapLayer* parent_;  
 
-    bool Water;
+    MapLayer* parent;
+
+	Crop* crop; 
     bool Fertilizer;
 
+
     public:
-	explicit Land(MapLayer* parent, const Vec<int>& pos);
+     explicit Land(const Vec<int>& pos, MapLayer* parent, bool Fertilizer);
     ~Land() override;
-    static MapObject* create(rapidjson::Value& val, MapLayer* parent, const Vec<int>& pos);
-    static MapObject* createByPlayer(const cocos2d::Vec2& position, MapLayer* parent);
+
+    static MapObject* create(rapidjson::Value& val, MapLayer* parent, const Vec<int>& pos); //create by achive
+    static MapObject* createByPlayer(const Vec<int>& position, MapLayer* parent);
+    
     virtual void init() override;
     virtual void interact() override;
     virtual void clear() override;
+    
     virtual void pause() override;
     virtual void resume() override;
+    
     virtual void settle() override;
-    virtual bool hasCollision() override;
 
-    void saveToArchive(const cocos2d::Vec2& position);
+    // archive
+    void create_archive_in_memory(const Vec<int>& position);
+    void change_archive_in_memory(const Vec<int>& position);
 
     // Getter 
-    bool isWatered() const { return Water; }
     bool isFertilized() const { return Fertilizer; }
-    void setWater(bool water) { Water = water; }
     void setFertilizer(bool fertilizer) { Fertilizer = fertilizer; }
+    virtual bool hasCollision() override;
+
 }; 
