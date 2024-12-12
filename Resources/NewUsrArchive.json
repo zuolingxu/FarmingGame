@@ -3,15 +3,29 @@
         "day": 1,
         "money": 1000
     },
-    
-    "belongings": {
-        "axe": [
-            1, "wood"
-        ],
-        "sunflower_seed":[
-            10
-        ]
+
+  "belongings": [
+    {
+      "type": "HOE",
+      "quantity": 1
     },
+    {
+      "type": "PICKAXE",
+      "quantity": 1
+    },
+    {
+      "type": "WATERING_CAN",
+      "quantity": 1
+    },
+    {
+      "type": "FERTILIZER",
+      "quantity": 10
+    },
+    {
+      "type": "CAULIFLOWER_SEED",
+      "quantity": 5
+    }
+  ],
     
     "relationship": {
         "Caroline": 0,
