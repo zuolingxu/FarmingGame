@@ -1,18 +1,26 @@
 {
     "Name": "town",
     "TMX": "tiledmap/town.tmx",
-    "ObjectList": {
-        "40 2":{
-            "Type":"NPC",
-            "Info":{
-                "Name":"Haley",
-                "favorability":0,
-                "marriage":false,
-                "friendship":false,
-                "festival":false
-            }
-        }
+  "ObjectList": {
+    "40 2": {
+      "Type": "NPC",
+      "Info": {
+        "Name": "Haley",
+        "favorability": 0,
+        "marriage": false,
+        "friendship": false,
+        "festival": false
+      }
+    },
+    "1 1": {
+      "Type": "Gate",
+      "Info": {
+        "NextMap": "farm",
+        "NextPosition": "1 1",
+        "please delete": "this test"
+      }
     }
+  }
 }
 
 

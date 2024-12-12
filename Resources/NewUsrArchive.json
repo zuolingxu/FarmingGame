@@ -31,19 +31,23 @@
         "Haley":false
     },
 
-    "Map":{
-        "Example": {
-            "12 13":{
-                "Type": "Land",
-                "Info": {
-                "CropName": "Potato",
-                "LiveDay": "1",
-                "MaturationDay": "5",
-                "Water": true,
-                "Fertilizer": 1
-              }
-            }    
+
+  "Map": {
+    "Farm": {
+      "12 13": {
+        "Type": "Land",
+        "Info": {
+          "HasCrop": true,
+          "Fertilizer": true,
+          "CropInfo": {
+            "CropName": "potato",
+            "Water": true,
+            "LiveDay": 1,
+            "MaturationDay": 7
+          }
         }
+      }
     }
+  }
 
 }

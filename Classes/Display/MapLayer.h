@@ -44,8 +44,8 @@ public:
 
 	friend class SceneManager;
 	// These function is for SceneManager
-	static MapLayer* createWithDocument(const std::string& tmx_path,
-		const cocos2d::Color3B& background_color, rapidjson::Value* const_object, rapidjson::Value* archive_object);
+	static MapLayer* createWithDocument(const std::string& tmx_path, const cocos2d::Color3B& background_color, 
+		rapidjson::Value* const_object, rapidjson::Value* archive_object, bool create_able = false);
 
 	// Make this layer to front, and load tmx file
 	cocos2d::Node* toFront(PlayerSprite* main_player);
@@ -91,10 +91,11 @@ private:
 	cocos2d::Vec2 mouse_pos_ = cocos2d::Vec2::ZERO; //  Store the mouse position, for reFocus
 	Vec<int> focus_pos_; //  Store the focus position
 	bool is_front_ = false; //  represent whether the layer is being displayed
+	bool create_abled = false;
 
 	// private Constructor and Destructor
 	MapLayer(const std::string& tmx_path, const cocos2d::Color3B& background_color, 
-		rapidjson::Value* const_object, rapidjson::Value* archive_object);
+		rapidjson::Value* const_object, rapidjson::Value* archive_object, bool create_able);
 	~MapLayer() = default;
 
 	// These function is for Create step

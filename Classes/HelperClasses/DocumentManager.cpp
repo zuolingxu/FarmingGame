@@ -164,7 +164,7 @@ bool DocumentManager::createArchiveDocument(const int num)
 	std::string archive_name = std::format("Save_{}", num);
 	if ((*data_["UsrConfig"])["Archive"].HasMember(archive_name.c_str()))
 	{
-		CCLOG("Archive already exists!");
+		// CCLOG("Archive already exists!");
 		return false;
 	}
 

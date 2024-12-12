@@ -1,4 +1,3 @@
-
 #pragma once
 #include "cocos2d.h"
 #include "ui/CocosGUI.h"
@@ -7,11 +6,10 @@
 enum class UILayerType {
     START_SCREEN,
     BAG,
-    TASK_BAR,
-    TOOL_BAR
+    TASK_BAR
 };
 
-class UILayer : public cocos2d::Layer
+class UILayer : public cocos2d::Ref
 {
 public:
     struct Item {
@@ -23,7 +21,7 @@ public:
             : name(itemName), quantity(num), iconPath(icon) {}
     };
     // 创建 UILayer 实例
-    static Node* createUILayer(UILayerType type);
+    static cocos2d::Node* createUILayer(UILayerType type);
 
     // 初始化 UILayer
     bool initWithType(UILayerType type);
@@ -32,26 +30,19 @@ public:
     cocos2d::ui::Layout* getBagLayout() const { return bagLayout_; }
     cocos2d::ui::Layout* getTaskBarLayout() const { return taskBarLayout_; }
     cocos2d::ui::Layout* getStartScreenLayout() const { return startScreenLayout_; }
-    //cocos2d::ui::Layout* getToolBarLayout() const { return toolBarLayout_; }
+        
+    // TODO: Manufacture
+    // TODO: BagLayer
+    // TODO: ListLayer
 
-    // 刷新背包界面
-    void refreshBagItems(const std::vector<Item>& items);
-
-    // 显示和隐藏 UI 元素
-    void showBag();
-    void hideBag();
-    void showStartScreen();
-    void hideStartScreen();
 private:
     // UI 组件
     cocos2d::ui::Layout* taskBarLayout_;
     cocos2d::ui::Layout* bagLayout_;
     cocos2d::ui::Layout* startScreenLayout_;
-    cocos2d::ui::Layout* toolBarLayout_; // 工具栏布局
 
     // 创建各个 UI 组件的方法
     void createTaskBarLayout();
     void createBagLayout();
     void createStartScreenLayout();
-    void createToolBarLayout();
 };
