@@ -14,9 +14,6 @@ MainCharacter* MainCharacter::getInstance() {
     return instance;
 }
 
-void MainCharacter::addItem(const Item& item) {
-    inventory.push_back(item);  // Add an item to the inventory
-}
 
 const std::vector<Item>& MainCharacter::getInventory() const {
     return inventory;  // Return the list of items in the inventory
