@@ -23,7 +23,7 @@ class Land final: protected MapObject {
     ~Land() override;
 
     static MapObject* create(rapidjson::Value& val, MapLayer* parent, const Vec<int>& pos); //create by achive
-    static MapObject* createByPlayer(const Vec<int>& position, MapLayer* parent);
+    static MapObject* createByPlayer(const Vec<int>& position, MapLayer* parent);//in farm,hoe,nothing
     
     virtual void init() override;
     virtual void interact() override;
@@ -42,5 +42,7 @@ class Land final: protected MapObject {
     bool isFertilized() const { return Fertilizer; }
     void setFertilizer(bool fertilizer) { Fertilizer = fertilizer; }
     virtual bool hasCollision() override;
+
+    void change_land_frame();
 
 }; 

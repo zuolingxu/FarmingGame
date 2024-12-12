@@ -4,6 +4,9 @@
 #include "cocos2d.h"
 #include <sstream>
 #include <iostream>
+#include <string>
+
+
 constexpr int GridSize = 16;
 
 const cocos2d::Size designResolutionSize = cocos2d::Size(480, 320);
@@ -123,6 +126,10 @@ enum class ItemType {
 	PUMPKIN,           // Pumpkin
 	POTATO,            // Potato
 
+	// Food
+	SOUP,              // Soup
+	FISH,              // fish
+
 	// Tools
 	FERTILIZER,        // Fertilizer
 	FISHING_ROD,       // Fishing Rod
@@ -130,14 +137,109 @@ enum class ItemType {
 	PICKAXE,           // Pickaxe
 	WATERING_CAN,      // Watering Can
 
+	// Stone
+	ROCK,              // ordinary stone
+	IRON,              // iron ore
+
 	// Default (no item)
 	NONE               // No Item
 };
+//need change MainCharacter::itemTypeToString if change
 
-
+//Item in bag or in hands
 struct Item {
 	ItemType type;
 	int quantity;
 	std::string iconPath;
-	Item(ItemType t, int q = 1, const std::string& icon = "") : type(t), quantity(1), iconPath(icon) {}
+
+	Item(ItemType t, int q = 1) : type(t), quantity(q)
+	{
+		std::string itemName = itemTypeToString(type);  // Convert ItemType to string
+
+		DocumentManager* manager = DocumentManager::getInstance();
+
+		iconPath = manager->getPath(itemName);
+	
+
+	}
+	// Convert ItemType to string
+	static std::string itemTypeToString(ItemType type) {
+		switch (type) {
+			case ItemType::CAULIFLOWER_SEED: return "CAULIFLOWER_SEED";
+			case ItemType::PUMPKIN_SEED: return "PUMPKIN_SEED";
+			case ItemType::POTATO_SEED: return "POTATO_SEED";
+			case ItemType::CAULIFLOWER: return "CAULIFLOWER";
+			case ItemType::PUMPKIN: return "PUMPKIN";
+			case ItemType::POTATO: return "POTATO";
+			case ItemType::SOUP: return "SOUP";
+			case ItemType::FISH: return "FISH";
+			case ItemType::FERTILIZER: return "FERTILIZER";
+			case ItemType::FISHING_ROD: return "FISHING_ROD";
+			case ItemType::HOE: return "HOE";
+			case ItemType::PICKAXE: return "PICKAXE";
+			case ItemType::WATERING_CAN: return "WATERING_CAN";
+			case ItemType::ROCK: return "ROCK";
+			case ItemType::IRON: return "IRON";
+			case ItemType::NONE: return "NONE";
+			default: return "UNKNOWN";
+		}
+	}
+
+	// Convert string to ItemType
+	static ItemType stringToItemType(const std::string& typeStr) {
+		if (typeStr == "CAULIFLOWER_SEED") {
+			return ItemType::CAULIFLOWER_SEED;
+		}
+		else if (typeStr == "PUMPKIN_SEED") {
+			return ItemType::PUMPKIN_SEED;
+		}
+		else if (typeStr == "POTATO_SEED") {
+			return ItemType::POTATO_SEED;
+		}
+		else if (typeStr == "CAULIFLOWER") {
+			return ItemType::CAULIFLOWER;
+		}
+		else if (typeStr == "PUMPKIN") {
+			return ItemType::PUMPKIN;
+		}
+		else if (typeStr == "POTATO") {
+			return ItemType::POTATO;
+		}
+		else if (typeStr == "SOUP") {
+			return ItemType::SOUP;
+		}
+		else if (typeStr == "FISH") {
+			return ItemType::FISH;
+		}
+		else if (typeStr == "FERTILIZER") {
+			return ItemType::FERTILIZER;
+		}
+		else if (typeStr == "FISHING_ROD") {
+			return ItemType::FISHING_ROD;
+		}
+		else if (typeStr == "HOE") {
+			return ItemType::HOE;
+		}
+		else if (typeStr == "PICKAXE") {
+			return ItemType::PICKAXE;
+		}
+		else if (typeStr == "WATERING_CAN") {
+			return ItemType::WATERING_CAN;
+		}
+		else if (typeStr == "ROCK") {
+			return ItemType::ROCK;
+		}
+		else if (typeStr == "IRON") {
+			return ItemType::IRON;
+		}
+		else if (typeStr == "NONE") {
+			return ItemType::NONE;
+		}
+		else {
+			return ItemType::NONE;  // Default to NONE for unknown strings
+		}
+	}
+
+
 };
+

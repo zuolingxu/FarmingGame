@@ -23,10 +23,10 @@ class Crop{
 	explicit Crop(Vec<int> position, MapLayer* parent, std::string CropName, bool Water, int LiveDay, int MaturationDay);
 	~Crop();
 	static Crop* create(rapidjson::Value& val, MapLayer* parent, const Vec<int>& pos);
-	static Crop* createByPlayer(const Vec<int>& position, MapLayer* parent, Land* land, const std::string& CropName,bool Fertilizer);
+	static Crop* createByPlayer(const Vec<int>& position, MapLayer* parent, const std::string& CropName,bool Fertilizer);
 
 	void init();
-	void interact();
+	bool harvest_successful();
 	void clear();
 	void settle();
 
@@ -35,5 +35,6 @@ class Crop{
 	int getLiveDay() const { return LiveDay; }
 	int getMaturationDay() const { return MaturationDay; }
 
+	void change_to_watered() { Water = 1; }
 }; 
 

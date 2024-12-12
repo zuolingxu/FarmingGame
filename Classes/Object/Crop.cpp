@@ -1,5 +1,6 @@
 #include "Crop.h"
 #include "Land.h"
+#include "MainCharacter.h"
 
 Crop::Crop(Vec<int> position, MapLayer* parent, std::string CropName, bool Water, int LiveDay, int MaturationDay)
     : info{ nullptr, {1, 1}, position },  // Initialize ObjectInfo
@@ -16,6 +17,7 @@ Crop::~Crop() {
     // Destructor (empty for now)
 }
 
+//create by archive
 Crop* Crop::create(rapidjson::Value& val, MapLayer* parent, const Vec<int>& position) {
     std::string cropName = "unknown";  // Default crop name
     int LiveDay = 1;                   // Default growth days
@@ -35,7 +37,7 @@ Crop* Crop::create(rapidjson::Value& val, MapLayer* parent, const Vec<int>& posi
     return crop;
 }
 
-Crop* Crop::createByPlayer(const Vec<int>& position, MapLayer* parent, Land* land, const std::string& CropName, bool Fertilizer) {
+Crop* Crop::createByPlayer(const Vec<int>& position, MapLayer* parent, const std::string& CropName, bool Fertilizer) {
     int LiveDay = 1;
     if (Fertilizer) LiveDay++;  // If fertilizer is used, increase the growth days by 1
     // Create the Crop object using the provided CropName
@@ -43,8 +45,37 @@ Crop* Crop::createByPlayer(const Vec<int>& position, MapLayer* parent, Land* lan
     return crop;
 }
 
-void Crop::interact() {
-    // Interaction logic (currently empty)
+//harvest
+bool Crop::harvest_successful() {
+    if (LiveDay == MaturationDay) {
+        // Remove the sprite from the scene
+        info.sprite->removeFromParent();
+        info.sprite = nullptr;
+
+        // Create the corresponding ItemType based on the uppercase CropName
+        ItemType harvestedItemType;
+
+        if (CropName == "cauliflower") {
+            harvestedItemType = ItemType::CAULIFLOWER;
+        }
+        else if (CropName == "pumkin") {
+            harvestedItemType = ItemType::PUMPKIN;
+        }
+        else if (CropName == "potato") {
+            harvestedItemType = ItemType::POTATO;
+        }
+        else {
+            // Handle the case where the crop name is not recognized
+            return false;
+        }
+
+        // Add the harvested crop to the character's inventory
+        MainCharacter* character = MainCharacter::getInstance();
+        character->modifyItemQuantity(harvestedItemType, 1);
+
+        return true;
+    }
+    return false;
 }
 
 void Crop::init() {

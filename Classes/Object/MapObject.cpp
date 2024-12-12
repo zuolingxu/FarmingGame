@@ -35,7 +35,7 @@ MapObject* MapObject::create(rapidjson::Value& val, MapLayer* parents, const Vec
     }
     else if (type == "Gate") 
     {
-        //ref = Mineral::create(SubVal, parents, pos);
+        ref = Gate::create(SubVal, parents, pos);
     }
     else
     {
