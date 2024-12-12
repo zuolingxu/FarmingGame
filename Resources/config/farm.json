@@ -1,5 +1,19 @@
 {
     "Name": "farm",
     "TMX": "TiledMap/farm.tmx",
-    "BackGroundColor":[51,102,153]
+    "BackGroundColor":[51,102,153],
+    "ObjectList":{
+        "49 16":{
+            "NextMap":"town",
+            "NextPosition":"0 17"
+        },
+        "29 16":{
+            "NextMap":"chicken_house",
+            "NextPosition":"9 0"
+        },
+        "22 23":{
+            "NextMap":"mine",
+            "NextPosition":"6 13"
+        }
+    }
 }

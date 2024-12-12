@@ -11,6 +11,14 @@
                 "friendship":false,
                 "festival":true
             }
+        },
+        "0 17":{
+            "NextMap":"farm",
+            "NextPosition":"49 16"
+        },
+        "49 16":{
+            "NextMap":"beach",
+            "NextPosition":"0 17"
         }
     }
 }

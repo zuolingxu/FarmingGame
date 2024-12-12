@@ -13,6 +13,10 @@
             "Info":{
                 "Name":"cow"
             }
+        },
+        "9 0":{
+            "NextMap":"farm",
+            "NextPosition":"29 16"
         }
     }
 }

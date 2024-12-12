@@ -1,5 +1,11 @@
 {
     "Name": "mine",
     "TMX": "TiledMap/mine.tmx",
-    "BackGroundColor":[51,102,153]
+    "BackGroundColor":[51,102,153],
+    "ObjectList":{
+        "6 13":{
+            "NextMap":"farm",
+            "NextPosition":"22 23"
+        }
+    }
 }
