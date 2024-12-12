@@ -7,6 +7,10 @@
             "Info":{
                 "Name":"Abigail"
             }
+        },
+        "7 0":{
+            "NextMap":"town",
+            "NextPosition":"25 19"
         }
     }
 }

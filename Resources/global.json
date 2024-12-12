@@ -38,6 +38,22 @@
         "loading_bar": "image/loading_bar.png",
         "FocusPic": "image/selected_tile.png",
         
+        "FISH":"image/bagobjects-0.png",
+        "CAULIFLOWER":"image/bagobjects-1.png",
+        "POTATO":"image/bagobjects-2.png",
+        "PUMPKIN":"image/bagobjects-3.png",
+        "SOUP":"image/bagobjects-4.png",
+        "FERTILIZER":"image/bagobjects-5.png",
+        "IRON":"image/bagobjects-6.png",
+        "STONE":"image/bagobjects-7.png",
+        "CAULIFLOWER_SEED":"image/bagobjects-8.png",
+        "POTATO_SEED":"image/bagobjects-9.png",
+        "PUMPKIN_SEED":"image/bagobjects-10.png",
+        "FISHING_ROD":"image/bagobjects-11.png",
+        "HOE":"image/bagobjects-12.png",
+        "PICKAXE":"image/bagobjects-13.png",
+        "WATERING_CAN":"image/bagobjects-14.png",
+        
         "ArialFon": "fonts/arial.ttf",
         "MarkerFeltFon": "fonst/Marker Felt.ttf"
     },

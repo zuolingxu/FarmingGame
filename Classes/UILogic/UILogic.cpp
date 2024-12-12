@@ -25,7 +25,6 @@ UILogic::UILogic()
     : startScreenNode_(nullptr)
     , bagNode_(nullptr)
     , taskBarNode_(nullptr)
-    , saveManager_(nullptr)
     , mainCharacter_(nullptr)
 {
 //    // 获取其他管理器实例
@@ -107,27 +106,17 @@ void UILogic::bindTaskBarEvents()
     {
         closeButton->addTouchEventListener(CC_CALLBACK_2(UILogic::onCloseBagButtonClicked, this));
     }
-    // ����ťһ����updateTaskUI�д���������ֻ����updateTaskUI�а󶨼���
 }
 
 void UILogic::onNewButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
 {
-//    if (type != ui::Widget::TouchEventType::ENDED) return;
-//
-//    CCLOG("New Button Clicked");
-//    bool success = saveManager_->createNewSave();
-//    if (success)
-//    {
-//        CCLOG("New save created.");
-//        // 切换地图，比如 "Map1"
-//        sceneManager_->switchToMap("Map1", "default");
-//        // 隐藏开始界面节点
-//        startScreenNode_->setVisible(false);
-//    }
-//    else
-//    {
-//        CCLOG("Failed to create new save.");
-//    }
+    int i = 1;
+    while (!DocumentManager::getInstance()->createArchiveDocument(i)) { i++; }
+    //rapidjson::Value& val = (*DocumentManager::getInstance()->getConfigDocument())["Archive"];
+    //for (auto& i : val.GetObject()) {
+    //    i.name.GetString();
+    //    i.value.GetObject();
+    //}
 }
 
 void UILogic::onLoadButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
@@ -201,15 +190,6 @@ void UILogic::useItemFromBag(int slotIndex)
     {
         CCLOG("This slot is empty.");
         return;
-    }
-
-    // TODO:将该物品返回给MainCharacter
-
-
-    // 使用后减少数量
-    item.quantity -= 1;
-    if (item.quantity <= 0) {
-        bagItems_.erase(bagItems_.begin() + slotIndex);
     }
 
     // ˢ�±���UI
@@ -338,4 +318,9 @@ void UILogic::completeTask(int taskIndex)
     updateTaskUI();
 }
 
-
+void UILogic::initTasks() {
+    tasks_.push_back(Task("TASK:Plant a seed by yourself!", true));
+    tasks_.push_back(Task("TASK:Say hello to Haley in the town!", true));
+    tasks_.push_back(Task("TASK:Join a festival with the residents in the town!", true));
+    tasks_.push_back(Task("TASK:Catch a fish by the beach!", true));
+}
