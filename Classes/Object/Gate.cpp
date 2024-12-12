@@ -14,7 +14,8 @@ Gate::~Gate()
 
 MapObject* Gate::create(rapidjson::Value& val, MapLayer* parent, const Vec<int>& pos)
 {
-	if (val.IsObject() && val.HasMember("NextMap")&&val.HasMember("NextPosition")) {
+	if (val.HasMember("NextMap") && val["NextMap"].IsString() &&
+		val.HasMember("NextPosition") && val["NextPosition"].IsString()) {
 		std::string NextMap= val["NextMap"].GetString();
 		std::string NextPosition = val["NextPosition"].GetString();
 
@@ -25,8 +26,12 @@ MapObject* Gate::create(rapidjson::Value& val, MapLayer* parent, const Vec<int>&
 
 void Gate::interact()
 {
-	SceneManager* SM=SceneManager::getInstance();
-	SM->NextMap(NextMap, NextPosition);
+	if (SceneManager* SM = SceneManager::getInstance()) {
+		SM->NextMap(NextMap, NextPosition);
+	}
+	else {
+		CCLOG("Error: SceneManager instance is null!");
+	}
 }
 
 void Gate::init()

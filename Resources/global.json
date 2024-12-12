@@ -11,6 +11,7 @@
     "npc1house": "config/npc1house.json",
     "npc2house": "config/npc2house.json",
     "chicken_house": "config/chicken_house.json",
+    "farm": "config/farm.json",
 
     "Player": "config/player.json",
     "Abigail": "config/Abigail.json",
@@ -46,5 +47,5 @@
     "gate": "config/gate.json"
   },
     "UI": ["ConfigUI"],
-    "Map": ["town", "town_festival" , "npc1house", "npc2house","chicken_house"]
+    "Map": ["farm", "town", "town_festival" , "npc1house", "npc2house","chicken_house"]
 }

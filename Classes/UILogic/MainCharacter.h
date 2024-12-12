@@ -16,6 +16,8 @@ private:
     // Private constructor to prevent direct creation of an instance
     MainCharacter();
 
+    const int MAX_QUANTITY = 10000;
+
 public:
     // Get the singleton instance
     static MainCharacter* getInstance();
@@ -31,6 +33,9 @@ public:
 
     // Get the current held item
     const Item* getCurrentItem() const;
+
+    // Get the type of the current held item
+    ItemType getCurrentItemType() const;
 
     // Modify the quantity of a specified item in the backpack (+n or -n)
     bool modifyItemQuantity(ItemType type, int delta);

@@ -31,20 +31,6 @@
         "Haley":false
     },
 
-  "belongings": {
-    "axe": [
-      1,
-      "wood"
-    ],
-    "sunflower_seed": [
-      10
-    ]
-  },
-
-  "relationship": {
-    "Tom": 0,
-    "Alice": 0
-  },
 
   "Map": {
     "Farm": {

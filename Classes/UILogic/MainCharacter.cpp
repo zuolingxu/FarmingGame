@@ -3,9 +3,23 @@
 // Initialize static member
 MainCharacter* MainCharacter::instance = nullptr;
 
-MainCharacter::MainCharacter() : currentItem(nullptr) {
-    // Initialize any required members here
+//TODO init bag from json
+MainCharacter::MainCharacter():currentItem(nullptr) {
+    // Add a default NONE item to the inventory
+
+    // Point currentItem to the NONE item in the inventory
+
 }
+
+
+MainCharacter::~MainCharacter() {
+    // No need to delete currentItem, as it points to an object in the inventory
+    currentItem = nullptr;
+
+    // Clear the inventory
+    inventory.clear();
+}
+
 
 MainCharacter* MainCharacter::getInstance() {
     if (!instance) {
@@ -42,6 +56,9 @@ const Item* MainCharacter::getCurrentItem() const {
     return currentItem;  // Return the current held item
 }
 
+ItemType MainCharacter::getCurrentItemType() const {
+    return currentItem ? currentItem->type : ItemType::NONE;
+}
 
 bool MainCharacter::modifyItemQuantity(ItemType type, int delta) {
     // If delta is 0, return immediately (no change)
@@ -51,7 +68,7 @@ bool MainCharacter::modifyItemQuantity(ItemType type, int delta) {
     for (auto it = inventory.begin(); it != inventory.end(); ++it) {
         if (it->type == type) {
             // Modify the item quantity
-            if (it->quantity + delta < 0) {
+            if (it->quantity + delta < 0|| it->quantity + delta > MAX_QUANTITY) {
                 return 0;  // If the resulting quantity is less than zero, return an error
             }
 
@@ -59,6 +76,10 @@ bool MainCharacter::modifyItemQuantity(ItemType type, int delta) {
 
             // If the item quantity becomes zero or less, remove the item from inventory
             if (it->quantity == 0) {
+                if (currentItem == &(*it)) {
+                    currentItem = nullptr;  // Clear the current item pointer
+                }
+
                 inventory.erase(it);
             }
             return 1;  // Operation successful
@@ -77,10 +98,6 @@ bool MainCharacter::modifyItemQuantity(ItemType type, int delta) {
 void MainCharacter::cleanup() {
     delete instance;
     instance = nullptr;  // Clean up the singleton instance
-}
-
-MainCharacter::~MainCharacter() {
-    // Destructor
 }
 
 

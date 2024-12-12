@@ -245,11 +245,13 @@ void Land::interact()
     }
 }
 
+// todo Clear the sprite information
 void Land::clear() {
     if (crop)
     {
         crop->clear();
     }
+
     info_.sprite = nullptr;  // Clear the sprite information
 }
 

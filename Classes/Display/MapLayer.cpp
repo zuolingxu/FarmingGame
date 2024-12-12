@@ -337,7 +337,7 @@ void MapLayer::onMouseDown(cocos2d::Event* event)
                         {
                             focus->interact();
                         }
-                        else if (MainCharacter::getInstance()->getCurrentItem()->type == ItemType::HOE)
+                        else if (MainCharacter::getInstance()->getCurrentItemType() == ItemType::HOE)
                         {
                             Land::createByPlayer(focus_pos_, this);
                         }
