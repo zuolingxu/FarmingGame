@@ -3,6 +3,9 @@
 #include "cocos2d.h"
 #include <sstream>
 #include <iostream>
+#include <string>
+
+
 constexpr int GridSize = 16;
 
 const cocos2d::Size designResolutionSize = cocos2d::Size(480, 320);
@@ -122,6 +125,10 @@ enum class ItemType {
 	PUMPKIN,           // Pumpkin
 	POTATO,            // Potato
 
+	// Food
+	SOUP,              // Soup
+	FISH,              // fish
+
 	// Tools
 	FERTILIZER,        // Fertilizer
 	FISHING_ROD,       // Fishing Rod
@@ -129,14 +136,54 @@ enum class ItemType {
 	PICKAXE,           // Pickaxe
 	WATERING_CAN,      // Watering Can
 
+	// Stone
+	ROCK,              // ordinary stone
+	IRON,              // iron ore
+
 	// Default (no item)
 	NONE               // No Item
 };
+//need change MainCharacter::itemTypeToString if change
 
-
+//Item in bag or in hands
 struct Item {
 	ItemType type;
 	int quantity;
 	std::string iconPath;
-	Item(ItemType t, int q = 1, const std::string& icon = "") : type(t), quantity(1), iconPath(icon) {}
+
+	//TODO give name write in iconPath
+	Item(ItemType t, int q = 1) : type(t), quantity(1)
+	{
+		std::string itemName = itemTypeToString(type);  // Convert ItemType to string
+
+		DocumentManager* manager = DocumentManager::getInstance();
+
+		iconPath = manager->getPath(itemName);
+	
+
+	}
+
+	std::string itemTypeToString(ItemType type) {
+		switch (type) {
+			case ItemType::CAULIFLOWER_SEED: return "CAULIFLOWER_SEED";
+			case ItemType::PUMPKIN_SEED: return "PUMPKIN_SEED";
+			case ItemType::POTATO_SEED: return "POTATO_SEED";
+			case ItemType::CAULIFLOWER: return "CAULIFLOWER";
+			case ItemType::PUMPKIN: return "PUMPKIN";
+			case ItemType::POTATO: return "POTATO";
+			case ItemType::SOUP: return "SOUP";
+			case ItemType::FISH: return "FISH";
+			case ItemType::FERTILIZER: return "FERTILIZER";
+			case ItemType::FISHING_ROD: return "FISHING_ROD";
+			case ItemType::HOE: return "HOE";
+			case ItemType::PICKAXE: return "PICKAXE";
+			case ItemType::WATERING_CAN: return "WATERING_CAN";
+			case ItemType::ROCK: return "ROCK";
+			case ItemType::IRON: return "IRON";
+			case ItemType::NONE: return "NONE";
+			default: return "UNKNOWN";
+		}
+	}
+
 };
+

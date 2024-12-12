@@ -1,0 +1,15 @@
+{
+  "town": {
+    "1 2": {
+      "NextMap": "farm",
+      "NextPosition": "12 13"
+    }
+  },
+
+  "farm": {
+    "12 13": {
+      "NextMap": "town",
+      "NextPosition": "1 2"
+    }
+  }
+}

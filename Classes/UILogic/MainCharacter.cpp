@@ -14,9 +14,6 @@ MainCharacter* MainCharacter::getInstance() {
     return instance;
 }
 
-void MainCharacter::addItem(const Item& item) {
-    inventory.push_back(item);  // Add an item to the inventory
-}
 
 const std::vector<Item>& MainCharacter::getInventory() const {
     return inventory;  // Return the list of items in the inventory
@@ -44,6 +41,7 @@ void MainCharacter::setCurrentItem(ItemType type) {
 const Item* MainCharacter::getCurrentItem() const {
     return currentItem;  // Return the current held item
 }
+
 
 bool MainCharacter::modifyItemQuantity(ItemType type, int delta) {
     // If delta is 0, return immediately (no change)
@@ -84,3 +82,5 @@ void MainCharacter::cleanup() {
 MainCharacter::~MainCharacter() {
     // Destructor
 }
+
+

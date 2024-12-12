@@ -5,7 +5,7 @@ USING_NS_CC;
 
 Land::Land(const Vec<int>& pos, MapLayer* parent, bool Fertilizer)
     : MapObject(pos), parent(parent), crop(nullptr), Fertilizer(false) {
-    info_.size = Vec<int>(1, 1);    // The plant occupies a space of 1x1
+    info_.size = Vec<int>(1, 1);    // The land occupies a space of 1x1
 }
 
 Land::~Land() {
@@ -15,6 +15,7 @@ Land::~Land() {
     }
 }
 
+//create by archive
 MapObject* Land::create(rapidjson::Value& val, MapLayer* parent, const Vec<int>& pos) {
 
     Land* land = new Land(pos, parent, false);
@@ -86,12 +87,12 @@ void Land::create_archive_in_memory(const Vec<int>& position) {
 
         info.AddMember("CropInfo", cropInfo, archiveDoc->GetAllocator());
     }
-
     // Store the info data into landData
     landData.AddMember("Info", info, archiveDoc->GetAllocator());
 
     // Store the Land data at the corresponding position under "Farm"
     farm.AddMember(rapidjson::Value(positionKey.c_str(), archiveDoc->GetAllocator()), landData, archiveDoc->GetAllocator());
+
 }
 
 void Land::change_archive_in_memory(const Vec<int>& position) {
@@ -149,20 +150,106 @@ void Land::change_archive_in_memory(const Vec<int>& position) {
 
 void Land::init() {
     // Initialize the land (if needed)
+    std::string plistFilePath = "LandPls";  // The plist file path for the land's sprite
+    std::string spriteframe = "Land-" + std::to_string(crop->getWater())+".png";  // Construct the sprite frame filename
+    DocumentManager* manager = DocumentManager::getInstance();
+
+    if (FileUtils::getInstance()->isFileExist(plistFilePath)) {
+        // If the plist file exists, load it
+        MapLayer::loadPlist(manager->getPath(plistFilePath));
+    }
+    else {
+        CCLOG("Error: Plist file %s not found!", plistFilePath.c_str());
+        return; // Exit the function to avoid further errors
+    }
+
+    // Ensure parent is not null to avoid null pointer access
+    if (parent != nullptr) {
+        // Use the loaded plist to create the sprite, ensuring the sprite frame exists
+        parent->addSpriteWithFrame(info_, spriteframe);
+    }
+    else {
+        CCLOG("Error: parent is nullptr!");
+    }
 }
 
-void Land::interact() {
+void Land::interact()
+{
     MainCharacter* maincharacter = MainCharacter::getInstance();
     const Item* currentItem = maincharacter->getCurrentItem();
 
     if (currentItem) {
-        if (currentItem->type == ItemType::FERTILIZER) {
+        if (crop) {
+            if (crop->harvest_successful()) {
+                delete crop;
+                crop = nullptr;
+            }
+        }
+
+        if (currentItem->type == ItemType::NONE) {
+
+        }
+        else if (currentItem->type == ItemType::FERTILIZER) {
             Fertilizer = true;  // Apply fertilizer when the player interacts with the land
         }
+        else if (currentItem->type == ItemType::CAULIFLOWER_SEED ||
+            currentItem->type == ItemType::PUMPKIN_SEED ||
+            currentItem->type == ItemType::POTATO_SEED) 
+        {
+            std::string cropName;
+            if (currentItem->type == ItemType::CAULIFLOWER_SEED) {
+                cropName = "cauliflower";
+            }
+            else if (currentItem->type == ItemType::PUMPKIN_SEED) {
+                cropName = "pumpkin";
+            }
+            else if (currentItem->type == ItemType::POTATO_SEED) {
+                cropName = "potato";
+            }
+
+            //no crop , plant
+            if(!crop){
+                crop = Crop::createByPlayer(info_.position, parent, cropName, Fertilizer);
+            }
+        }
+        else if (currentItem->type == ItemType::WATERING_CAN) {
+            if(crop){
+                crop->change_to_watered();
+            }
+            if (crop) crop->settle();  // Settle the crop if there is one
+            change_archive_in_memory(info_.position);  // Update the archive data
+
+            std::string plistFilePath = "LandPls";  // The plist file path for the land's sprite
+            std::string spriteframe = "Land-1.png";  // Construct the sprite frame filename next day water is false
+            DocumentManager* manager = DocumentManager::getInstance();
+
+            if (FileUtils::getInstance()->isFileExist(plistFilePath)) {
+                // If the plist file exists, load it
+                MapLayer::loadPlist(manager->getPath(plistFilePath));
+            }
+            else {
+                CCLOG("Error: Plist file %s not found!", plistFilePath.c_str());
+                return; // Exit the function to avoid further errors
+            }
+
+            // Ensure parent is not null to avoid null pointer access
+            if (parent != nullptr) {
+                // Use the loaded plist to create the sprite and update the sprite frame
+                parent->changeWithSingleFrame(info_.sprite, spriteframe);
+            }
+            else {
+                CCLOG("Error: parent is nullptr!");
+            }
+        }
+
     }
 }
 
 void Land::clear() {
+    if (crop)
+    {
+        crop->clear();
+    }
     info_.sprite = nullptr;  // Clear the sprite information
 }
 
@@ -177,6 +264,28 @@ void Land::resume() {
 void Land::settle() {
     if (crop) crop->settle();  // Settle the crop if there is one
     change_archive_in_memory(info_.position);  // Update the archive data
+
+    std::string plistFilePath = "LandPls";  // The plist file path for the land's sprite
+    std::string spriteframe = "Land-0.png";  // Construct the sprite frame filename next day water is false
+    DocumentManager* manager = DocumentManager::getInstance();
+
+    if (FileUtils::getInstance()->isFileExist(plistFilePath)) {
+        // If the plist file exists, load it
+        MapLayer::loadPlist(manager->getPath(plistFilePath));
+    }
+    else {
+        CCLOG("Error: Plist file %s not found!", plistFilePath.c_str());
+        return; // Exit the function to avoid further errors
+    }
+
+    // Ensure parent is not null to avoid null pointer access
+    if (parent != nullptr) {
+        // Use the loaded plist to create the sprite and update the sprite frame
+        parent->changeWithSingleFrame(info_.sprite, spriteframe);
+    }
+    else {
+        CCLOG("Error: parent is nullptr!");
+    }
 }
 
 bool Land::hasCollision() {

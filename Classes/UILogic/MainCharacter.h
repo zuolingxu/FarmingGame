@@ -20,9 +20,6 @@ public:
     // Get the singleton instance
     static MainCharacter* getInstance();
 
-    // Add an item to the backpack
-    void addItem(const Item& item);
-
     // Get all items in the backpack
     const std::vector<Item>& getInventory() const;
 
@@ -48,3 +45,5 @@ public:
     // Destructor
     ~MainCharacter();
 };
+
+//主角行为和背包在一天结束后需要保存进存档

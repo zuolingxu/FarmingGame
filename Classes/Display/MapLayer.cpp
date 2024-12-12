@@ -4,6 +4,7 @@
 #include "SceneManager.h"
 #include <functional>
 #include "Land.h"
+#include "MainCharacter.h"
 
 USING_NS_CC;
 #ifdef _MSC_VER
@@ -23,7 +24,8 @@ static bool inVecRange(const std::vector<T>& vec, const Vec<int>& index)
 }
 
 MapLayer::MapLayer(const std::string& tmx_path, const cocos2d::Color3B& background_color,
-    rapidjson::Value* const_object, rapidjson::Value* archive_object) : background_color_(background_color)
+    rapidjson::Value* const_object, rapidjson::Value* archive_object, bool create_able) 
+    :  background_color_(background_color), create_abled(create_able)
 {
     DocumentManager* manager = DocumentManager::getInstance();
     if (manager->hasDocument(tmx_path))
@@ -63,9 +65,9 @@ MapLayer::MapLayer(const std::string& tmx_path, const cocos2d::Color3B& backgrou
     }
 }
 
-MapLayer* MapLayer::createWithDocument(const std::string& tmx_path, const Color3B& background_color, rapidjson::Value* const_object, rapidjson::Value* archive_object)
+MapLayer* MapLayer::createWithDocument(const std::string& tmx_path, const Color3B& background_color, rapidjson::Value* const_object, rapidjson::Value* archive_object, bool create_able)
 {
-    MapLayer* map = new(std::nothrow) MapLayer(tmx_path, background_color, const_object, archive_object);
+    MapLayer* map = new(std::nothrow) MapLayer(tmx_path, background_color, const_object, archive_object, create_able);
     if (map)
     {
         map->autorelease();
@@ -256,7 +258,7 @@ void MapLayer::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Ev
         player->move(PlayerSprite::MOVEMENT::W_RIGHT, 12);
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F6:
-        // TODO: Test Code
+        manager->saveArchiveDocument();
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F7:
         // TODO: Test Code
@@ -325,7 +327,7 @@ void MapLayer::onMouseDown(cocos2d::Event* event)
         {
             try
             {
-                ::MapObject* focus = interact_map_.at(focus_pos_.X()).at(focus_pos_.Y());
+                MapObject* focus = interact_map_.at(focus_pos_.X()).at(focus_pos_.Y());
                 Vec<int> grid_pos = toGrid(main_player_->getPosition() + Vec2(GridSize / 2, 0));
                 for (auto& pos : valid_pos)
                 {
@@ -335,9 +337,9 @@ void MapLayer::onMouseDown(cocos2d::Event* event)
                         {
                             focus->interact();
                         }
-                        else if (true /* && holdings == "chutou"*/)
+                        else if (MainCharacter::getInstance()->getCurrentItem()->type == ItemType::HOE)
                         {
-                            //Land::createByPlayer();
+                            Land::createByPlayer(focus_pos_, this);
                         }
                     }
                 }
