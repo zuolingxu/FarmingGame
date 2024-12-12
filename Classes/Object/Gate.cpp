@@ -57,7 +57,12 @@ void Gate::resume()
 
 void Gate::settle()
 {
-
+	if (TimeManager::getInstance()->isFestivalDay()&&NextMap=="town") {
+		NextMap = "town_festival";
+	}
+	if (NextMap == "town_festival" && !(TimeManager::getInstance()->isFestivalDay())) {
+		NextMap == "town";
+	}
 }
 
 bool Gate::hasCollision()

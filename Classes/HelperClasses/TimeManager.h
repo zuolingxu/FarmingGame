@@ -12,6 +12,7 @@ private:
     const int SPRING_DAYS = 10;
     const int AUTUMN_DAYS = 10;
     const float MinutesOfOneDay = 10; // 现实MinuteOfOneDay分钟等于游戏1天
+    const std::vector<int> festival_days_ = { 3, 7, 15, 20, 25 };
 
     static TimeManager* instance_;//单例函数
 
@@ -35,6 +36,9 @@ public:
     float getCurrentTime() const { return current_time_; }
     int getCurrentDay() const { return current_day_; }
     std::string getSeason()const { return season; }
+    bool isFestivalDay() const {
+        return std::find(festival_days_.begin(), festival_days_.end(), current_day_%26) != festival_days_.end();
+    }
     //暂停游戏等
     void pause(); // 暂停游戏
     void resume(); // 恢复游戏
