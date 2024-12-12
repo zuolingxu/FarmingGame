@@ -3,7 +3,7 @@
 #include "NPC.h"
 #include "Land.h"
 
-MapObject::MapObject(const Vec<int>& pos) : info_(nullptr, {}, pos) { }
+MapObject::MapObject(const Vec<int>& pos) : info_{ nullptr, {}, pos } { }
 
 MapObject::ObjectInfo& MapObject::getInfo()
 {

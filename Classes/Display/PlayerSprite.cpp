@@ -128,6 +128,7 @@ void PlayerSprite::move(MOVEMENT move_e, const int length)
 	    stopAction(repeat_action_);
         repeat_action_->release();
         repeat_action_ = nullptr;
+        unscheduleUpdate();
     }
 
     Animation* animation = Animation::create();
@@ -203,6 +204,7 @@ void PlayerSprite::interact(const Vec<int>& pos)
         repeat_action_->release();
         repeat_action_ = nullptr;
         is_moving = false;
+        unscheduleUpdate();
     }
 
 	if (pos.Y() == -1)
@@ -271,9 +273,11 @@ void PlayerSprite::update(float delta)
         }
 
         Vec2 next_pos1 = next_pos + Vec2(2, 0);
-        Vec2 next_pos2 = next_pos + Vec2(size_.X() * GridSize - 2, 4);
-        if (parent_->hasCollision(next_pos1) || parent_->hasCollision(next_pos2)
-            || (getPosition() - destination).length() < delta * 20)
+        Vec2 next_pos2 = next_pos + Vec2(size_.X() * GridSize - 2, 0);
+        Vec2 next_pos3 = next_pos + Vec2(2, (size_.Y() - 1) * GridSize + 2);
+        Vec2 next_pos4 = next_pos + Vec2(size_.X() * GridSize - 2, (size_.Y() - 1) * GridSize + 2);
+        if (parent_->hasCollision(next_pos1) || parent_->hasCollision(next_pos2) || parent_->hasCollision(next_pos3)
+			|| parent_->hasCollision(next_pos4) || (getPosition() - destination).length() < delta * 20)
         {
             destination = {-1,-1};
             stop(MOVEMENT::ALL);

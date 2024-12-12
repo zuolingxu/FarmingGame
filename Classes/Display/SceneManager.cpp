@@ -90,6 +90,7 @@ void SceneManager::clearMaps()
 		}
 		map_.clear();
 	}
+	// TODO: clearMainCharacter
 }
 
 
@@ -146,7 +147,7 @@ void SceneManager::NextMap(const std::string& map_name, const std::string& pos) 
 	auto functionCallback = std::function<void(float)>([call_back](float dt) {
 		(*call_back)();  
 		});
-	loader->schedule(functionCallback, instance_, 0.0f, 3, 0.0f, false, "loading");
+	loader->schedule(functionCallback, instance_, 0.02f, 3, 0.0f, false, "loading");
 }
 
 
@@ -193,8 +194,8 @@ void SceneManager::NextMapCallBack::start()
 	}
 	else
 	{
+		Director::getInstance()->replaceScene(loading_scene);
 		getInstance()->map_.at(getInstance()->current_map_name_)->toBack();
-		Director::getInstance()->replaceScene(TransitionFade::create(0.5f, loading_scene));
 	}
 	loading_per = 5.0f;
 }
