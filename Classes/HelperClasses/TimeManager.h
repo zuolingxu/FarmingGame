@@ -9,11 +9,15 @@
 
 class TimeManager {
 private:
+    const int SPRING_DAYS = 10;
+    const int AUTUMN_DAYS = 10;
     const float MinutesOfOneDay = 10; // 现实MinuteOfOneDay分钟等于游戏1天
+
     static TimeManager* instance_;//单例函数
 
     int current_day_; // 当前游戏天数
     float current_time_; // 当前时间（以游戏时间小时为单位）
+    std::string season;
 
     bool is_paused_; // 是否暂停
     std::vector<MapLayer*> map_layers_; // 存储所有地图层
@@ -27,10 +31,10 @@ private:
 public:
     static TimeManager* getInstance(); // 获取单例实例 在void SceneManager::createMaps()被调用，开始计时
 
-    //给ui的接口
-    //获取当前时间
-    int getCurrentDay() const;//游戏时间第几天
-    float getCurrentTime() const;//游戏时间第几小时
+
+    float getCurrentTime() const { return current_time_; }
+    int getCurrentDay() const { return current_day_; }
+    std::string getSeason()const { return season; }
     //暂停游戏等
     void pause(); // 暂停游戏
     void resume(); // 恢复游戏

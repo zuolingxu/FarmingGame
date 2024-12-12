@@ -42,7 +42,10 @@
     "ArialFon": "fonts/arial.ttf",
     "MarkerFeltFon": "fonst/Marker Felt.ttf",
 
-    "crop": "config/crop.json",
+    "cauliflower": "config/crop_cauliflower.json",
+    "potato": "config/crop_potato.json",
+    "pumpkin": "config/crop_pumpkin.json",
+
     "mineral": "config/mineral.json",
     "gate": "config/gate.json"
   },

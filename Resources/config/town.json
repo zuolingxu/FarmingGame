@@ -11,14 +11,6 @@
         "friendship": false,
         "festival": false
       }
-    },
-    "1 1": {
-      "Type": "Gate",
-      "Info": {
-        "NextMap": "farm",
-        "NextPosition": "1 1",
-        "please delete": "this test"
-      }
     }
   }
 }

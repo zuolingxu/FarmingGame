@@ -10,7 +10,7 @@ USING_NS_CC;
 #endif
 
 // 静态实例初始化
-UILogic* UILogic::instance_ = new UILogic();
+UILogic* UILogic::instance_ = nullptr;
 
 UILogic* UILogic::getInstance()
 {

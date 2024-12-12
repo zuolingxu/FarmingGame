@@ -5,7 +5,8 @@
 #include <sstream>
 #include <iostream>
 #include <string>
-
+#include <algorithm>  // For std::transform
+#include <cctype>     // For std::touppe
 
 constexpr int GridSize = 16;
 
@@ -185,61 +186,64 @@ struct Item {
 		}
 	}
 
-	// Convert string to ItemType
+	// Convert string to ItemType,both uppercase and lowersave
 	static ItemType stringToItemType(const std::string& typeStr) {
-		if (typeStr == "CAULIFLOWER_SEED") {
+		std::string normalizedStr = typeStr;
+
+		std::transform(normalizedStr.begin(), normalizedStr.end(), normalizedStr.begin(), ::toupper);
+
+		if (normalizedStr == "CAULIFLOWER_SEED") {
 			return ItemType::CAULIFLOWER_SEED;
 		}
-		else if (typeStr == "PUMPKIN_SEED") {
+		else if (normalizedStr == "PUMPKIN_SEED") {
 			return ItemType::PUMPKIN_SEED;
 		}
-		else if (typeStr == "POTATO_SEED") {
+		else if (normalizedStr == "POTATO_SEED") {
 			return ItemType::POTATO_SEED;
 		}
-		else if (typeStr == "CAULIFLOWER") {
+		else if (normalizedStr == "CAULIFLOWER") {
 			return ItemType::CAULIFLOWER;
 		}
-		else if (typeStr == "PUMPKIN") {
+		else if (normalizedStr == "PUMPKIN") {
 			return ItemType::PUMPKIN;
 		}
-		else if (typeStr == "POTATO") {
+		else if (normalizedStr == "POTATO") {
 			return ItemType::POTATO;
 		}
-		else if (typeStr == "SOUP") {
+		else if (normalizedStr == "SOUP") {
 			return ItemType::SOUP;
 		}
-		else if (typeStr == "FISH") {
+		else if (normalizedStr == "FISH") {
 			return ItemType::FISH;
 		}
-		else if (typeStr == "FERTILIZER") {
+		else if (normalizedStr == "FERTILIZER") {
 			return ItemType::FERTILIZER;
 		}
-		else if (typeStr == "FISHING_ROD") {
+		else if (normalizedStr == "FISHING_ROD") {
 			return ItemType::FISHING_ROD;
 		}
-		else if (typeStr == "HOE") {
+		else if (normalizedStr == "HOE") {
 			return ItemType::HOE;
 		}
-		else if (typeStr == "PICKAXE") {
+		else if (normalizedStr == "PICKAXE") {
 			return ItemType::PICKAXE;
 		}
-		else if (typeStr == "WATERING_CAN") {
+		else if (normalizedStr == "WATERING_CAN") {
 			return ItemType::WATERING_CAN;
 		}
-		else if (typeStr == "ROCK") {
+		else if (normalizedStr == "ROCK") {
 			return ItemType::ROCK;
 		}
-		else if (typeStr == "IRON") {
+		else if (normalizedStr == "IRON") {
 			return ItemType::IRON;
 		}
-		else if (typeStr == "NONE") {
+		else if (normalizedStr == "NONE") {
 			return ItemType::NONE;
 		}
 		else {
 			return ItemType::NONE;  // Default to NONE for unknown strings
 		}
 	}
-
 
 };
 

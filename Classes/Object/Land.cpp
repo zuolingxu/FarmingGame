@@ -194,7 +194,7 @@ void Land::interact()
         }
         else if (currentItem->type == ItemType::CAULIFLOWER_SEED ||
             currentItem->type == ItemType::PUMPKIN_SEED ||
-            currentItem->type == ItemType::POTATO_SEED) 
+            currentItem->type == ItemType::POTATO_SEED)
         {
             std::string cropName;
             if (currentItem->type == ItemType::CAULIFLOWER_SEED) {
@@ -208,7 +208,7 @@ void Land::interact()
             }
 
             //no crop , plant
-            if(!crop){
+            if (!crop) {
                 crop = Crop::createByPlayer(info_.position, parent, cropName, Fertilizer);
             }
         }
