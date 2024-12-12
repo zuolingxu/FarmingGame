@@ -30,34 +30,31 @@ UILogic::UILogic()
 //    // 获取其他管理器实例
     saveManager_ = DocumentManager::getInstance();
     mainCharacter_ = MainCharacter::getInstance();
-
-
 }
 
 UILogic::~UILogic()
 {
-    // 析构时保存数据（可选）
-    //saveDataToSave();
+
 }
 
 void UILogic::initStartScreenNode(cocos2d::Node* startScreenNode)
 {
     startScreenNode_ = startScreenNode;
-    bindStartScreenEvents(); // �󶨿�ʼ���水ť�¼�
+    bindStartScreenEvents(); 
 }
 
 void UILogic::initBagNode(cocos2d::Node* bagNode)
 {
     bagNode_ = bagNode;
-    bindBagEvents(); // �󶨱���UI�¼�
-    refreshBagUI();  // ˢ�±�����ʾ
+    bindBagEvents(); 
+    refreshBagUI();  
 }
 
 void UILogic::initTaskBarNode(cocos2d::Node* taskBarNode)
 {
     taskBarNode_ = taskBarNode;
-    bindTaskBarEvents(); // ������ť�¼�
-    updateTaskUI();      // ˢ��������ʾ
+    bindTaskBarEvents(); 
+    updateTaskUI();      
 }
 
 void UILogic::bindStartScreenEvents()
@@ -84,7 +81,6 @@ void UILogic::bindBagEvents()
 {
     if (!bagNode_) return;
 
-    // �������ӵ���¼�
     const int numSlots = 24;
     for (int i = 0; i < numSlots; ++i)
     {
@@ -100,7 +96,6 @@ void UILogic::bindTaskBarEvents()
 {
     if (!taskBarNode_) return;
 
-    // �رձ�����ť
     auto closeButton = dynamic_cast<ui::Button*>(bagNode_->getChildByName("CloseButton"));
     if (closeButton)
     {
@@ -192,7 +187,6 @@ void UILogic::useItemFromBag(int slotIndex)
         return;
     }
 
-    // ˢ�±���UI
     refreshBagUI();
 
     // TODO:将该物品返回给MainCharacter
@@ -209,7 +203,6 @@ void UILogic::onTaskItemClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType
     std::string taskName = button->getName(); // "Task_x"
     int taskIndex = std::stoi(taskName.substr(5));
 
-    // ����Ӧ����ɲſɵ�
     if (!tasks_[taskIndex].completed) {
         return;
     }
@@ -224,12 +217,9 @@ void UILogic::updateBagItems(std::vector<Item> bagitem) {
 
 void UILogic::refreshBagUI()
 {
-    // TODO:从saveManager获取最新的背包数据（若存档中保存了物品信息）
-    //bagItems_ = saveManager_->getBagItems();
 
     if (!bagNode_) return;
 
-    // ���������ʾ��ͼ�꣬����ֱ��ˢ��
     const int numSlots = 24;
     const int columns = 12; // 每行12个
     const int rows = 2; // 2行
@@ -243,7 +233,7 @@ void UILogic::refreshBagUI()
         auto slot = dynamic_cast<ui::Button*>(bagNode_->getChildByName("Slot_" + std::to_string(i)));
         if (!slot) continue;
 
-        slot->removeAllChildren(); // �Ƴ��ɵ�ͼ��������ı�
+        slot->removeAllChildren(); 
 
         if (i < (int)bagItems_.size())
         {
@@ -273,8 +263,6 @@ void UILogic::refreshBagUI()
 
 void UILogic::updateTaskUI()
 {
-    // TODO:�� saveManager ��ȡ������������
-    //tasks_ = saveManager_->getTasks();
 
     if (!taskBarNode_) return;
 
