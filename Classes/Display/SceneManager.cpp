@@ -50,7 +50,11 @@ void SceneManager::createMapWithDocument(rapidjson::Document* doc)
 		archive_object = &(*archive_doc)["Map"][name.c_str()];
 	}
 
-	MapLayer* map = MapLayer::createWithDocument(tmx_path, backGroundColor, const_object, archive_object);
+	bool create_able = false; 
+	if (name == "farm" || name == "town") { // TODO: delete test condition( name == "town")
+		create_able = true;
+	}
+	MapLayer* map = MapLayer::createWithDocument(tmx_path, backGroundColor, const_object, archive_object, create_able);
 	map->retain();
 	map_.emplace(name, map);
 }

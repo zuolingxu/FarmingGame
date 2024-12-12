@@ -16,12 +16,11 @@ private:
     // Private constructor to prevent direct creation of an instance
     MainCharacter();
 
+    const int MAX_QUANTITY = 10000;
+
 public:
     // Get the singleton instance
     static MainCharacter* getInstance();
-
-    // Add an item to the backpack
-    void addItem(const Item& item);
 
     // Get all items in the backpack
     const std::vector<Item>& getInventory() const;
@@ -35,6 +34,9 @@ public:
     // Get the current held item
     const Item* getCurrentItem() const;
 
+    // Get the type of the current held item
+    ItemType getCurrentItemType() const;
+
     // Modify the quantity of a specified item in the backpack (+n or -n)
     bool modifyItemQuantity(ItemType type, int delta);
 
@@ -47,4 +49,9 @@ public:
 
     // Destructor
     ~MainCharacter();
+
+    // Load inventory from JSON
+    void loadInventoryFromArchive(const rapidjson::Value& json);
 };
+
+//主角行为和背包在一天结束后需要保存进存档
