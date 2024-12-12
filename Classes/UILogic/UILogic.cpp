@@ -1,10 +1,15 @@
-#include"UILogic.h"
+#include <format>
 #include "DocumentManager.h"
 #include "SceneManager.h"
+#include "json/document.h"
+#include "UILogic.h"
 
 USING_NS_CC;
+#ifdef _MSC_VER
+#undef GetObject
+#endif
 
-// ��̬ʵ����ʼ��
+// 静态实例初始化
 UILogic* UILogic::instance_ = new UILogic();
 
 UILogic* UILogic::getInstance()
@@ -17,25 +22,22 @@ UILogic* UILogic::getInstance()
 }
 
 UILogic::UILogic()
-//    : startScreenNode_(nullptr)
-//    , bagNode_(nullptr)
-//    , taskBarNode_(nullptr)
-//    , saveManager_(nullptr)
-//    , sceneManager_(nullptr)
-//    , mainCharacter_(nullptr)
+    : startScreenNode_(nullptr)
+    , bagNode_(nullptr)
+    , taskBarNode_(nullptr)
+    , saveManager_(nullptr)
+    , mainCharacter_(nullptr)
 {
-//    // ��ȡ����������ʵ���������Ϊ������
-//    saveManager_ = SaveManager::getInstance();
-//    sceneManager_ = SceneManager::getInstance();
-//    mainCharacter_ = MainCharacter::getInstance();
-//
-//    // �Ӵ浵���س�ʼ���ݣ������Ҫ��
-//    loadDataFromSave();
+//    // 获取其他管理器实例
+    saveManager_ = DocumentManager::getInstance();
+    mainCharacter_ = MainCharacter::getInstance();
+
+
 }
 
 UILogic::~UILogic()
 {
-    // ����ʱ�������ݣ���ѡ��
+    // 析构时保存数据（可选）
     //saveDataToSave();
 }
 
@@ -117,9 +119,9 @@ void UILogic::onNewButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventTyp
 //    if (success)
 //    {
 //        CCLOG("New save created.");
-//        // �л���ͼ������ "Map1"
+//        // 切换地图，比如 "Map1"
 //        sceneManager_->switchToMap("Map1", "default");
-//        // ���ؿ�ʼ����ڵ�
+//        // 隐藏开始界面节点
 //        startScreenNode_->setVisible(false);
 //    }
 //    else
@@ -144,7 +146,7 @@ void UILogic::onLoadButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventTy
 //            sceneManager_->switchToMap(mapName, playerPos);
 //            startScreenNode_->setVisible(false);
 //
-//            // ���¼������ݲ�ˢ��UI
+//            // 重新加载数据并刷新UI
 //            loadDataFromSave();
 //            refreshBagUI();
 //            updateTaskUI();
@@ -201,10 +203,10 @@ void UILogic::useItemFromBag(int slotIndex)
         return;
     }
 
-    // TODO:������Ʒ���ظ�MainCharacter
+    // TODO:将该物品返回给MainCharacter
 
 
-    // ʹ�ú��������
+    // 使用后减少数量
     item.quantity -= 1;
     if (item.quantity <= 0) {
         bagItems_.erase(bagItems_.begin() + slotIndex);
@@ -212,6 +214,9 @@ void UILogic::useItemFromBag(int slotIndex)
 
     // ˢ�±���UI
     refreshBagUI();
+
+    // TODO:将该物品返回给MainCharacter
+    mainCharacter_->setCurrentItem(item.type);
 }
 
 void UILogic::onTaskItemClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
@@ -233,17 +238,28 @@ void UILogic::onTaskItemClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType
     updateTaskUI();
 }
 
+void UILogic::updateBagItems(std::vector<Item> bagitem) {
+    bagItems_ = bagitem;
+}
+
 void UILogic::refreshBagUI()
 {
-    // TODO:��saveManager��ȡ���µı������ݣ����浵�б�������Ʒ��Ϣ��
+    // TODO:从saveManager获取最新的背包数据（若存档中保存了物品信息）
     //bagItems_ = saveManager_->getBagItems();
 
     if (!bagNode_) return;
 
     // ���������ʾ��ͼ�꣬����ֱ��ˢ��
     const int numSlots = 24;
+    const int columns = 12; // 每行12个
+    const int rows = 2; // 2行
+    const float slotSize = 20.0f; // 每个格子的大小
+
     for (int i = 0; i < numSlots; ++i)
     {
+        int row = i / columns;
+        int col = i % columns;
+
         auto slot = dynamic_cast<ui::Button*>(bagNode_->getChildByName("Slot_" + std::to_string(i)));
         if (!slot) continue;
 
@@ -257,16 +273,17 @@ void UILogic::refreshBagUI()
                 auto itemSprite = Sprite::create(item.iconPath);
                 if (itemSprite)
                 {
-                    itemSprite->setPosition(Vec2(slot->getContentSize().width / 2,slot->getContentSize().height / 2));
+                    itemSprite->setContentSize(Size(slotSize, slotSize));
+                    itemSprite->setPosition(Vec2(col * slotSize + slotSize / 2 + 120, row * slotSize + slotSize / 2 ));
                     slot->addChild(itemSprite);
                 }
 
                 if (item.quantity > 1)
                 {
-                    auto quantityLabel = ui::Text::create(std::to_string(item.quantity), "Arial", 20);
+                    auto quantityLabel = ui::Text::create(std::to_string(item.quantity), "Arial", 10);
                     quantityLabel->setTextColor(Color4B::WHITE);
                     quantityLabel->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
-                    quantityLabel->setPosition(Vec2(slot->getContentSize().width - 5, 5));
+                    quantityLabel->setPosition(Vec2(col * slotSize + slotSize / 2 + 125, row * slotSize + slotSize / 2 -5));
                     slot->addChild(quantityLabel);
                 }
             }
@@ -286,12 +303,14 @@ void UILogic::updateTaskUI()
     for (int i = 0; i < (int)tasks_.size(); ++i)
     {
         const Task& task = tasks_[i];
-        auto taskButton = ui::Button::create("image/TaskButtonNormal.png", "image/TaskButtonSelected.png");
-        taskButton->setPosition(Vec2(100, 100 + i * 50));
+        auto taskButton = ui::Button::create("image/textBox..png", "image/textBox..png");
+        taskButton->setScale9Enabled(true);
+        taskButton->setContentSize(Size(360, 50));
+        taskButton->setPosition(Vec2(240, 100 + i * 50));
         taskButton->setName("Task_" + std::to_string(i));
 
-        auto taskLabel = ui::Text::create(task.description, "Arial", 20);
-        taskLabel->setPosition(Vec2(taskButton->getContentSize().width / 2,taskButton->getContentSize().height / 2));
+        auto taskLabel = ui::Text::create(task.description, "Arial", 10);
+        taskLabel->setPosition(Vec2(180,25));
         taskButton->addChild(taskLabel);
 
         if (task.completed)
@@ -309,26 +328,6 @@ void UILogic::updateTaskUI()
     }
 }
 
-void UILogic::addItemToBag(const Item& item)
-{
-    // ����Ƿ�����ͬ��Ʒ�ѵ�
-    bool found = false;
-    for (auto& bItem : bagItems_) {
-        if (bItem.type == item.type && bItem.iconPath == item.iconPath)
-        {
-            bItem.quantity += item.quantity;
-            found = true;
-            break;
-        }
-    }
-
-    if (!found) {
-        bagItems_.push_back(item);
-    }
-
-    refreshBagUI();
-}
-
 void UILogic::completeTask(int taskIndex)
 {
     if (taskIndex < 0 || taskIndex >= (int)tasks_.size()) {
@@ -339,18 +338,4 @@ void UILogic::completeTask(int taskIndex)
     updateTaskUI();
 }
 
-void UILogic::loadDataFromSave()
-{
-    //TODO: �Ӵ浵���������ر�������������
-    //bagItems_ = saveManager_->getBagItems();
-    //tasks_ = saveManager_->getTasks();
-    // �����Ҫ����UI������ڳ�ʼ�����������refreshBagUI��updateTaskUI
-}
 
-void UILogic::saveDataToSave()
-{
-    // TODO:����ǰ�������������ݱ��浽�浵
-    // saveManager_->setBagItems(bagItems_);
-    // saveManager_->setTasks(tasks_);
-    // saveManager_->saveArchive();
-}

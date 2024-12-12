@@ -128,6 +128,7 @@ void PlayerSprite::move(MOVEMENT move_e, const int length)
 	    stopAction(repeat_action_);
         repeat_action_->release();
         repeat_action_ = nullptr;
+        unscheduleUpdate();
     }
 
     Animation* animation = Animation::create();
@@ -203,6 +204,7 @@ void PlayerSprite::interact(const Vec<int>& pos)
         repeat_action_->release();
         repeat_action_ = nullptr;
         is_moving = false;
+        unscheduleUpdate();
     }
 
 	if (pos.Y() == -1)

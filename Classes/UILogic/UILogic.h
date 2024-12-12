@@ -1,9 +1,10 @@
 #pragma once
-#include "cocos2d.h"
 #include "ui/CocosGUI.h"
+#include"HelperClasses.h"
+#include"MainCharacter.h"
 #include <string>
 #include <vector>
-#include "HelperClasses.h"
+#include "cocos2d.h"
 
 // �򵥵���Ʒ�ṹ�壬��UILayer���屣��һ��
 
@@ -38,19 +39,15 @@ public:
     // ˢ������UI
     void updateTaskUI();
 
-    // ������Ʒ������
-    void addItemToBag(const Item& item);
+    //refresh bag items
+    void updateBagItems(std::vector<Item> bagitem);
 
-    // ʹ����Ʒ/�Ƴ���Ʒ
     // �ڵ������ʱ����
     void useItemFromBag(int slotIndex);
 
     //// ����������
     void completeTask(int taskIndex);
 
-    // ������Ҫ�� DocumentManager ����/���汳������������
-    void loadDataFromSave();
-    void saveDataToSave();
 
 private:
     UILogic();
@@ -58,18 +55,26 @@ private:
 
     // ��ʼ���¼��󶨺���
     void bindStartScreenEvents();
+
     void bindBagEvents();
+
     void bindTaskBarEvents();
 
      //��ť����¼��ص�����
     void onNewButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+
     void onLoadButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+
     void onExitButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 
     void onCloseBagButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+
     void onBagSlotClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 
     void onTaskItemClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+
+    //the logic of tasks
+    void initTasks();
 
     static UILogic* instance_;
 
@@ -80,6 +85,8 @@ private:
     std::vector<Item> bagItems_;
     std::vector<Task> tasks_;
 
+    DocumentManager* saveManager_;
+    MainCharacter* mainCharacter_;
 };
 
 

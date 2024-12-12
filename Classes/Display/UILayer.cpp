@@ -1,7 +1,8 @@
 #include "UILayer.h"
-
+#include "UILogic.h"
 USING_NS_CC;
 
+UILogic* uilogic = UILogic::getInstance();
 Node* UILayer::createUILayer(UILayerType type)
 {
     UILayer* ret = new UILayer();
@@ -36,12 +37,15 @@ bool UILayer::initWithType(UILayerType type)
     {
         case UILayerType::START_SCREEN:
             createStartScreenLayout();
+            uilogic->initStartScreenNode(startScreenLayout_);
             break;
         case UILayerType::BAG:
             createBagLayout();
+            uilogic->initBagNode(bagLayout_);
             break;
         case UILayerType::TASK_BAR:
             createTaskBarLayout();
+            uilogic->initTaskBarNode(taskBarLayout_);
             break;
         default:
             break;
@@ -57,15 +61,13 @@ void UILayer::createTaskBarLayout()
     taskBarLayout_->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
     taskBarLayout_->setPosition(Vec2(0,0));
     taskBarLayout_->setName("taskbar");
-    //taskBarLayout_->setBackGroundColorType(ui::Layout::BackGroundColorType::SOLID);
-    //taskBarLayout_->setBackGroundColor(Color3B(50, 50, 50)); // 深灰色背景
-    //this->addChild(taskBarLayout_, 4);
 
     // 添加关闭按钮
     auto closeButton = ui::Button::create("image/exit.png", "image/exit.png");
     closeButton->setPosition(Vec2(420, 300));
     closeButton->setName("CloseButton");
     taskBarLayout_->addChild(closeButton);
+
 }
 
 void UILayer::createBagLayout()
@@ -75,12 +77,9 @@ void UILayer::createBagLayout()
     bagLayout_->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
     bagLayout_->setPosition(Vec2(0,0)); 
     bagLayout_->setName("bag");
-    //bagLayout_->setBackGroundColorType(ui::Layout::BackGroundColorType::SOLID);
-    //bagLayout_->setBackGroundColor(Color3B(80, 80, 80)); // 中灰色背景
-    //this->addChild(bagLayout_, 4);
 
     // 添加背包格子
-    const int numSlots = 24; // 假设有12个格子
+    const int numSlots = 24; // 有24个格子
     const int columns = 12; // 每行12个
     const int rows = 2; // 2行
     const float slotSize = 20.0f; // 每个格子的大小
@@ -110,7 +109,6 @@ void UILayer::createStartScreenLayout()
     startScreenLayout_->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
     startScreenLayout_->setPosition(Vec2(0, 0));
     startScreenLayout_->setName("startscreen");
-    //this->addChild(startScreenLayout_, 3);
 
     // 添加开始按钮
     auto startButton = ui::Button::create("image/TitleButtons-0-4.png", "image/TitleButtons-0-0.png");
