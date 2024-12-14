@@ -206,7 +206,7 @@ void SceneManager::NextMapCallBack::start()
 	else
 	{
 		getInstance()->map_.at(getInstance()->current_map_name_)->toBack();
-		Director::getInstance()->replaceScene(TransitionFade::create(0.5f, loading_scene));
+		Director::getInstance()->replaceScene(loading_scene);
 	}
 	loading_per = 5.0f;
 }

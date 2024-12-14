@@ -13,12 +13,18 @@
             }
         },
         "0 17":{
+            "Type": "Gate",
+            "Info":{
             "NextMap":"farm",
             "NextPosition":"49 16"
+            }
         },
         "49 16":{
+            "Type": "Gate",
+            "Info":{
             "NextMap":"beach",
             "NextPosition":"0 17"
+            }
         }
     }
 }

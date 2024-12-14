@@ -1,12 +1,16 @@
 #pragma once
 #include "cocos2d.h"
 #include "ui/CocosGUI.h"
+#include<vector>
+#include<string>
 
 // 定义 UI 类型枚举
 enum class UILayerType {
     START_SCREEN,
     BAG,
-    TASK_BAR
+    TASK_BAR,
+    NPC,
+    LOAD_ARCHIVE
 };
 
 class UILayer : public cocos2d::Ref
@@ -30,19 +34,24 @@ public:
     cocos2d::ui::Layout* getBagLayout() const { return bagLayout_; }
     cocos2d::ui::Layout* getTaskBarLayout() const { return taskBarLayout_; }
     cocos2d::ui::Layout* getStartScreenLayout() const { return startScreenLayout_; }
+    cocos2d::ui::Layout* getnpcLayout() const { return npcLayout_; }
+    cocos2d::ui::Layout* getloadArchiveLayout() const { return loadArchiveLayout_; }
         
-    // TODO: Manufacture
-    // TODO: BagLayer
-    // TODO: ListLayer
 
 private:
     // UI 组件
     cocos2d::ui::Layout* taskBarLayout_;
     cocos2d::ui::Layout* bagLayout_;
     cocos2d::ui::Layout* startScreenLayout_;
+    cocos2d::ui::Layout* npcLayout_;
+    cocos2d::ui::Layout* loadArchiveLayout_;
+    std::vector<std::string> Sentence;
 
     // 创建各个 UI 组件的方法
     void createTaskBarLayout();
     void createBagLayout();
     void createStartScreenLayout();
+    void createNpcLayout();
+    void createLoadArchiveLayout();
+    void initSentence();
 };

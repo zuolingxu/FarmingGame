@@ -27,16 +27,27 @@ public:
 
     void initTaskBarNode(cocos2d::Node* taskBarNode);
 
+    void initNpcNode(cocos2d::Node* npcNode);
+
+    void initLoadArchiveNode(cocos2d::Node* loadArchiveNode);
+
     void refreshBagUI();
 
     void updateTaskUI();
 
     void updateBagItems(std::vector<Item> bagitem);
 
+    void updateTime(int day,float time);
+
+    void updatePower(int power);
+
     void useItemFromBag(int slotIndex);
 
     void completeTask(int taskIndex);
 
+    void updateArchiveUI();
+
+    void LoadArchive(int saveIndex);
 
 private:
     UILogic();
@@ -48,17 +59,23 @@ private:
 
     void bindTaskBarEvents();
 
+    void bindNpcEvents();
+
+    void bindLoadArchiveEvents();
+
     void onNewButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 
     void onLoadButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 
     void onExitButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 
-    void onCloseBagButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+    void onCloseButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 
     void onBagSlotClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 
     void onTaskItemClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+
+    void onArchiveClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 
     //the logic of tasks
     void initTasks();
@@ -68,6 +85,8 @@ private:
     cocos2d::Node* startScreenNode_;
     cocos2d::Node* bagNode_;
     cocos2d::Node* taskBarNode_;
+    cocos2d::Node* npcNode_;
+    cocos2d::Node* loadArchiveNode_;
 
     std::vector<Item> bagItems_;
     std::vector<Task> tasks_;

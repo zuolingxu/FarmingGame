@@ -4,16 +4,25 @@
     "BackGroundColor":[51,102,153],
     "ObjectList":{
         "49 16":{
+            "Type": "Gate",
+            "Info":{
             "NextMap":"town",
             "NextPosition":"0 17"
+            }
         },
         "29 16":{
+            "Type": "Gate",
+            "Info":{
             "NextMap":"chicken_house",
             "NextPosition":"9 0"
+            }
         },
         "22 23":{
+            "Type": "Gate",
+            "Info":{
             "NextMap":"mine",
             "NextPosition":"6 13"
+            }
         }
     }
 }

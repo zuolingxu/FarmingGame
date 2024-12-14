@@ -9,8 +9,11 @@
             }
         },
         "7 0":{
+            "Type": "Gate",
+            "Info":{
             "NextMap":"town",
             "NextPosition":"12 5"
+            }
         }
     }
 }

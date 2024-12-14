@@ -267,10 +267,12 @@ void PlayerSprite::update(float delta)
         int dire = static_cast<int>(move_e) - 4;
 
         Vec2 next_pos = getPosition() + Vec2(directions_[dire]) * displacement;
-        if (toGrid(getPosition()) != grid_pos_)
+        Vec<int> cur_pos = toGrid(getPosition());
+        if (cur_pos != grid_pos_ && !is_main_character)
         {
-             parent_->updateMaps( grid_pos_, toGrid(getPosition()), size_);
+            parent_->updateMaps(grid_pos_, toGrid(getPosition()), size_); 
         }
+        grid_pos_ = cur_pos;
 
         Vec2 next_pos1 = next_pos + Vec2(2, 0);
         Vec2 next_pos2 = next_pos + Vec2(size_.X() * GridSize - 2, 4);
