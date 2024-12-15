@@ -339,7 +339,9 @@ void MapLayer::onMouseDown(cocos2d::Event* event)
                         }
                         else if (MainCharacter::getInstance()->getCurrentItemType() == ItemType::HOE)
                         {
-                            Land::createByPlayer(focus_pos_, this);
+                            if(MainCharacter::getInstance()->modifyEnergy(MainCharacter::getInstance()->Tilling_the_soil_consumes_energy)){
+                                Land::createByPlayer(focus_pos_, this);
+                            }
                         }
                     }
                 }
@@ -353,6 +355,18 @@ void MapLayer::onMouseDown(cocos2d::Event* event)
         else if (e->getMouseButton() == cocos2d::EventMouse::MouseButton::BUTTON_RIGHT) 
         {
             // TODO: interact with holdings
+            const Item* item = MainCharacter::getInstance()->getCurrentItem();
+            if (item) {
+                if (item->type == ItemType::CAULIFLOWER ||
+                    item->type == ItemType::POTATO ||
+                    item->type == ItemType::PUMPKIN ||
+                    item->type == ItemType::FISH||
+                    item->type==ItemType::SOUP) 
+                {
+                    MainCharacter::getInstance()->eat_food_and_gain_energy(item->type);
+
+                }
+            }
         }
         
     }

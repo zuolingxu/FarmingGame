@@ -2,9 +2,11 @@
 #include "cocos2d.h"
 #include "SceneManager.h"
 #include "PlayerSprite.h"
+#include "MainCharacter.h"
 
 TimeManager* TimeManager::instance_ = nullptr;
 
+//todo xianshishijian
 TimeManager::TimeManager() : current_day_(1), current_time_(6.0f), is_paused_(false) {
     // 从文档中读取游戏天数
     DocumentManager* docManager = DocumentManager::getInstance();
@@ -87,6 +89,7 @@ void TimeManager::resume() {
     is_paused_ = false; // 恢复游戏
 }
 
+//archieve memory->disk
 void TimeManager::saveGameData() {
     // 获取 DocumentManager 实例
     DocumentManager* docManager = DocumentManager::getInstance();
@@ -98,7 +101,8 @@ void TimeManager::settleAllObjects() {
     SceneManager::getInstance()->settle();
 }
 
-//更改
+// todo interact with bed callback this function
+// todo donghua
 void TimeManager::sleep() {
     if(current_time_>=0.0f&& current_time_<6.0f)
         current_time_ = 6.0f;//凌晨睡觉，当天六点起床
@@ -106,30 +110,43 @@ void TimeManager::sleep() {
         endOfDay();
         current_time_ = 6.0f;//夜晚睡觉，第二天六点起床
     }
-    //更改
-    // 恢复主角体力值
-    //PlayerSprite::getInstance()->setEnergy(100);
 
-    // 保存当前交互地图数据、主角状态和时间
+    // 恢复主角体力值
+    MainCharacter::getInstance()->modifyEnergy(MainCharacter::getInstance()->MAX_ENERGY);
+
+    // save maincharacter data in acrhive in memory
+    MainCharacter::getInstance()->change_archive_in_memory();
+
+    //archieve memory->disk
     saveGameData();
 
-    //更改
-    //是否需要切换场景，播放动画
+    //todo
+    // 入睡动画在调用这个函数之前
+    // 起床动画在这个函数之后
 }
 
 //更改
+ //Todo shuaxinshijian
 void TimeManager::updateTime(float dt) {
+    int pre_current_time_ = (int)current_time_;
+
     // 每秒钟增加游戏时间
     current_time_ += dt * 24.0f / (float)(60 * MinutesOfOneDay);
 
-    // 判断是否达到2点且主角没有睡觉
-    /*if (current_time_ >= 2.0f && current_time_ < 3.0f) {
-        // 假设有一个方法来检查主角是否已经睡觉
-        if (!PlayerSprite::getInstance()->isSleeping()) {
-            sleep(); // 强制主角睡觉
-        }
-    }*/
+    if (pre_current_time_ != (int)current_time_) {
+        //Todo shuaxinshijian
+    }
 
+    // 判断是否达到2点
+    if (current_time_ >= 2.0f && current_time_ < 3.0f) {
+        // 不检查主角是否已经睡觉
+        // todo
+        // 加入瞬移动画
+        // 加入入睡动画
+        sleep(); // 强制主角睡觉
+        // 加入起床动画
+    }
+    // never change sequence with previous judge
     if (current_time_ >= 24.0f) {
         endOfDay(); // 如果时间超过24小时，结束一天
     }
@@ -137,3 +154,4 @@ void TimeManager::updateTime(float dt) {
     // 调试使用
     // logCurrentTime();
 }
+

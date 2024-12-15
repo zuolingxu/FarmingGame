@@ -27,7 +27,7 @@ private:
     ~TimeManager();
 
     void updateTime(float dt);// 更新游戏时间
-    void settleAllObjects(); // 调用所有物品的 settle 函数
+    void settleAllObjects(); // end of day callback all objects settle
 
 public:
     static TimeManager* getInstance(); // 获取单例实例 在void SceneManager::createMaps()被调用，开始计时
@@ -50,8 +50,8 @@ public:
     void sleep(); // 睡觉功能
 
     //可能用到的接口
-    void endOfDay(); // 一天结束，调用所有settle（）
-    void saveGameData(); // 在NewUrsArchive中存档
+    void endOfDay(); // // end of day callback all objects settle ,change archive in memory
+    void saveGameData(); // character sleep , save archive in c/
 
     //调试使用
     /*void logCurrentTime() {

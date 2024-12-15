@@ -43,6 +43,4 @@ class Land final: protected MapObject {
     void setFertilizer(bool fertilizer) { Fertilizer = fertilizer; }
     virtual bool hasCollision() override;
 
-    void change_land_frame();
-
 }; 
