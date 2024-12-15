@@ -4,8 +4,11 @@
     "BackGroundColor":[51,102,153],
     "ObjectList":{
         "0 17":{
+            "Type": "Gate",
+            "Info":{
             "NextMap":"town",
             "NextPosition":"49 16"
+            }
         }
     }
 }

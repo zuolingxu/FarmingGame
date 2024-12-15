@@ -1,6 +1,11 @@
+#include "DocumentManager.h"
 #include "UILayer.h"
 #include "UILogic.h"
+
 USING_NS_CC;
+#ifdef _MSC_VER
+#undef GetObject
+#endif
 
 UILogic* uilogic = UILogic::getInstance();
 Node* UILayer::createUILayer(UILayerType type)
@@ -19,6 +24,12 @@ Node* UILayer::createUILayer(UILayerType type)
                 break;
             case UILayerType::TASK_BAR:
                 return ret->taskBarLayout_;
+                break;
+            case UILayerType::NPC:
+                return ret->npcLayout_;
+                break;
+            case UILayerType::LOAD_ARCHIVE:
+                return ret->loadArchiveLayout_;
                 break;
             default:
                 break;
@@ -47,6 +58,14 @@ bool UILayer::initWithType(UILayerType type)
             createTaskBarLayout();
             uilogic->initTaskBarNode(taskBarLayout_);
             break;
+        case UILayerType::NPC:
+            createNpcLayout();
+            uilogic->initNpcNode(npcLayout_);
+            break;
+        case UILayerType::LOAD_ARCHIVE:
+            createLoadArchiveLayout();
+            uilogic->initLoadArchiveNode(loadArchiveLayout_);
+            break;
         default:
             break;
     }
@@ -62,7 +81,7 @@ void UILayer::createTaskBarLayout()
     taskBarLayout_->setPosition(Vec2(0,0));
     taskBarLayout_->setName("taskbar");
 
-    // 添加关闭按钮
+    // 添加关 闭按钮
     auto closeButton = ui::Button::create("image/exit.png", "image/exit.png");
     closeButton->setPosition(Vec2(420, 300));
     closeButton->setName("CloseButton");
@@ -127,4 +146,44 @@ void UILayer::createStartScreenLayout()
     exitButton->setPosition(Vec2(356, 64));
     exitButton->setName("ExitButton");
     startScreenLayout_->addChild(exitButton);
+}
+
+void UILayer::createNpcLayout()
+{
+    npcLayout_ = ui::Layout::create();
+    npcLayout_->setContentSize(Director::getInstance()->getWinSize());
+    npcLayout_->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+    npcLayout_->setPosition(Vec2(0, 0));
+    npcLayout_->setName("npc");
+
+    auto textbox = ui::Button::create("image/textBox..png", "image/textBox..png");
+    textbox->setPosition(Vec2(240, 50));
+    textbox->setScale9Enabled(true);
+    textbox->setContentSize(Size(400,100));
+    textbox->setName("textbox");
+    static int count = 0;
+    int i = count % 5;
+    i++;
+    auto sentence = ui::Text::create(Sentence[i], "Arial", 10);
+    sentence->setPosition(Vec2(180, 25));
+    textbox->addChild(sentence);
+    taskBarLayout_->addChild(textbox);
+}
+
+void UILayer::createLoadArchiveLayout()
+{
+    loadArchiveLayout_ = ui::Layout::create();
+    loadArchiveLayout_->setContentSize(Director::getInstance()->getWinSize());
+    loadArchiveLayout_->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+    loadArchiveLayout_->setPosition(Vec2(0, 0));
+    loadArchiveLayout_->setName("loadarchive");
+
+}
+
+void UILayer::initSentence() {
+    Sentence.push_back("Hello, nice to see you!");
+    Sentence.push_back("Have you heard that Zhu Hongming is the best teacher in Tongji University?");
+    Sentence.push_back("How's your day? I feel great today");
+    Sentence.push_back("It is said that Zuo lingxu is the god of coding.");
+    Sentence.push_back("Thank you,I like it very much!");
 }

@@ -10,7 +10,7 @@ USING_NS_CC;
 #endif
 
 // 静态实例初始化
-UILogic* UILogic::instance_ = new UILogic();
+UILogic* UILogic::instance_ = nullptr;
 
 UILogic* UILogic::getInstance()
 {
@@ -34,7 +34,6 @@ UILogic::UILogic()
 
 UILogic::~UILogic()
 {
-
 }
 
 void UILogic::initStartScreenNode(cocos2d::Node* startScreenNode)
@@ -55,6 +54,19 @@ void UILogic::initTaskBarNode(cocos2d::Node* taskBarNode)
     taskBarNode_ = taskBarNode;
     bindTaskBarEvents(); 
     updateTaskUI();      
+}
+
+void UILogic::initNpcNode(cocos2d::Node* npcNode)
+{
+    npcNode_ = npcNode;
+    bindNpcEvents();
+}
+
+void UILogic::initLoadArchiveNode(cocos2d::Node* loadArchiveNode)
+{
+    loadArchiveNode_ = loadArchiveNode;
+    bindTaskBarEvents();
+    updateArchiveUI();
 }
 
 void UILogic::bindStartScreenEvents()
@@ -96,10 +108,36 @@ void UILogic::bindTaskBarEvents()
 {
     if (!taskBarNode_) return;
 
-    auto closeButton = dynamic_cast<ui::Button*>(bagNode_->getChildByName("CloseButton"));
-    if (closeButton)
+    auto closeButton = dynamic_cast<ui::Button*>(taskBarNode_->getChildByName("CloseButton"));
+    if (closeButton) {
+        closeButton->addTouchEventListener(CC_CALLBACK_2(UILogic::onCloseButtonClicked, this));
+    }
+}
+
+void UILogic::bindNpcEvents()
+{
+    if (!npcNode_) return;
+
+    auto textbox = dynamic_cast<ui::Button*>(npcNode_->getChildByName("textbox"));
+    if (textbox)
     {
-        closeButton->addTouchEventListener(CC_CALLBACK_2(UILogic::onCloseBagButtonClicked, this));
+        textbox->addTouchEventListener(CC_CALLBACK_2(UILogic::onCloseButtonClicked, this));
+    }
+}
+
+void UILogic::bindLoadArchiveEvents()
+{
+    if (!loadArchiveNode_) return;
+
+    rapidjson::Value& val = (*DocumentManager::getInstance()->getConfigDocument())["Archive"];
+    std::string save = val.GetString();
+    int savenum = std::stoi(save.substr(5));
+    for (int i = 0; i < savenum; ++i)
+    {
+        auto archive = dynamic_cast<ui::Button*>(bagNode_->getChildByName("Save_" + std::to_string(i)));
+        if (archive) {
+            archive->addTouchEventListener(CC_CALLBACK_2(UILogic::onArchiveClicked, this));
+        }
     }
 }
 
@@ -107,11 +145,7 @@ void UILogic::onNewButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventTyp
 {
     int i = 1;
     while (!DocumentManager::getInstance()->createArchiveDocument(i)) { i++; }
-    //rapidjson::Value& val = (*DocumentManager::getInstance()->getConfigDocument())["Archive"];
-    //for (auto& i : val.GetObject()) {
-    //    i.name.GetString();
-    //    i.value.GetObject();
-    //}
+    SceneManager::getInstance()->NextMap("town","5 5");
 }
 
 void UILogic::onLoadButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
@@ -149,12 +183,11 @@ void UILogic::onLoadButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventTy
 void UILogic::onExitButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
 {
 
-    CCLOG("Exit Button Clicked");
     Director::getInstance()->end();
 
 }
 
-void UILogic::onCloseBagButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
+void UILogic::onCloseButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
 {
     if (type != ui::Widget::TouchEventType::ENDED) return;
 
@@ -162,6 +195,11 @@ void UILogic::onCloseBagButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEve
     {
         bagNode_->setVisible(false);
     }
+
+    if (npcNode_) {
+        npcNode_->setVisible(false);
+    }
+
 }
 
 void UILogic::onBagSlotClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
@@ -177,20 +215,33 @@ void UILogic::onBagSlotClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType 
     useItemFromBag(slotIndex);
 }
 
+void UILogic::onArchiveClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type) {
+    if (type != ui::Widget::TouchEventType::ENDED) return;
+
+    auto button = dynamic_cast<ui::Button*>(sender);
+    if (!button) return;
+
+    std::string name = button->getName(); // "Save_x"
+    int saveIndex = std::stoi(name.substr(5));
+
+    LoadArchive(saveIndex);
+}
+
 void UILogic::useItemFromBag(int slotIndex)
 {
 
     auto& item = bagItems_[slotIndex];
-    if (item.quantity <= 0)
-    {
-        CCLOG("This slot is empty.");
-        return;
-    }
 
     refreshBagUI();
 
     // TODO:将该物品返回给MainCharacter
     mainCharacter_->setCurrentItem(item.type);
+}
+
+void UILogic::LoadArchive(int saveIndex) {
+
+
+    updateArchiveUI();
 }
 
 void UILogic::onTaskItemClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
@@ -274,7 +325,7 @@ void UILogic::updateTaskUI()
         auto taskButton = ui::Button::create("image/textBox..png", "image/textBox..png");
         taskButton->setScale9Enabled(true);
         taskButton->setContentSize(Size(360, 50));
-        taskButton->setPosition(Vec2(240, 100 + i * 50));
+        taskButton->setPosition(Vec2(240, 350 - i * 50));
         taskButton->setName("Task_" + std::to_string(i));
 
         auto taskLabel = ui::Text::create(task.description, "Arial", 10);
@@ -293,6 +344,34 @@ void UILogic::updateTaskUI()
         }
 
         taskBarNode_->addChild(taskButton);
+    }
+}
+
+void UILogic::updateArchiveUI() {
+    if (!loadArchiveNode_) return;
+
+    loadArchiveNode_->removeAllChildren();
+
+    rapidjson::Value& val = (*DocumentManager::getInstance()->getConfigDocument())["Archive"];
+
+    int i = 0;
+    for (auto& save : val.GetObject())
+    {
+        auto archiveButton = ui::Button::create("image/textBox..png", "image/textBox..png");
+        archiveButton->setScale9Enabled(true);
+        archiveButton->setContentSize(Size(360, 50));
+        float y = 300 - i * 50;
+        archiveButton->setPosition(Vec2(240, y));
+        archiveButton->setName("Save_" + std::to_string(i));
+
+        loadArchiveNode_->addChild(archiveButton);
+
+        auto archiveLabel = ui::Text::create("Day:"+std::to_string(save.value["day"].GetInt())+"  Money:"+std::to_string(save.value["money"].GetInt()), "Arial", 10);
+        archiveLabel->setPosition(Vec2(180, 25));
+        archiveButton->addChild(archiveLabel);
+
+        loadArchiveNode_->addChild(archiveButton);
+        i++;
     }
 }
 

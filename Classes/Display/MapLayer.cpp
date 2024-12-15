@@ -605,36 +605,36 @@ void MapLayer::updateMaps(const Vec<int>& old_pos, const Vec<int>& new_pos, cons
 	{
 		Vec<int> old_pos2 = old_pos + size;
         MapObject* obj = interact_map_[old_pos.X()][old_pos.Y()];
-        bool collision = false;
         if (obj != nullptr)
         {
-            collision = obj->hasCollision();
+            bool collision = obj->hasCollision();
             obj->getInfo().position = new_pos;
-        }
-        
-        for (int i = old_pos.X(); i < old_pos2.X(); ++i)
-        {
-	        for (int j = old_pos.Y(); j < old_pos2.Y(); ++j)
-	        {
-                if (inVecRange(collision_map_, Vec<int>(i, j)))
-                {
-                    collision_map_[i][j] = false;
-                    interact_map_[i][j] = nullptr;
-                }
-	        }
-        }
 
-        Vec<int> new_pos2 = new_pos + size;
-        for (int i = old_pos.X(); i < old_pos2.X(); ++i)
-        {
-            for (int j = old_pos.Y(); j < old_pos2.Y(); ++j)
+            for (int i = old_pos.X(); i < old_pos2.X(); ++i)
             {
-                if (inVecRange(collision_map_, Vec<int>(i, j)))
+                for (int j = old_pos.Y(); j < old_pos2.Y(); ++j)
                 {
-                    collision_map_[i][j] = collision;
-                    interact_map_[i][j] = obj;
+                    if (inVecRange(collision_map_, Vec<int>(i, j)))
+                    {
+                        collision_map_[i][j] = false;
+                        interact_map_[i][j] = nullptr;
+                    }
+                }
+            }
+
+            Vec<int> new_pos2 = new_pos + size;
+            for (int i = old_pos.X(); i < old_pos2.X(); ++i)
+            {
+                for (int j = old_pos.Y(); j < old_pos2.Y(); ++j)
+                {
+                    if (inVecRange(collision_map_, Vec<int>(i, j)))
+                    {
+                        collision_map_[i][j] = collision;
+                        interact_map_[i][j] = obj;
+                    }
                 }
             }
         }
+       
 	}
 }

@@ -15,8 +15,11 @@
             }
         },
         "9 0":{
+            "Type":"Gate",
+            "Info":{
             "NextMap":"farm",
             "NextPosition":"29 16"
+            }
         }
     }
 }
