@@ -109,6 +109,40 @@ void MapLayer::addObject(const Vec<int>& pos, rapidjson::Value& val)
     }
 }
 
+void MapLayer::removeObject(MapObject::ObjectInfo& obj)
+{
+	Vec<int> pos = obj.position;
+    Vec<int> pos2 = pos + obj.size;
+    if (inVecRange(interact_map_, pos) && interact_map_[pos.X()][pos.Y()] != nullptr)
+    {
+    	Director::getInstance()->getScheduler()->schedule(
+            [this, pos](float deltaTime){
+				interact_map_[pos.X()][pos.Y()]->release();
+    	},this, 0, 0, 0.02f, false, "delete_object");
+
+        interact_map_[pos.X()][pos.Y()];
+        for (int x = pos.X(); x < pos2.X(); x++)
+        {
+            for (int y = pos.Y(); y < pos2.Y(); y++)
+            {
+                if (inVecRange(interact_map_, { x,y }))
+                {
+                    interact_map_[x][y] = nullptr;
+                    collision_map_[x][y] = false;
+                }
+            }
+        }
+
+    }
+
+    if (obj.sprite != nullptr)
+    {
+	    obj.sprite->removeFromParent();
+        obj.sprite = nullptr;
+    }
+}
+
+
 void MapLayer::addCollisions()
 {
     const cocos2d::TMXObjectGroup* objectGroup = tiled_map_->getObjectGroup("collision");
@@ -429,7 +463,7 @@ Node* MapLayer::toFront(PlayerSprite* main_player)
 
     for (auto& row : interact_map_)
     {
-	    for (::MapObject* object: row)
+	    for (MapObject* object: row)
 	    {
 		    if (object != nullptr)
 		    {
@@ -480,6 +514,17 @@ void MapLayer::resume() const
 
 void MapLayer::toBack()
 {
+    for (auto& row : interact_map_)
+    {
+	    for (MapObject* object : row)
+	    {
+		    if (object != nullptr)
+		    {
+			    object->clear();
+		    }
+	    }
+    }
+    
 	if (is_front_){
 		is_front_ = false;
         tiled_map_ = nullptr;
@@ -552,19 +597,20 @@ void MapLayer::clearObjects()
     }
 }
 
-void MapLayer::addSpriteWithFrame(MapObject::ObjectInfo& obj_info, const std::string& frame_name) const
+void MapLayer::addSpriteWithFrame(MapObject::ObjectInfo& obj_info, const std::string& frame_name, const bool on_ground) const
 {
     if (is_front_ && obj_info.sprite == nullptr)
     {
         SpriteFrame* spriteFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName(frame_name);
-        if (spriteFrame != nullptr) 
+        if (spriteFrame != nullptr)
         {
             obj_info.sprite = Sprite::createWithSpriteFrame(spriteFrame);
-            obj_info.sprite->setPosition(toPixel(obj_info.position));
-            obj_info.sprite->setAnchorPoint(Vec2(0, 0));
-            obj_info.sprite->setCameraMask(static_cast<unsigned short>(CameraFlag::USER1));
-            layer_->addChild(obj_info.sprite, OBJECT_BASE_ZORDER - obj_info.position.Y() * GridSize);
         }
+        obj_info.sprite->setPosition(toPixel(obj_info.position));
+        obj_info.sprite->setAnchorPoint(Vec2(0, 0));
+        obj_info.sprite->setCameraMask(static_cast<unsigned short>(CameraFlag::USER1));
+        int zorder = on_ground ? TMX_ZORDER + 1 : OBJECT_BASE_ZORDER - obj_info.position.Y() * GridSize;
+        layer_->addChild(obj_info.sprite, zorder);
     }
 }
 
@@ -636,5 +682,13 @@ void MapLayer::updateMaps(const Vec<int>& old_pos, const Vec<int>& new_pos, cons
             }
         }
        
+	}
+}
+
+void MapLayer::removeSpriteFromLayer(cocos2d::Sprite* sprite)
+{
+	if (sprite != nullptr)
+	{
+		sprite->removeFromParentAndCleanup(true);
 	}
 }

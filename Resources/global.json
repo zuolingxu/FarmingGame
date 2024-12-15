@@ -12,6 +12,9 @@
     "npc2house": "config/npc2house.json",
     "chicken_house": "config/chicken_house.json",
     "farm": "config/farm.json",
+    "beach": "config/beach.json",
+    "mine": "config/mine.json",
+    "player_house": "config/player_house.json",
 
     "Player": "config/player.json",
     "Abigail": "config/Abigail.json",
@@ -59,5 +62,5 @@
         "MarkerFeltFon": "fonst/Marker Felt.ttf"
     },
     "UI": ["ConfigUI"],
-    "Map": ["farm", "town", "town_festival" , "npc1house", "npc2house","chicken_house"]
+    "Map": ["beach", "farm", "town", "town_festival" , "npc1house", "npc2house","chicken_house", "mine", "player_house"]
 }
