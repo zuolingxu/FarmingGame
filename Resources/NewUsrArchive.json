@@ -62,6 +62,15 @@
           }
         }
       }
+    },
+    "Mine": {
+      "12 13": {
+        "Type": "Mineral",
+        "Info": {
+          "MineralType": "iron",
+          "IsMined": false
+        }
+      }
     }
   }
 

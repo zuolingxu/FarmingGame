@@ -120,7 +120,7 @@ void Crop::settle() {
         std::string plistFilePath = (*doc)["plistpath"].GetString();
 
         std::string frame_n_format = (*doc)["frame_format"].GetString();
-        std::string spriteframe = getFrameName(frame_n_format, LiveDay);      // Plant days are from 1, 0 is plant wilt
+        std::string spriteframe = getFrameName(frame_n_format, LiveDay); 
 
         if (FileUtils::getInstance()->isFileExist(plistFilePath)) {
             // If the plist file exists, load it

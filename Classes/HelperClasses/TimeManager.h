@@ -9,11 +9,6 @@
 
 class TimeManager {
 private:
-    const int SPRING_DAYS = 10;
-    const int AUTUMN_DAYS = 10;
-    const float MinutesOfOneDay = 10; // 现实MinuteOfOneDay分钟等于游戏1天
-    const std::vector<int> festival_days_ = { 3, 7, 15, 20, 25 };//if first day is festival_day, cant init town_festival,but festival task is setted in fact
-
     static TimeManager* instance_;//单例函数
 
     int current_day_; // 当前游戏天数
@@ -30,8 +25,16 @@ private:
     void settleAllObjects(); // end of day callback all objects settle
 
 public:
-    static TimeManager* getInstance(); // 获取单例实例 在void SceneManager::createMaps()被调用，开始计时
+    const int REFRESH_MINERAL = 6;
 
+    const int SPRING_DAYS = 10;
+    const int AUTUMN_DAYS = 10;
+    const float MinutesOfOneDay = 10; // 现实MinuteOfOneDay分钟等于游戏1天
+
+    const std::vector<int> festival_days_ = { 3, 7, 15, 20, 25 };//if first day is festival_day, cant init town_festival,but festival task is setted in fact
+
+
+    static TimeManager* getInstance(); // 获取单例实例 在void SceneManager::createMaps()被调用，开始计时
 
     float getCurrentTime() const { return current_time_; }
     int getCurrentDay() const { return current_day_; }
@@ -39,6 +42,7 @@ public:
     bool isFestivalDay() const {
         return std::find(festival_days_.begin(), festival_days_.end(), current_day_%26) != festival_days_.end();
     }
+
     //暂停游戏等
     void pause(); // 暂停游戏
     void resume(); // 恢复游戏
