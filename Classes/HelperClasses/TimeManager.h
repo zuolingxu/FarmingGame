@@ -22,7 +22,7 @@ private:
     ~TimeManager();
 
     void updateTime(float dt);// 更新游戏时间
-    void settleAllObjects(); // end of day callback all objects settle
+    
 
 public:
     const int REFRESH_MINERAL = 6;
@@ -57,6 +57,8 @@ public:
     void endOfDay(); // // end of day callback all objects settle ,change archive in memory
     void saveGameData(); // character sleep , save archive in c/
 
+
+    void settleAllObjects(); // end of day callback all objects settle
     //调试使用
     /*void logCurrentTime() {
         CCLOG("Current Day: %d", current_day_);

@@ -295,16 +295,16 @@ void MapLayer::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Ev
         manager->saveArchiveDocument();
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F7:
-        // TODO: Test Code
+        TimeManager::getInstance()->settleAllObjects();
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F8:
-        // TODO: Test Code
+        TimeManager::getInstance()->endOfDay();
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F9:
-        // TODO: Test Code
+        DocumentManager::getInstance()->createArchiveDocument(1);
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F10:
-        // TODO: Test Code
+        DocumentManager::getInstance()->loadArchiveDocument(1);
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F11:
         // TODO: Test Code

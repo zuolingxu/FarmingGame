@@ -194,12 +194,12 @@ bool DocumentManager::loadArchiveDocument(const int num)
 	{
 		return false;
 	}
-	data_.emplace("UsrArchive", doc);
 
 	if (current_archive_ != 0)
 	{
 		freeArchiveDocument();
 	}
+	data_.emplace("UsrArchive", doc);
 	current_archive_ = num;
 	return true;
 }

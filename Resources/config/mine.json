@@ -3,7 +3,7 @@
     "TMX": "TiledMap/mine.tmx",
     "BackGroundColor":[51,102,153],
     "ObjectList":{
-        "6 13":{
+        "8 13":{
             "Type": "Gate",
             "Info":{
             "NextMap":"farm",
