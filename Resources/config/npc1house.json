@@ -7,6 +7,13 @@
             "Info":{
                 "Name":"Abigail"
             }
+        },
+        "7 0":{
+            "Type": "Gate",
+            "Info":{
+            "NextMap":"town",
+            "NextPosition":"25 19"
+            }
         }
     }
 }

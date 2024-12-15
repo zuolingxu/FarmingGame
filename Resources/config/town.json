@@ -1,6 +1,6 @@
 {
-    "Name": "town",
-    "TMX": "tiledmap/town.tmx",
+  "Name": "town",
+  "TMX": "tiledmap/town.tmx",
   "ObjectList": {
     "40 2": {
       "Type": "NPC",
@@ -18,7 +18,28 @@
         "NextMap": "farm",
         "NextPosition": "49 16"
       }
-    }
+      },
+    "49 16": {
+      "Type": "Gate",
+      "Info": {
+        "NextMap": "beach",
+        "NextPosition": "0 17"
+      }
+      },
+    "25 19": {
+      "Type": "Gate",
+      "Info": {
+        "NextMap": "npc1house",
+        "NextPosition": "7 0"
+      }
+      },
+    "12 5": {
+      "Type": "Gate",
+      "Info": {
+        "NextMap": "npc2house",
+        "NextPosition": "7 0"
+      }
+      }
   }
 }
 

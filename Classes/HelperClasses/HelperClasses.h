@@ -153,6 +153,7 @@ struct Item {
 	int quantity;
 	std::string iconPath;
 
+
 	Item(ItemType t, int q = 1) : type(t), quantity(q)
 	{
 		std::string itemName = itemTypeToString(type);  // Convert ItemType to string
