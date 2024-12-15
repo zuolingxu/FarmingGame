@@ -43,7 +43,7 @@ bool MainCharacter::modifyMoney(int delta) {
 //todo shuaxinbeibao
 //todo xianshitili
 // init from archive
-MainCharacter::MainCharacter():currentItem(nullptr) {
+MainCharacter::MainCharacter():currentItem(nullptr),money(0) {
     // Add a default NONE item to the inventory
 
     // Point currentItem to the NONE item in the inventory
@@ -60,7 +60,7 @@ MainCharacter::MainCharacter():currentItem(nullptr) {
         }
         // money
         if (doc->HasMember("key_info") && (*doc)["key_info"].HasMember("money")) {
-            money = (*doc)["key_info"]["money"].GetInt(); // 读取游戏天数
+            money = (*doc)["key_info"]["money"].GetInt(); // 读取游戏金钱
         }
         else {
             CCLOG("Archive document is missing or malformed!");
@@ -69,7 +69,7 @@ MainCharacter::MainCharacter():currentItem(nullptr) {
 
     //todo shuaxinbeibao
     // show bag item in ui
-  
+   // UILogic::getInstance()->updateBagItems(inventory);
 
 }
 

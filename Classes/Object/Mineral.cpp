@@ -43,8 +43,8 @@ void Mineral::init() {
     if (parent != nullptr) {
         // 根据是否已经挖掘来决定是否显示矿石
         if (isMined) {
-            // 如果矿石已被挖掘，传入空字符串（不显示矿石）
-            parent->addSpriteWithFrame(info_, "");
+            // 如果矿石已被挖掘，info_.sprite=nullptr（不显示矿石）
+            info_.sprite = nullptr;
         }
         else {
             // 如果矿石没有被挖掘，传入对应的矿石类型纹理
@@ -72,7 +72,9 @@ void Mineral::interact() {
         isMined = 1;
         update_ismined_Archive(info_.position, 1);
 
-        parent->changeWithSingleFrame(info_.sprite, "");
+        // 矿石被挖掘
+        info_.sprite->removeFromParentAndCleanup(true);
+        info_.sprite = nullptr;
     }
 
     // 减少体力，增加物品
@@ -96,6 +98,7 @@ void Mineral::resume() {
 
 void Mineral::settle() 
 {
+    //every REFRESH_MINERAL , refresh mineral
     int day = TimeManager::getInstance()->getCurrentDay();
     if (day%TimeManager::getInstance()->REFRESH_MINERAL==0)
     {
@@ -114,7 +117,12 @@ void Mineral::settle()
             isMined = 0;
             update_ismined_Archive(info_.position, 0);
 
-            parent->changeWithSingleFrame(info_.sprite, spriteFrame);
+            if (info_.sprite) {
+                // now sprite has been displayed
+            }
+            else {
+                parent->addSpriteWithFrame(info_, spriteFrame);
+            }
 
         }
     }

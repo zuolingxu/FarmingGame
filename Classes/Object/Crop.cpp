@@ -53,7 +53,7 @@ Crop* Crop::createByPlayer(const Vec<int>& position, MapLayer* parent, const std
 bool Crop::harvest_successful() {
     if (LiveDay == MaturationDay) {
         // Remove the sprite from the scene
-        info.sprite->removeFromParent();
+        info.sprite->removeFromParentAndCleanup(true);
         info.sprite = nullptr;
 
         // Create the corresponding ItemType based on the uppercase CropName
@@ -89,7 +89,7 @@ void Crop::init() {
     // Ensure parent is not null to avoid null pointer access
     if (parent != nullptr) {
         // Use the loaded plist to create the sprite, ensuring the sprite frame exists
-        parent->addSpriteWithFrame(info, spriteframe);
+        parent->addSpriteWithFrame(info, spriteframe,false);
     }
     else {
         CCLOG("Error: parent is nullptr!");
