@@ -44,6 +44,7 @@ bool MainCharacter::modifyMoney(int delta) {
 //todo xianshitili
 // init from archive
 MainCharacter::MainCharacter():currentItem(nullptr),money(0) {
+    inventory = new std::vector<Item>();
     // Add a default NONE item to the inventory
 
     // Point currentItem to the NONE item in the inventory
@@ -69,7 +70,7 @@ MainCharacter::MainCharacter():currentItem(nullptr),money(0) {
 
     //todo shuaxinbeibao
     // show bag item in ui
-   // UILogic::getInstance()->updateBagItems(inventory);
+   
 
 }
 
@@ -79,12 +80,13 @@ MainCharacter::~MainCharacter() {
     currentItem = nullptr;
 
     // Clear the inventory
-    inventory.clear();
+    delete inventory;  // Free memory allocated for inventory
+    inventory = nullptr;
 }
 
 void MainCharacter::loadInventoryFromArchive(const rapidjson::Value& json) {
     if (json.IsArray()) {
-        inventory.clear();  // Clear existing inventory
+        inventory->clear();  // Clear existing inventory
 
         for (const auto& item : json.GetArray()) {
             if (item.HasMember("type") && item.HasMember("quantity")) {
@@ -94,7 +96,7 @@ void MainCharacter::loadInventoryFromArchive(const rapidjson::Value& json) {
                 // Convert string to ItemType
                 ItemType type = Item::stringToItemType(typeStr);
                 if (type != ItemType::NONE) { // Ensure valid type
-                    inventory.emplace_back(type, quantity);
+                    inventory->emplace_back(type, quantity);
                 }
                 else {
                     CCLOG("Unknown item type: %s", typeStr.c_str());
@@ -103,7 +105,7 @@ void MainCharacter::loadInventoryFromArchive(const rapidjson::Value& json) {
         }
 
         // Set current item to the first item in the inventory
-        currentItem = !inventory.empty() ? &inventory.front() : nullptr;
+        currentItem = !inventory->empty() ? &inventory->front() : nullptr;
     }
     else {
         CCLOG("Invalid JSON format for inventory!");
@@ -118,12 +120,12 @@ MainCharacter* MainCharacter::getInstance() {
 }
 
 
-const std::vector<Item>& MainCharacter::getInventory() const {
-    return inventory;  // Return the list of items in the inventory
+const std::vector<Item>* MainCharacter::getInventory() const {
+    return inventory;// Return the list of items in the inventory
 }
 
 bool MainCharacter::hasItem(ItemType type) const {
-    for (const auto& item : inventory) {
+    for (const auto& item : *inventory) {
         if (item.type == type) {
             return true;  // Return true if the item type is found
         }
@@ -132,7 +134,7 @@ bool MainCharacter::hasItem(ItemType type) const {
 }
 
 void MainCharacter::setCurrentItem(ItemType type) {
-    for (auto& item : inventory) {
+    for (auto& item : *inventory) {
         if (item.type == type) {
             currentItem = &item;  // Set the current held item
             return;
@@ -155,7 +157,7 @@ bool MainCharacter::modifyItemQuantity(ItemType type, int delta) {
     if (delta == 0) return 1;  // 1 indicates success, quantity is unchanged
 
     // Traverse the inventory to find the specified item type
-    for (auto it = inventory.begin(); it != inventory.end(); ++it) {
+    for (auto it = inventory->begin(); it != inventory->end(); ++it) {
         if (it->type == type) {
             // Modify the item quantity
             if (it->quantity + delta < 0|| it->quantity + delta > MAX_QUANTITY) {
@@ -170,7 +172,7 @@ bool MainCharacter::modifyItemQuantity(ItemType type, int delta) {
                     currentItem = nullptr;  // Clear the current item pointer
                 }
 
-                inventory.erase(it);
+                inventory->erase(it);
             }
 
             //todo shuaxinwupinlan
@@ -180,7 +182,7 @@ bool MainCharacter::modifyItemQuantity(ItemType type, int delta) {
 
     // If the item is not found, and delta is positive, add the item to the inventory
     if (delta > 0) {
-        inventory.push_back(Item(type, delta));  // Add new item with quantity
+        inventory->push_back(Item(type, delta));  // Add new item with quantity
         return 1;  // Item added successfully
     }
 
@@ -243,7 +245,7 @@ void MainCharacter::change_archive_in_memory() {
         rapidjson::Value& belongingsArray = (*doc)["belongings"];
 
         // 遍历背包中的物品，并更新存档中的相应物品数量
-        for (auto& item : inventory) {
+        for (auto& item : *inventory) {
             bool itemFound = false;
 
             // 遍历存档中的物品，检查是否已经有该物品

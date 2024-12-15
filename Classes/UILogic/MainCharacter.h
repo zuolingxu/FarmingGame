@@ -9,7 +9,7 @@ USING_NS_CC;
 class MainCharacter {
 
 private:
-    std::vector<Item> inventory;       // Backpack items
+    std::vector<Item>* inventory;       // Backpack items
     Item* currentItem;                 // The current item held by the character (only one item can be held)
     static MainCharacter* instance;    // Singleton instance
 
@@ -52,7 +52,7 @@ public:
     int getCurrentMoney() { return money; }
 
     // Get all items in the backpack
-    const std::vector<Item>& getInventory() const;
+    const std::vector<Item>* getInventory() const;
 
     // Check if the backpack contains an item of a specific type
     bool hasItem(ItemType type) const;
