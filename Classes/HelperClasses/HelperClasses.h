@@ -152,6 +152,7 @@ struct Item {
 	int quantity;
 	std::string iconPath;
 
+
 	Item(ItemType t, int q = 1) : type(t), quantity(q)
 	{
 		std::string itemName = itemTypeToString(type);  // Convert ItemType to string
@@ -162,8 +163,8 @@ struct Item {
 	
 
 	}
-
-	std::string itemTypeToString(ItemType type) {
+	// Convert ItemType to string
+	static std::string itemTypeToString(ItemType type) {
 		switch (type) {
 			case ItemType::CAULIFLOWER_SEED: return "CAULIFLOWER_SEED";
 			case ItemType::PUMPKIN_SEED: return "PUMPKIN_SEED";
@@ -184,6 +185,62 @@ struct Item {
 			default: return "UNKNOWN";
 		}
 	}
+
+	// Convert string to ItemType
+	static ItemType stringToItemType(const std::string& typeStr) {
+		if (typeStr == "CAULIFLOWER_SEED") {
+			return ItemType::CAULIFLOWER_SEED;
+		}
+		else if (typeStr == "PUMPKIN_SEED") {
+			return ItemType::PUMPKIN_SEED;
+		}
+		else if (typeStr == "POTATO_SEED") {
+			return ItemType::POTATO_SEED;
+		}
+		else if (typeStr == "CAULIFLOWER") {
+			return ItemType::CAULIFLOWER;
+		}
+		else if (typeStr == "PUMPKIN") {
+			return ItemType::PUMPKIN;
+		}
+		else if (typeStr == "POTATO") {
+			return ItemType::POTATO;
+		}
+		else if (typeStr == "SOUP") {
+			return ItemType::SOUP;
+		}
+		else if (typeStr == "FISH") {
+			return ItemType::FISH;
+		}
+		else if (typeStr == "FERTILIZER") {
+			return ItemType::FERTILIZER;
+		}
+		else if (typeStr == "FISHING_ROD") {
+			return ItemType::FISHING_ROD;
+		}
+		else if (typeStr == "HOE") {
+			return ItemType::HOE;
+		}
+		else if (typeStr == "PICKAXE") {
+			return ItemType::PICKAXE;
+		}
+		else if (typeStr == "WATERING_CAN") {
+			return ItemType::WATERING_CAN;
+		}
+		else if (typeStr == "ROCK") {
+			return ItemType::ROCK;
+		}
+		else if (typeStr == "IRON") {
+			return ItemType::IRON;
+		}
+		else if (typeStr == "NONE") {
+			return ItemType::NONE;
+		}
+		else {
+			return ItemType::NONE;  // Default to NONE for unknown strings
+		}
+	}
+
 
 };
 

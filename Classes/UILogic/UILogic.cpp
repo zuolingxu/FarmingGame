@@ -10,7 +10,7 @@ USING_NS_CC;
 #endif
 
 // 静态实例初始化
-UILogic* UILogic::instance_ = new UILogic();
+UILogic* UILogic::instance_ = nullptr;
 
 UILogic* UILogic::getInstance()
 {
@@ -25,40 +25,48 @@ UILogic::UILogic()
     : startScreenNode_(nullptr)
     , bagNode_(nullptr)
     , taskBarNode_(nullptr)
-    , saveManager_(nullptr)
     , mainCharacter_(nullptr)
 {
 //    // 获取其他管理器实例
     saveManager_ = DocumentManager::getInstance();
     mainCharacter_ = MainCharacter::getInstance();
-
-
 }
 
 UILogic::~UILogic()
 {
-    // 析构时保存数据（可选）
-    //saveDataToSave();
 }
 
 void UILogic::initStartScreenNode(cocos2d::Node* startScreenNode)
 {
     startScreenNode_ = startScreenNode;
-    bindStartScreenEvents(); // �󶨿�ʼ���水ť�¼�
+    bindStartScreenEvents(); 
 }
 
 void UILogic::initBagNode(cocos2d::Node* bagNode)
 {
     bagNode_ = bagNode;
-    bindBagEvents(); // �󶨱���UI�¼�
-    refreshBagUI();  // ˢ�±�����ʾ
+    bindBagEvents(); 
+    refreshBagUI();  
 }
 
 void UILogic::initTaskBarNode(cocos2d::Node* taskBarNode)
 {
     taskBarNode_ = taskBarNode;
-    bindTaskBarEvents(); // ������ť�¼�
-    updateTaskUI();      // ˢ��������ʾ
+    bindTaskBarEvents(); 
+    updateTaskUI();      
+}
+
+void UILogic::initNpcNode(cocos2d::Node* npcNode)
+{
+    npcNode_ = npcNode;
+    bindNpcEvents();
+}
+
+void UILogic::initLoadArchiveNode(cocos2d::Node* loadArchiveNode)
+{
+    loadArchiveNode_ = loadArchiveNode;
+    bindTaskBarEvents();
+    updateArchiveUI();
 }
 
 void UILogic::bindStartScreenEvents()
@@ -85,7 +93,6 @@ void UILogic::bindBagEvents()
 {
     if (!bagNode_) return;
 
-    // �������ӵ���¼�
     const int numSlots = 24;
     for (int i = 0; i < numSlots; ++i)
     {
@@ -101,33 +108,44 @@ void UILogic::bindTaskBarEvents()
 {
     if (!taskBarNode_) return;
 
-    // �رձ�����ť
-    auto closeButton = dynamic_cast<ui::Button*>(bagNode_->getChildByName("CloseButton"));
-    if (closeButton)
-    {
-        closeButton->addTouchEventListener(CC_CALLBACK_2(UILogic::onCloseBagButtonClicked, this));
+    auto closeButton = dynamic_cast<ui::Button*>(taskBarNode_->getChildByName("CloseButton"));
+    if (closeButton) {
+        closeButton->addTouchEventListener(CC_CALLBACK_2(UILogic::onCloseButtonClicked, this));
     }
-    // ����ťһ����updateTaskUI�д���������ֻ����updateTaskUI�а󶨼���
+}
+
+void UILogic::bindNpcEvents()
+{
+    if (!npcNode_) return;
+
+    auto textbox = dynamic_cast<ui::Button*>(npcNode_->getChildByName("textbox"));
+    if (textbox)
+    {
+        textbox->addTouchEventListener(CC_CALLBACK_2(UILogic::onCloseButtonClicked, this));
+    }
+}
+
+void UILogic::bindLoadArchiveEvents()
+{
+    if (!loadArchiveNode_) return;
+
+    rapidjson::Value& val = (*DocumentManager::getInstance()->getConfigDocument())["Archive"];
+    std::string save = val.GetString();
+    int savenum = std::stoi(save.substr(5));
+    for (int i = 0; i < savenum; ++i)
+    {
+        auto archive = dynamic_cast<ui::Button*>(bagNode_->getChildByName("Save_" + std::to_string(i)));
+        if (archive) {
+            archive->addTouchEventListener(CC_CALLBACK_2(UILogic::onArchiveClicked, this));
+        }
+    }
 }
 
 void UILogic::onNewButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
 {
-//    if (type != ui::Widget::TouchEventType::ENDED) return;
-//
-//    CCLOG("New Button Clicked");
-//    bool success = saveManager_->createNewSave();
-//    if (success)
-//    {
-//        CCLOG("New save created.");
-//        // 切换地图，比如 "Map1"
-//        sceneManager_->switchToMap("Map1", "default");
-//        // 隐藏开始界面节点
-//        startScreenNode_->setVisible(false);
-//    }
-//    else
-//    {
-//        CCLOG("Failed to create new save.");
-//    }
+    int i = 1;
+    while (!DocumentManager::getInstance()->createArchiveDocument(i)) { i++; }
+    SceneManager::getInstance()->NextMap("town","5 5");
 }
 
 void UILogic::onLoadButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
@@ -165,12 +183,11 @@ void UILogic::onLoadButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventTy
 void UILogic::onExitButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
 {
 
-    CCLOG("Exit Button Clicked");
     Director::getInstance()->end();
 
 }
 
-void UILogic::onCloseBagButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
+void UILogic::onCloseButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
 {
     if (type != ui::Widget::TouchEventType::ENDED) return;
 
@@ -178,6 +195,11 @@ void UILogic::onCloseBagButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEve
     {
         bagNode_->setVisible(false);
     }
+
+    if (npcNode_) {
+        npcNode_->setVisible(false);
+    }
+
 }
 
 void UILogic::onBagSlotClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
@@ -193,30 +215,33 @@ void UILogic::onBagSlotClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType 
     useItemFromBag(slotIndex);
 }
 
+void UILogic::onArchiveClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type) {
+    if (type != ui::Widget::TouchEventType::ENDED) return;
+
+    auto button = dynamic_cast<ui::Button*>(sender);
+    if (!button) return;
+
+    std::string name = button->getName(); // "Save_x"
+    int saveIndex = std::stoi(name.substr(5));
+
+    LoadArchive(saveIndex);
+}
+
 void UILogic::useItemFromBag(int slotIndex)
 {
 
     auto& item = bagItems_[slotIndex];
-    if (item.quantity <= 0)
-    {
-        CCLOG("This slot is empty.");
-        return;
-    }
 
-    // TODO:将该物品返回给MainCharacter
-
-
-    // 使用后减少数量
-    item.quantity -= 1;
-    if (item.quantity <= 0) {
-        bagItems_.erase(bagItems_.begin() + slotIndex);
-    }
-
-    // ˢ�±���UI
     refreshBagUI();
 
     // TODO:将该物品返回给MainCharacter
     mainCharacter_->setCurrentItem(item.type);
+}
+
+void UILogic::LoadArchive(int saveIndex) {
+
+
+    updateArchiveUI();
 }
 
 void UILogic::onTaskItemClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
@@ -229,7 +254,6 @@ void UILogic::onTaskItemClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType
     std::string taskName = button->getName(); // "Task_x"
     int taskIndex = std::stoi(taskName.substr(5));
 
-    // ����Ӧ����ɲſɵ�
     if (!tasks_[taskIndex].completed) {
         return;
     }
@@ -244,12 +268,9 @@ void UILogic::updateBagItems(std::vector<Item> bagitem) {
 
 void UILogic::refreshBagUI()
 {
-    // TODO:从saveManager获取最新的背包数据（若存档中保存了物品信息）
-    //bagItems_ = saveManager_->getBagItems();
 
     if (!bagNode_) return;
 
-    // ���������ʾ��ͼ�꣬����ֱ��ˢ��
     const int numSlots = 24;
     const int columns = 12; // 每行12个
     const int rows = 2; // 2行
@@ -263,7 +284,7 @@ void UILogic::refreshBagUI()
         auto slot = dynamic_cast<ui::Button*>(bagNode_->getChildByName("Slot_" + std::to_string(i)));
         if (!slot) continue;
 
-        slot->removeAllChildren(); // �Ƴ��ɵ�ͼ��������ı�
+        slot->removeAllChildren(); 
 
         if (i < (int)bagItems_.size())
         {
@@ -293,8 +314,6 @@ void UILogic::refreshBagUI()
 
 void UILogic::updateTaskUI()
 {
-    // TODO:�� saveManager ��ȡ������������
-    //tasks_ = saveManager_->getTasks();
 
     if (!taskBarNode_) return;
 
@@ -306,7 +325,7 @@ void UILogic::updateTaskUI()
         auto taskButton = ui::Button::create("image/textBox..png", "image/textBox..png");
         taskButton->setScale9Enabled(true);
         taskButton->setContentSize(Size(360, 50));
-        taskButton->setPosition(Vec2(240, 100 + i * 50));
+        taskButton->setPosition(Vec2(240, 350 - i * 50));
         taskButton->setName("Task_" + std::to_string(i));
 
         auto taskLabel = ui::Text::create(task.description, "Arial", 10);
@@ -328,6 +347,34 @@ void UILogic::updateTaskUI()
     }
 }
 
+void UILogic::updateArchiveUI() {
+    if (!loadArchiveNode_) return;
+
+    loadArchiveNode_->removeAllChildren();
+
+    rapidjson::Value& val = (*DocumentManager::getInstance()->getConfigDocument())["Archive"];
+
+    int i = 0;
+    for (auto& save : val.GetObject())
+    {
+        auto archiveButton = ui::Button::create("image/textBox..png", "image/textBox..png");
+        archiveButton->setScale9Enabled(true);
+        archiveButton->setContentSize(Size(360, 50));
+        float y = 300 - i * 50;
+        archiveButton->setPosition(Vec2(240, y));
+        archiveButton->setName("Save_" + std::to_string(i));
+
+        loadArchiveNode_->addChild(archiveButton);
+
+        auto archiveLabel = ui::Text::create("Day:"+std::to_string(save.value["day"].GetInt())+"  Money:"+std::to_string(save.value["money"].GetInt()), "Arial", 10);
+        archiveLabel->setPosition(Vec2(180, 25));
+        archiveButton->addChild(archiveLabel);
+
+        loadArchiveNode_->addChild(archiveButton);
+        i++;
+    }
+}
+
 void UILogic::completeTask(int taskIndex)
 {
     if (taskIndex < 0 || taskIndex >= (int)tasks_.size()) {
@@ -338,4 +385,9 @@ void UILogic::completeTask(int taskIndex)
     updateTaskUI();
 }
 
-
+void UILogic::initTasks() {
+    tasks_.push_back(Task("TASK:Plant a seed by yourself!", true));
+    tasks_.push_back(Task("TASK:Say hello to Haley in the town!", true));
+    tasks_.push_back(Task("TASK:Join a festival with the residents in the town!", true));
+    tasks_.push_back(Task("TASK:Catch a fish by the beach!", true));
+}

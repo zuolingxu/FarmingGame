@@ -49,6 +49,9 @@ public:
 
     // Destructor
     ~MainCharacter();
+
+    // Load inventory from JSON
+    void loadInventoryFromArchive(const rapidjson::Value& json);
 };
 
 //主角行为和背包在一天结束后需要保存进存档

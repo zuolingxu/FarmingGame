@@ -1,13 +1,25 @@
 #include "MainCharacter.h"
+#include "DocumentManager.h"
 
 // Initialize static member
 MainCharacter* MainCharacter::instance = nullptr;
 
-//TODO init bag from json
+// init from archive
 MainCharacter::MainCharacter():currentItem(nullptr) {
     // Add a default NONE item to the inventory
 
     // Point currentItem to the NONE item in the inventory
+    DocumentManager* dm = DocumentManager::getInstance();
+    // no instance, no archive
+    if(dm){
+        rapidjson::Document* doc = dm->getArchiveDocument();
+        if (doc && doc->HasMember("belongings") && (*doc)["belongings"].IsArray()) {
+            loadInventoryFromArchive((*doc)["belongings"]);
+        }
+        else {
+            CCLOG("Archive document is missing or malformed!");
+        }
+    }
 
 }
 
@@ -20,6 +32,33 @@ MainCharacter::~MainCharacter() {
     inventory.clear();
 }
 
+void MainCharacter::loadInventoryFromArchive(const rapidjson::Value& json) {
+    if (json.IsArray()) {
+        inventory.clear();  // Clear existing inventory
+
+        for (const auto& item : json.GetArray()) {
+            if (item.HasMember("type") && item.HasMember("quantity")) {
+                std::string typeStr = item["type"].GetString();
+                int quantity = item["quantity"].GetInt();
+
+                // Convert string to ItemType
+                ItemType type = Item::stringToItemType(typeStr);
+                if (type != ItemType::NONE) { // Ensure valid type
+                    inventory.emplace_back(type, quantity);
+                }
+                else {
+                    CCLOG("Unknown item type: %s", typeStr.c_str());
+                }
+            }
+        }
+
+        // Set current item to the first item in the inventory
+        currentItem = !inventory.empty() ? &inventory.front() : nullptr;
+    }
+    else {
+        CCLOG("Invalid JSON format for inventory!");
+    }
+}
 
 MainCharacter* MainCharacter::getInstance() {
     if (!instance) {
