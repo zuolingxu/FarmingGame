@@ -21,6 +21,11 @@ public:
 	// If you want to use anything in a picture set, you should call this function first.
 	static void loadPlist(std::string plist_name);
 
+	// This Function will delete the pointer, collision and sprite on certain place
+	// It will delete the Object after 0.02s
+	// TODO: UnTested
+	void removeObject(MapObject::ObjectInfo& obj);
+
 	// to know if a place has a collision, the pos should be a pixel position
 	bool hasCollision(const cocos2d::Vec2& pos);
 
@@ -30,7 +35,9 @@ public:
 	// frame_name is name of frame in .plist file.
 	// pos is GRID position of sprite, the anchor is (0,0) (bottom left).
 	// You should call loadPlist method first, if the sprite set has not been loaded.
-	void addSpriteWithFrame(MapObject::ObjectInfo& obj_info, const std::string& frame_name) const;
+	// on_ground is whether the sprite is on the ground.
+	// If on_ground is true, the sprite will always beneath player.
+	void addSpriteWithFrame(MapObject::ObjectInfo& obj_info, const std::string& frame_name, bool on_ground = true) const;
 
 	// add a PlayerSprite into the Map, sprite_document is a json document that contains all information of the sprite.
 	void addPlayerSpriteWithDocument(MapObject::ObjectInfo& obj_info, const rapidjson::Document* sprite_document);
@@ -39,6 +46,10 @@ public:
 	// This function is only for normal Sprite
 	void changeWithSingleFrame(cocos2d::Sprite* stationary_sprite, const std::string& new_frame_name) const;
 
+	// remove sprite from layer
+	void removeSpriteFromLayer(cocos2d::Sprite* sprite);
+
+	// This function is for PlayerSprite, for update interact map and collision map
 	void updateMaps(const Vec<int>& old_pos, const Vec<int>& new_pos, const Vec<int>& size);
 
 
@@ -100,6 +111,7 @@ private:
 
 	// These function is for Create step
 	void addObject(const Vec<int>& pos, rapidjson::Value& val); // add Objects
+
 	void addCollisions(); //  add Collisions
 
 	// These function is for InitStep

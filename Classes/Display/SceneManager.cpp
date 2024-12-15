@@ -236,7 +236,7 @@ void SceneManager::NextMapCallBack::render()
 			DocumentManager* manager = DocumentManager::getInstance();
 			rapidjson::Document* doc = manager->getDocument(manager->getPath("Player"));
 			main_player = PlayerSprite::create
-			(doc, toVec2(pos), {1,2}, (*manager->getConfigDocument())["always_run"].GetBool());
+			(doc, toVec2(pos), {1,1}, (*manager->getConfigDocument())["always_run"].GetBool());
 		}
 
 		next_map = getInstance()->map_.at(map_name)->toFront(main_player);
