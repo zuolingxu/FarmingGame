@@ -31,24 +31,31 @@ public:
 
     void initLoadArchiveNode(cocos2d::Node* loadArchiveNode);
 
+    void initShopNode(cocos2d::Node* shopNode);
+
+    void initManufactureNode(cocos2d::Node* manufactureNode);
+
     void refreshBagUI();
 
     void updateTaskUI();
 
-    void updateBagItems(std::vector<Item> bagitem);
-
-    void updateTime(int day,float time);
-
-    void updatePower(int power);
+    void updateBagItems(std::vector<Item>* bagitem);
 
     void useItemFromBag(int slotIndex);
 
     void completeTask(int taskIndex);
 
-    void updateArchiveUI();
+    void refreshArchiveUI();
 
     void LoadArchive(int saveIndex);
 
+    void refreshTimeUI(int day,float hour);
+
+    void refreshPowerUI(int power);
+
+    void refreshMoneyUI(int money);
+
+    void refreshNpcUI(std::string name);
 private:
     UILogic();
     ~UILogic();
@@ -62,6 +69,10 @@ private:
     void bindNpcEvents();
 
     void bindLoadArchiveEvents();
+
+    void bindShopEvents();
+
+    void bindManufactureEvents();
 
     void onNewButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 
@@ -77,6 +88,16 @@ private:
 
     void onArchiveClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 
+    void onCauliflowerClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+
+    void onPotatoClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+
+    void onPumpkinClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+
+    void onFertilizerClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+
+    void onSoupClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+
     //the logic of tasks
     void initTasks();
 
@@ -87,8 +108,11 @@ private:
     cocos2d::Node* taskBarNode_;
     cocos2d::Node* npcNode_;
     cocos2d::Node* loadArchiveNode_;
+    cocos2d::Node* timeNode_;
+    cocos2d::Node* shopNode_;
+    cocos2d::Node* manufactureNode_;
 
-    std::vector<Item> bagItems_;
+    std::vector<Item>* bagItems_;
     std::vector<Task> tasks_;
 
     DocumentManager* saveManager_;

@@ -35,42 +35,32 @@
     "potatoPls": "plist/potato.plist",
     "pumpkinPls": "plist/pumpkin.plist",
     "ToolsPls": "plist/tools.plist",
-    "mineralPls": "plist/mineral.plist",
-    "LandPls": "plist/Land.plist",
-
+    
     "HelloPic": "image/hello_world.png",
-    "CloseNormalPic": "image/close_normal.png",
-    "CloseSeletedPic": "image/close_seleted.png",
+    "CloseNormalPic":"image/close_normal.png",
+    "CloseSeletedPic":"image/close_seleted.png",
     "loading_bar": "image/loading_bar.png",
     "FocusPic": "image/selected_tile.png",
-
+    
+    "FISH":"image/bagobjects-0.png",
+    "CAULIFLOWER":"image/bagobjects-1.png",
+    "POTATO":"image/bagobjects-2.png",
+    "PUMPKIN":"image/bagobjects-3.png",
+    "SOUP":"image/bagobjects-4.png",
+    "FERTILIZER":"image/bagobjects-5.png",
+    "IRON":"image/bagobjects-6.png",
+    "STONE":"image/bagobjects-7.png",
+    "CAULIFLOWER_SEED":"image/bagobjects-8.png",
+    "POTATO_SEED":"image/bagobjects-9.png",
+    "PUMPKIN_SEED":"image/bagobjects-10.png",
+    "FISHING_ROD":"image/bagobjects-11.png",
+    "HOE":"image/bagobjects-12.png",
+    "PICKAXE":"image/bagobjects-13.png",
+    "WATERING_CAN":"image/bagobjects-14.png",
+    
     "ArialFon": "fonts/arial.ttf",
-    "MarkerFeltFon": "fonst/Marker Felt.ttf",
-
-    "cauliflower": "config/crop_cauliflower.json",
-    "potato": "config/crop_potato.json",
-    "pumpkin": "config/crop_pumpkin.json",
-
-    "iron": "config/mineral_iron.json",
-    "stone": "config/mineral_stone.json",
-    "gate": "config/gate.json",
-
-    "FISH": "image/bagobjects-0.png",
-    "CAULIFLOWER": "image/bagobjects-1.png",
-    "POTATO": "image/bagobjects-2.png",
-    "PUMPKIN": "image/bagobjects-3.png",
-    "SOUP": "image/bagobjects-4.png",
-    "FERTILIZER": "image/bagobjects-5.png",
-    "IRON": "image/bagobjects-6.png",
-    "STONE": "image/bagobjects-7.png",
-    "CAULIFLOWER_SEED": "image/bagobjects-8.png",
-    "POTATO_SEED": "image/bagobjects-9.png",
-    "PUMPKIN_SEED": "image/bagobjects-10.png",
-    "FISHING_ROD": "image/bagobjects-11.png",
-    "HOE": "image/bagobjects-12.png",
-    "PICKAXE": "image/bagobjects-13.png",
-    "WATERING_CAN": "image/bagobjects-14.png"
+    "MarkerFeltFon": "fonst/Marker Felt.ttf"
   },
-  "UI": [ "ConfigUI" ],
-  "Map": [ "beach", "farm", "town", "town_festival", "npc1house", "npc2house", "chicken_house", "mine", "player_house" ]
+  "UI": ["ConfigUI"],
+  "Map": ["beach", "farm", "town", "town_festival" , "npc1house", "npc2house","chicken_house", "mine", "player_house"]
 }
