@@ -1,7 +1,7 @@
 {
     "Name": "mine",
     "TMX": "TiledMap/mine.tmx",
-    "BackGroundColor":[51,102,153],
+    "BackGroundColor":[0,0,0],
     "ObjectList":{
         "6 13":{
             "Type": "Gate",

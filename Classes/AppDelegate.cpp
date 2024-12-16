@@ -100,7 +100,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
         //manager->loadArchiveDocument(19);
         //SceneManager::getInstance()->NextMap("introduction");
         DocumentManager::getInstance()->loadArchiveDocument(19);
-        SceneManager::getInstance()->NextMap("town", "7 10");
+        SceneManager::getInstance()->NextMap("mine", "7 10");
     }
     catch (const std::exception& e)
     {
