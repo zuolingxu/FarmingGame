@@ -9,7 +9,8 @@ USING_NS_CC;
 
 class Land;
 
-class Crop{
+//todo kuwei
+class Crop {
 	private:
 	MapObject::ObjectInfo info;
 	MapLayer* parent;
@@ -19,9 +20,10 @@ class Crop{
 	int LiveDay;
 	const int MaturationDay;
 
+
 	public:
-	explicit Crop(Vec<int> position, MapLayer* parent, std::string CropName, bool Water, int LiveDay, int MaturationDay);
-	~Crop();
+		explicit Crop(Vec<int> position, MapLayer* parent, std::string CropName, bool Water, int LiveDay, int MaturationDay);
+		~Crop();
 	static Crop* create(rapidjson::Value& val, MapLayer* parent, const Vec<int>& pos);
 	static Crop* createByPlayer(const Vec<int>& position, MapLayer* parent, const std::string& CropName,bool Fertilizer);
 

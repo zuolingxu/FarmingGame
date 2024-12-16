@@ -9,11 +9,11 @@
 
 class TimeManager {
 private:
-    const float MinutesOfOneDay = 10; // 现实MinuteOfOneDay分钟等于游戏1天
     static TimeManager* instance_;//单例函数
 
     int current_day_; // 当前游戏天数
     float current_time_; // 当前时间（以游戏时间小时为单位）
+    std::string season;
 
     bool is_paused_; // 是否暂停
     std::vector<MapLayer*> map_layers_; // 存储所有地图层
@@ -22,15 +22,27 @@ private:
     ~TimeManager();
 
     void updateTime(float dt);// 更新游戏时间
-    void settleAllObjects(); // 调用所有物品的 settle 函数
+    
 
 public:
+    const int REFRESH_MINERAL = 6;
+
+    const int SPRING_DAYS = 10;
+    const int AUTUMN_DAYS = 10;
+    const float MinutesOfOneDay = 10; // 现实MinuteOfOneDay分钟等于游戏1天
+
+    const std::vector<int> festival_days_ = { 3, 7, 15, 20, 25 };//if first day is festival_day, cant init town_festival,but festival task is setted in fact
+
+
     static TimeManager* getInstance(); // 获取单例实例 在void SceneManager::createMaps()被调用，开始计时
 
-    //给ui的接口
-    //获取当前时间
-    int getCurrentDay() const;//游戏时间第几天
-    float getCurrentTime() const;//游戏时间第几小时
+    float getCurrentTime() const { return current_time_; }
+    int getCurrentDay() const { return current_day_; }
+    std::string getSeason()const { return season; }
+    bool isFestivalDay() const {
+        return std::find(festival_days_.begin(), festival_days_.end(), current_day_%26) != festival_days_.end();
+    }
+
     //暂停游戏等
     void pause(); // 暂停游戏
     void resume(); // 恢复游戏
@@ -42,9 +54,11 @@ public:
     void sleep(); // 睡觉功能
 
     //可能用到的接口
-    void endOfDay(); // 一天结束，调用所有settle（）
-    void saveGameData(); // 在NewUrsArchive中存档
+    void endOfDay(); // // end of day callback all objects settle ,change archive in memory
+    void saveGameData(); // character sleep , save archive in c/
 
+
+    void settleAllObjects(); // end of day callback all objects settle
     //调试使用
     /*void logCurrentTime() {
         CCLOG("Current Day: %d", current_day_);

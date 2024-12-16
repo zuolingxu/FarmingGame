@@ -70,7 +70,7 @@ private:
     cocos2d::ActionInterval* repeat_action_ = nullptr; //  current repeat action of the player
     cocos2d::Vec2 destination = { -1,-1 }; //  the destination of the player
     Vec<int> grid_pos_ = { -1,-1 }; //  the grid position of the player
-    Vec<int> size_ = { 1, 2 };
+    Vec<int> size_ = { 1, 1 }; // the size of the player
     MOVEMENT stand_direction_ = MOVEMENT::DOWN; //  the direction the player is facing
     bool run_ = false; //  if the player is running, changeSpeed Method will change this
     bool is_moving = false; //  if the player is moving, stay movements is considered as moving

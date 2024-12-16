@@ -9,21 +9,50 @@ USING_NS_CC;
 class MainCharacter {
 
 private:
-    std::vector<Item> inventory;       // Backpack items
+    std::vector<Item>* inventory;       // Backpack items
     Item* currentItem;                 // The current item held by the character (only one item can be held)
     static MainCharacter* instance;    // Singleton instance
+
+    int energy = MAX_ENERGY;           // every time inter game is 6:00 energy is 100, dont need to load from archive or save in archive
+
+    int money;
 
     // Private constructor to prevent direct creation of an instance
     MainCharacter();
 
-    const int MAX_QUANTITY = 10000;
-
 public:
+    const int MAX_QUANTITY = 10000;  //item max quantity
+    const int MAX_ENERGY = 100;
+    const int MAX_MONEY = 114514;
+
+    const int Tilling_the_soil_consumes_energy = -5;
+    const int Getting_mineral_consumes_energy = -5;
+    const int Watering_crops_consumes_energy = -3;
+    const int Fertilizing_consumes_energy = -3;
+
+    const int Eating_cauliflower_gain_energy = 20;
+    const int Eating_potato_gain_energy = 30;
+    const int Eating_pumpkin_gain_energy = 40;
+    const int Eating_fish_gain_energy = 50;
+    const int Eating_soup_gain_energy = 60;
+
+
     // Get the singleton instance
     static MainCharacter* getInstance();
 
+    // modify energy
+    // energy can meet need return 0
+    bool modifyEnergy(int delta);
+
+    // Get energy
+    int getEnergy() { return energy; }
+
+    bool modifyMoney(int delta);
+
+    int getCurrentMoney() { return money; }
+
     // Get all items in the backpack
-    const std::vector<Item>& getInventory() const;
+    const std::vector<Item>* getInventory() const;
 
     // Check if the backpack contains an item of a specific type
     bool hasItem(ItemType type) const;
@@ -52,6 +81,8 @@ public:
 
     // Load inventory from JSON
     void loadInventoryFromArchive(const rapidjson::Value& json);
-};
 
-//主角行为和背包在一天结束后需要保存进存档
+    void eat_food_and_gain_energy(ItemType type);
+
+    void change_archive_in_memory();
+};

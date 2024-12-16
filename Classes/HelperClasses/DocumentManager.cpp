@@ -195,7 +195,6 @@ bool DocumentManager::loadArchiveDocument(const int num)
 		return false;
 	}
 
-
 	if (current_archive_ != 0)
 	{
 		freeArchiveDocument();
