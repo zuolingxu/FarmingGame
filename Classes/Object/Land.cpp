@@ -149,14 +149,15 @@ void Land::change_archive_in_memory(const Vec<int>& position) {
 }
 
 void Land::init() {
-    // Initialize the land (if needed)
-    std::string plistFilePath = "LandPls";  // The plist file path for the land's sprite
-    std::string spriteframe = "Land-" + std::to_string(crop->getWater())+".png";  // Construct the sprite frame filename
+
     DocumentManager* manager = DocumentManager::getInstance();
+
+    std::string plistFilePath = manager->getPath("LandPls");  // The plist file path for the land's sprite
+    std::string spriteframe = "Land-" + std::to_string(crop->getWater())+".png";  // Construct the sprite frame filename
 
     if (FileUtils::getInstance()->isFileExist(plistFilePath)) {
         // If the plist file exists, load it
-        MapLayer::loadPlist(manager->getPath(plistFilePath));
+        MapLayer::loadPlist(plistFilePath);
     }
     else {
         CCLOG("Error: Plist file %s not found!", plistFilePath.c_str());
@@ -170,6 +171,10 @@ void Land::init() {
     }
     else {
         CCLOG("Error: parent is nullptr!");
+    }
+
+    if (crop) {
+        crop->init();
     }
 }
 
@@ -189,12 +194,16 @@ void Land::interact()
         if (currentItem->type == ItemType::NONE) {
 
         }
-        else if (currentItem->type == ItemType::FERTILIZER) {
-            Fertilizer = true;  // Apply fertilizer when the player interacts with the land
+        // haven t fertililzer,no crop
+        else if (currentItem->type == ItemType::FERTILIZER && crop == nullptr && Fertilizer == 0) {
+            if(MainCharacter::getInstance()->modifyItemQuantity(ItemType::FERTILIZER,-1)){
+                MainCharacter::getInstance()->modifyEnergy(MainCharacter::getInstance()->Fertilizing_consumes_energy);
+                Fertilizer = true;
+            }
         }
         else if (currentItem->type == ItemType::CAULIFLOWER_SEED ||
             currentItem->type == ItemType::PUMPKIN_SEED ||
-            currentItem->type == ItemType::POTATO_SEED) 
+            currentItem->type == ItemType::POTATO_SEED)
         {
             std::string cropName;
             if (currentItem->type == ItemType::CAULIFLOWER_SEED) {
@@ -208,17 +217,19 @@ void Land::interact()
             }
 
             //no crop , plant
-            if(!crop){
+            if (!crop) {
                 crop = Crop::createByPlayer(info_.position, parent, cropName, Fertilizer);
             }
         }
-        else if (currentItem->type == ItemType::WATERING_CAN) {
-            if(crop){
-                crop->change_to_watered();
-            }
-            if (crop) crop->settle();  // Settle the crop if there is one
+        // can watering only if have a crop and havent been watered
+        else if (currentItem->type == ItemType::WATERING_CAN && crop && !(crop->getWater())) {
+
+            MainCharacter::getInstance()->modifyEnergy(MainCharacter::getInstance()->Watering_crops_consumes_energy);
+            crop->change_to_watered();
+
             change_archive_in_memory(info_.position);  // Update the archive data
 
+            //change show
             std::string plistFilePath = "LandPls";  // The plist file path for the land's sprite
             std::string spriteframe = "Land-1.png";  // Construct the sprite frame filename next day water is false
             DocumentManager* manager = DocumentManager::getInstance();

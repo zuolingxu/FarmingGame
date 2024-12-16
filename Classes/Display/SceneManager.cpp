@@ -102,6 +102,7 @@ void SceneManager::clearMaps()
 		}
 		map_.clear();
 	}
+	// TODO: clearMainCharacter
 }
 
 
@@ -158,7 +159,7 @@ void SceneManager::NextMap(const std::string& map_name, const std::string& pos) 
 	auto functionCallback = std::function<void(float)>([call_back](float dt) {
 		(*call_back)();  
 		});
-	loader->schedule(functionCallback, instance_, 0.0f, 3, 0.0f, false, "loading");
+	loader->schedule(functionCallback, instance_, 0.02f, 3, 0.0f, false, "loading");
 }
 
 
@@ -205,8 +206,8 @@ void SceneManager::NextMapCallBack::start()
 	}
 	else
 	{
-		getInstance()->map_.at(getInstance()->current_map_name_)->toBack();
 		Director::getInstance()->replaceScene(loading_scene);
+		getInstance()->map_.at(getInstance()->current_map_name_)->toBack();
 	}
 	loading_per = 5.0f;
 }
@@ -235,7 +236,7 @@ void SceneManager::NextMapCallBack::render()
 			DocumentManager* manager = DocumentManager::getInstance();
 			rapidjson::Document* doc = manager->getDocument(manager->getPath("Player"));
 			main_player = PlayerSprite::create
-			(doc, toVec2(pos), {1,2}, (*manager->getConfigDocument())["always_run"].GetBool());
+			(doc, toVec2(pos), {1,1}, (*manager->getConfigDocument())["always_run"].GetBool());
 		}
 
 		next_map = getInstance()->map_.at(map_name)->toFront(main_player);

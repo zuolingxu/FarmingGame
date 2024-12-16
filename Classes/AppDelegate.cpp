@@ -99,6 +99,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
         //CCLOG(manager->getPath("global").c_str());
         //manager->loadArchiveDocument(19);
         //SceneManager::getInstance()->NextMap("introduction");
+        // DocumentManager::getInstance()->createArchiveDocument(19);
         DocumentManager::getInstance()->loadArchiveDocument(19);
         SceneManager::getInstance()->NextMap("town", "7 10");
     }

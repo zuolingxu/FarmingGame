@@ -1,8 +1,9 @@
 {
-    "key_info": {
-        "day": 1,
-        "money": 1000
-    },
+  "key_info": {
+    "season": "spring",
+    "day": 1,
+    "money": 1000
+  },
 
   "belongings": [
     {
@@ -47,8 +48,8 @@
 
 
   "Map": {
-    "Farm": {
-      "12 13": {
+    "farm": {
+      "22 19": {
         "Type": "Land",
         "Info": {
           "HasCrop": true,
@@ -59,6 +60,15 @@
             "LiveDay": 1,
             "MaturationDay": 7
           }
+        }
+      }
+    },
+    "mine": {
+      "8 13": {
+        "Type": "Mineral",
+        "Info": {
+          "MineralType": "iron",
+          "IsMined": false
         }
       }
     }
