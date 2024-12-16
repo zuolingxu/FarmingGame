@@ -5,6 +5,7 @@
 #include <functional>
 #include "Land.h"
 #include "MainCharacter.h"
+#include "Mineral.h" //todo delete
 
 USING_NS_CC;
 #ifdef _MSC_VER
@@ -225,6 +226,23 @@ void MapLayer::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Ev
     Vec<int> position(5, 10);
     MapObject* land = nullptr;
 
+    // TODO: delete test example
+    const char* json = R"({
+        "8 13": {
+            "Type": "Mineral",
+            "Info": {
+                "MineralType": "iron",
+                "IsMined": false
+            }
+        }
+    })";
+
+    // Parse the JSON into a document
+    rapidjson::Document document;
+    document.Parse(json);
+    rapidjson::Value& V = document["8 13"];
+    rapidjson::Value& val = V["Info"];
+
     switch (keyCode)
     {
     case cocos2d::EventKeyboard::KeyCode::KEY_UP_ARROW:
@@ -295,16 +313,39 @@ void MapLayer::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Ev
         manager->saveArchiveDocument();
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F7:
-        TimeManager::getInstance()->settleAllObjects();
+       
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F8:
-        TimeManager::getInstance()->endOfDay();
+        
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F9:
-        DocumentManager::getInstance()->createArchiveDocument(1);
+        
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F10:
-        DocumentManager::getInstance()->loadArchiveDocument(1);
+      
+  
+        if (val.HasMember("IsMined") && val.HasMember("MineralType")) {
+            bool im = val["IsMined"].GetBool();  // Corrected field name from "IsMind" to "IsMined"
+            std::string mineralType = val["MineralType"].GetString();  // Corrected the key from "type" to "MineralType"
+
+            // Retrieve the MapLayer creation data (you may need to adjust this based on your actual structure)
+            std::string tmxPath = "tiledmap/mine.tmx"; // Example, replace with actual path
+            cocos2d::Color3B backgroundColor = cocos2d::Color3B::WHITE; // Example, replace with actual color
+
+            // Assuming `parent` is passed or created elsewhere
+            MapLayer* mapLayer = MapLayer::createWithDocument(
+                tmxPath,
+                backgroundColor,
+                &val,  // Assuming val contains const_object for map layer
+                nullptr,  // You can pass the archive_object if necessary
+                true // create_able can be set based on your logic
+            );
+
+            // Create a new Mineral object using the position, parent map layer, and other relevant information
+            MapObject* mineral =  Mineral::create(val, mapLayer, Vec<int>(8,13));
+
+          
+        }
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F11:
         // TODO: Test Code

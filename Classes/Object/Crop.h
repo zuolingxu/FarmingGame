@@ -10,7 +10,7 @@ USING_NS_CC;
 class Land;
 
 //todo kuwei
-class Crop{
+class Crop {
 	private:
 	MapObject::ObjectInfo info;
 	MapLayer* parent;

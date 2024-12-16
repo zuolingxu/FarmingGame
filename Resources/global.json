@@ -35,6 +35,8 @@
     "potatoPls": "plist/potato.plist",
     "pumpkinPls": "plist/pumpkin.plist",
     "ToolsPls": "plist/tools.plist",
+    "mineralPls": "plist/mineral.plist",
+    "LandPls": "plist/Land.plist",
 
     "HelloPic": "image/hello_world.png",
     "CloseNormalPic": "image/close_normal.png",

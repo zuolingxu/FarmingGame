@@ -149,14 +149,15 @@ void Land::change_archive_in_memory(const Vec<int>& position) {
 }
 
 void Land::init() {
-    // Initialize the land (if needed)
-    std::string plistFilePath = "LandPls";  // The plist file path for the land's sprite
-    std::string spriteframe = "Land-" + std::to_string(crop->getWater())+".png";  // Construct the sprite frame filename
+
     DocumentManager* manager = DocumentManager::getInstance();
+
+    std::string plistFilePath = manager->getPath("LandPls");  // The plist file path for the land's sprite
+    std::string spriteframe = "Land-" + std::to_string(crop->getWater())+".png";  // Construct the sprite frame filename
 
     if (FileUtils::getInstance()->isFileExist(plistFilePath)) {
         // If the plist file exists, load it
-        MapLayer::loadPlist(manager->getPath(plistFilePath));
+        MapLayer::loadPlist(plistFilePath);
     }
     else {
         CCLOG("Error: Plist file %s not found!", plistFilePath.c_str());
@@ -170,6 +171,10 @@ void Land::init() {
     }
     else {
         CCLOG("Error: parent is nullptr!");
+    }
+
+    if (crop) {
+        crop->init();
     }
 }
 

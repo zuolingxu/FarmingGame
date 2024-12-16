@@ -5,11 +5,12 @@
 #include "HelperClasses.h"
 
 Crop::Crop(Vec<int> position, MapLayer* parent, std::string CropName, bool Water, int LiveDay, int MaturationDay)
-    : info{ nullptr, {1, 1}, position },  // Initialize ObjectInfo
-    parent(parent), CropName(std::move(CropName)), Water(Water), LiveDay(LiveDay),
+    :  parent(parent), CropName(std::move(CropName)), Water(Water), LiveDay(LiveDay),
     MaturationDay(MaturationDay)
 {
-
+    info.position = position;
+    info.size = Vec<int>(1, 1);    // The land occupies a space of 1x1
+    info.sprite = nullptr;
 }
 
 Crop::~Crop() {
@@ -79,7 +80,7 @@ void Crop::init() {
 
     if (FileUtils::getInstance()->isFileExist(plistFilePath)) {
         // If the plist file exists, load it
-        MapLayer::loadPlist(manager->getPath(plistFilePath));
+        MapLayer::loadPlist(plistFilePath);
     }
     else {
         CCLOG("Error: Plist file %s not found!", plistFilePath.c_str());
@@ -89,7 +90,7 @@ void Crop::init() {
     // Ensure parent is not null to avoid null pointer access
     if (parent != nullptr) {
         // Use the loaded plist to create the sprite, ensuring the sprite frame exists
-        parent->addSpriteWithFrame(info, spriteframe,false);
+        parent->addSpriteWithFrame(info, spriteframe, false);
     }
     else {
         CCLOG("Error: parent is nullptr!");

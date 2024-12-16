@@ -5,6 +5,8 @@
 Mineral::Mineral(const Vec<int>& pos, MapLayer* parent, bool im, const std::string& type)
     : MapObject(pos), parent(parent), isMined(im), mineralType(type) {
     info_.size = Vec<int>(1, 1);  // 默认矿石占据一个1x1的格子
+
+    CCLOG("11");
 }
 
 Mineral::~Mineral() {
@@ -17,11 +19,12 @@ MapObject* Mineral::create(rapidjson::Value& val, MapLayer* parent, const Vec<in
     
     // Check if the mineral has been mined already
     if (val.HasMember("IsMined")&&val.HasMember("MineralType")) {
-        bool im = val["IsMind"].GetBool();
-        std::string mineralType = val["type"].GetString();
+        bool im = val["IsMined"].GetBool();
+        std::string mineralType = val["MineralType"].GetString();
       
         // Create a new Mineral object using the position and parent map layer
         Mineral* mineral = new Mineral(pos, parent, im, mineralType);
+        return mineral;
     }
     else {
         return nullptr;
@@ -37,7 +40,7 @@ void Mineral::init() {
     std::string plistFilePath = (*doc)["plistpath"].GetString();
     std::string spriteFrame = (*doc)["frame_format"].GetString();
 
-    MapLayer::loadPlist(DocumentManager::getInstance()->getPath(plistFilePath));
+    MapLayer::loadPlist(plistFilePath);
 
     // 如果父级对象存在，加载矿石的精灵
     if (parent != nullptr) {
@@ -59,6 +62,8 @@ void Mineral::interact() {
         CCLOG("The mineral has already been mined.");
         return;
     }
+    if (MainCharacter::getInstance()->getCurrentItemType() != ItemType::HOE)
+        return;
 
     // 挖掘矿石
     // 将矿石标记为已挖掘
