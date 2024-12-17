@@ -278,13 +278,15 @@ void Land::settle() {
     if (crop) crop->settle();  // Settle the crop if there is one
     change_archive_in_memory(info_.position);  // Update the archive data
 
-    std::string plistFilePath = "LandPls";  // The plist file path for the land's sprite
-    std::string spriteframe = "Land-0.png";  // Construct the sprite frame filename next day water is false
     DocumentManager* manager = DocumentManager::getInstance();
+    rapidjson::Document* doc = manager->getDocument(manager->getPath("Land"));
+    std::string plistFilePath = (*doc)["plistpath"].GetString();  // The plist file path for the land's sprite
+    std::string spriteframe = "Land-0.png";  // Construct the sprite frame filename next day water is false
+  
 
     if (FileUtils::getInstance()->isFileExist(plistFilePath)) {
         // If the plist file exists, load it
-        MapLayer::loadPlist(manager->getPath(plistFilePath));
+        MapLayer::loadPlist(plistFilePath);
     }
     else {
         CCLOG("Error: Plist file %s not found!", plistFilePath.c_str());

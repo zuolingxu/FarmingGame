@@ -114,7 +114,7 @@ void Mineral::settle()
         std::string plistFilePath = (*doc)["plistpath"].GetString();
         std::string spriteFrame = (*doc)["frame_format"].GetString();
 
-        MapLayer::loadPlist(DocumentManager::getInstance()->getPath(plistFilePath));
+        MapLayer::loadPlist(plistFilePath);
 
         // 如果父级对象存在，加载矿石的精灵
         if (parent != nullptr) {

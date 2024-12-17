@@ -299,7 +299,7 @@ void MapLayer::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Ev
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F3:
         // µ÷ÓÃ createByPlayer º¯Êý
-        land = Land::createByPlayer(position, parent);
+         land = Land::createByPlayer(position, parent);
         manager->saveArchiveDocument();
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F4:
@@ -313,7 +313,7 @@ void MapLayer::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Ev
         manager->saveArchiveDocument();
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F7:
-       
+        TimeManager::getInstance()->endOfDay();
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F8:
         

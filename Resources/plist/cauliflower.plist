@@ -11,11 +11,11 @@
                 <key>spriteOffset</key>
                 <string>{0,0}</string>
                 <key>spriteSize</key>
-                <string>{16,16}</string>
+                <string>{16,32}</string>
                 <key>spriteSourceSize</key>
-                <string>{16,16}</string>
+                <string>{16,32}</string>
                 <key>textureRect</key>
-                <string>{{0,0},{16,16}}</string>
+                <string>{{0,0},{16,32}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -26,11 +26,11 @@
                 <key>spriteOffset</key>
                 <string>{0,0}</string>
                 <key>spriteSize</key>
-                <string>{16,16}</string>
+                <string>{16,32}</string>
                 <key>spriteSourceSize</key>
-                <string>{16,16}</string>
+                <string>{16,32}</string>
                 <key>textureRect</key>
-                <string>{{16,0},{16,16}}</string>
+                <string>{{16,0},{16,32}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -41,11 +41,11 @@
                 <key>spriteOffset</key>
                 <string>{0,0}</string>
                 <key>spriteSize</key>
-                <string>{16,16}</string>
+                <string>{16,32}</string>
                 <key>spriteSourceSize</key>
-                <string>{16,16}</string>
+                <string>{16,32}</string>
                 <key>textureRect</key>
-                <string>{{32,0},{16,16}}</string>
+                <string>{{32,0},{16,32}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -56,56 +56,11 @@
                 <key>spriteOffset</key>
                 <string>{0,0}</string>
                 <key>spriteSize</key>
-                <string>{16,16}</string>
+                <string>{16,32}</string>
                 <key>spriteSourceSize</key>
-                <string>{16,16}</string>
+                <string>{16,32}</string>
                 <key>textureRect</key>
-                <string>{{48,0},{16,16}}</string>
-                <key>textureRotated</key>
-                <false/>
-            </dict>
-            <key>cauliflower-4.png</key>
-            <dict>
-                <key>aliases</key>
-                <array/>
-                <key>spriteOffset</key>
-                <string>{0,0}</string>
-                <key>spriteSize</key>
-                <string>{16,16}</string>
-                <key>spriteSourceSize</key>
-                <string>{16,16}</string>
-                <key>textureRect</key>
-                <string>{{64,0},{16,16}}</string>
-                <key>textureRotated</key>
-                <false/>
-            </dict>
-            <key>cauliflower-5.png</key>
-            <dict>
-                <key>aliases</key>
-                <array/>
-                <key>spriteOffset</key>
-                <string>{0,0}</string>
-                <key>spriteSize</key>
-                <string>{16,16}</string>
-                <key>spriteSourceSize</key>
-                <string>{16,16}</string>
-                <key>textureRect</key>
-                <string>{{80,0},{16,16}}</string>
-                <key>textureRotated</key>
-                <false/>
-            </dict>
-            <key>cauliflower-6.png</key>
-            <dict>
-                <key>aliases</key>
-                <array/>
-                <key>spriteOffset</key>
-                <string>{0,0}</string>
-                <key>spriteSize</key>
-                <string>{16,16}</string>
-                <key>spriteSourceSize</key>
-                <string>{16,16}</string>
-                <key>textureRect</key>
-                <string>{{96,0},{16,16}}</string>
+                <string>{{48,0},{16,32}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -121,9 +76,9 @@
             <key>realTextureFileName</key>
             <string>cauliflower.png</string>
             <key>size</key>
-            <string>{112,16}</string>
+            <string>{64,32}</string>
             <key>smartupdate</key>
-            <string>$TexturePacker:SmartUpdate:78bd865453305fb24674faca41b364c2:1ccf05b99c44b33aa3fed043d3f1dafa:1079e061b81d7c7d32f1320daa1baae5$</string>
+            <string>$TexturePacker:SmartUpdate:13c704f4d5513d559211b984ec9c8637:cd5ca99ddfc3505e6f2c3fd4495112f8:1079e061b81d7c7d32f1320daa1baae5$</string>
             <key>textureFileName</key>
             <string>cauliflower.png</string>
         </dict>

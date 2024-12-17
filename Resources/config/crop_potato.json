@@ -3,5 +3,6 @@
   "LiveDay": 1,
   "MaturationDay": 5,
   "plistpath": "plist/potato.plist",
-  "frame_format": "potato-{}.png"
+  "frame_format": "potato-{}.png",
+  "growing_season": ["spring","autumn"]
 }

@@ -53,7 +53,10 @@
 
     "iron": "config/mineral_iron.json",
     "stone": "config/mineral_stone.json",
+
     "gate": "config/gate.json",
+
+    "Land": "config/Land.json",
 
     "FISH": "image/bagobjects-0.png",
     "CAULIFLOWER": "image/bagobjects-1.png",
@@ -63,6 +66,7 @@
     "FERTILIZER": "image/bagobjects-5.png",
     "IRON": "image/bagobjects-6.png",
     "STONE": "image/bagobjects-7.png",
+    "ROCK": "image/bagobjects-7.png",
     "CAULIFLOWER_SEED": "image/bagobjects-8.png",
     "POTATO_SEED": "image/bagobjects-9.png",
     "PUMPKIN_SEED": "image/bagobjects-10.png",

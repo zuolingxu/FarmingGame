@@ -27,6 +27,9 @@ MapObject* Gate::create(rapidjson::Value& val, MapLayer* parent, const Vec<int>&
 void Gate::interact()
 {
 	if (SceneManager* SM = SceneManager::getInstance()) {
+		//todo
+		//		if (is_bed)
+		//	sleep();
 		SM->NextMap(NextMap, NextPosition);
 	}
 	else {

@@ -3,5 +3,6 @@
   "LiveDay": 1,
   "MaturationDay": 7,
   "plistpath": "plist/pumpkin.plist",
-  "frame_format": "pumpkin-{}.png"
+  "frame_format": "pumpkin-{}.png",
+  "growing_season": [ "autumn" ]
 }

@@ -16,7 +16,7 @@ TimeManager::TimeManager() : current_day_(1), current_time_(6.0f), is_paused_(fa
         current_day_ = (*doc)["key_info"]["day"].GetInt(); // 读取游戏天数
     }
     if (doc->HasMember("key_info") && (*doc)["key_info"].HasMember("season")) {
-        season = (*doc)["key_info"]["season"].GetString(); // 读取游戏天数
+        season = (*doc)["key_info"]["season"].GetString(); // 读取游戏季节
     }
 
     // 初始化调度器
@@ -53,7 +53,7 @@ void TimeManager::endOfDay() {
     settleAllObjects(); // 调用所有物品的 settle 函数
     current_day_++; // 增加游戏天数
     current_time_ = 0.0f;
-    if (1 <= current_day_ % 20 <= 10)
+    if (1 <= (current_day_ % 20) && (current_day_ % 20) <= 10)
         season = "spring";
     else
         season = "autumn";

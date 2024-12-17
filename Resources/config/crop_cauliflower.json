@@ -3,5 +3,6 @@
   "LiveDay": 1,
   "MaturationDay": 3,
   "plistpath": "plist/cauliflower.plist",
-  "frame_format": "cauliflower-{}.png"
+  "frame_format": "cauliflower-{}.png",
+  "growing_season": ["spring"]
 }
