@@ -298,9 +298,7 @@ void MapLayer::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Ev
         changeWithSingleFrame(obj.sprite, "cow-1.png");
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F3:
-        // µ÷ÓÃ createByPlayer º¯Êý
-         land = Land::createByPlayer(position, parent);
-        manager->saveArchiveDocument();
+        MainCharacter::getInstance()->setCurrentItem(ItemType::HOE);
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F4:
         addPlayerSpriteWithDocument(obj2, manager->getDocument(manager->getPath("Cow")));
@@ -310,16 +308,16 @@ void MapLayer::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Ev
         player->move(PlayerSprite::MOVEMENT::W_RIGHT, 12);
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F6:
-        manager->saveArchiveDocument();
+        MainCharacter::getInstance()->setCurrentItem(ItemType::WATERING_CAN);
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F7:
-        TimeManager::getInstance()->endOfDay();
+        MainCharacter::getInstance()->setCurrentItem(ItemType::CAULIFLOWER_SEED);
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F8:
-        
+        manager->saveArchiveDocument();
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F9:
-        
+        TimeManager::getInstance()->sleep();
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F10:
       
@@ -412,10 +410,11 @@ void MapLayer::onMouseDown(cocos2d::Event* event)
                         {
                             focus->interact();
                         }
-                        else if (MainCharacter::getInstance()->getCurrentItemType() == ItemType::HOE)
+                        else if (MainCharacter::getInstance()->getCurrentItemType() == ItemType::HOE && create_abled)
                         {
                             if(MainCharacter::getInstance()->modifyEnergy(MainCharacter::getInstance()->Tilling_the_soil_consumes_energy)){
-                                Land::createByPlayer(focus_pos_, this);
+                                interact_map_[focus_pos_.X()][focus_pos_.Y()] = Land::createByPlayer(focus_pos_, this);
+                                collision_map_[focus_pos_.X()][focus_pos_.Y()] = interact_map_[focus_pos_.X()][focus_pos_.Y()]->hasCollision();
                             }
                         }
                     }

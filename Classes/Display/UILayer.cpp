@@ -7,9 +7,13 @@ USING_NS_CC;
 #undef GetObject
 #endif
 
-UILogic* uilogic = UILogic::getInstance();
+static UILogic* uilogic = nullptr;
 Node* UILayer::createUILayer(UILayerType type)
 {
+    if (uilogic == nullptr) {
+        uilogic = UILogic::getInstance();
+    }
+
     UILayer* ret = new UILayer();
     if (ret && ret->initWithType(type))
     {

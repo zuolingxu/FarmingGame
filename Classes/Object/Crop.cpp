@@ -47,6 +47,10 @@ Crop* Crop::createByPlayer(const Vec<int>& position, MapLayer* parent, const std
     int MaturationDay = (*doc)["MaturationDay"].GetInt();
 
     Crop* crop = new Crop(position, parent, CropName, false, LiveDay, MaturationDay);
+
+    // create picture
+    crop->init();
+
     return crop;
 }
 

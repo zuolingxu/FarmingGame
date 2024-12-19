@@ -25,6 +25,7 @@ MapObject* Land::create(rapidjson::Value& val, MapLayer* parent, const Vec<int>&
         if (val.HasMember("CropInfo") && val["CropInfo"].IsObject()) {
             rapidjson::Value& cropInfo = val["CropInfo"];
             land->crop = Crop::create(cropInfo, parent, pos);  // Create the Crop object using Crop::create
+            land->crop->init();  // generate a picture
         }
     }
 
@@ -41,9 +42,11 @@ MapObject* Land::createByPlayer(const Vec<int>& position, MapLayer* parent) {
 
     land->create_archive_in_memory(position);  // Create and save the land data in memory
 
+    land->init();
     return land;
 }
 
+// Map farm in memory
 void Land::create_archive_in_memory(const Vec<int>& position) {
     // Get the DocumentManager and the current archive document
     auto* docManager = DocumentManager::getInstance();
@@ -57,11 +60,11 @@ void Land::create_archive_in_memory(const Vec<int>& position) {
 
     // Get the Map node (or create a Farm node)
     rapidjson::Value& map = (*archiveDoc)["Map"];
-    if (!map.HasMember("Farm")) {
-        map.AddMember("Farm", rapidjson::Value(rapidjson::kObjectType), archiveDoc->GetAllocator());
+    if (!map.HasMember("farm")) {
+        map.AddMember("farm", rapidjson::Value(rapidjson::kObjectType), archiveDoc->GetAllocator());
     }
 
-    rapidjson::Value& farm = map["Farm"];
+    rapidjson::Value& farm = map["farm"];
 
     // Convert position to a string to use as the map key
     std::string positionKey = std::to_string(position.X()) + " " + std::to_string(position.Y());
@@ -69,6 +72,9 @@ void Land::create_archive_in_memory(const Vec<int>& position) {
     // Create a data structure for the current Land object
     rapidjson::Value landData(rapidjson::kObjectType);
     rapidjson::Value info(rapidjson::kObjectType);
+
+    // Add the "Type": "Land" field to indicate this is a land object
+    landData.AddMember("Type", rapidjson::Value("Land", archiveDoc->GetAllocator()), archiveDoc->GetAllocator());
 
     // Record whether there is a crop
     info.AddMember("HasCrop", crop != nullptr, archiveDoc->GetAllocator());
@@ -104,8 +110,8 @@ void Land::change_archive_in_memory(const Vec<int>& position) {
     std::string positionKey = std::to_string(position.X()) + " " + std::to_string(position.Y());
 
     // Find the corresponding Land object using positionKey
-    if (archiveDoc->HasMember("Map") && (*archiveDoc)["Map"].HasMember("Farm")) {
-        rapidjson::Value& farm = (*archiveDoc)["Map"]["Farm"];
+    if (archiveDoc->HasMember("Map") && (*archiveDoc)["Map"].HasMember("farm")) {
+        rapidjson::Value& farm = (*archiveDoc)["Map"]["farm"];
         if (farm.HasMember(positionKey.c_str())) {
             rapidjson::Value& landInfo = farm[positionKey.c_str()];
 
@@ -129,6 +135,8 @@ void Land::change_archive_in_memory(const Vec<int>& position) {
 
                 // If there is a crop, update the crop information
                 if (hasCrop && crop != nullptr) {
+                    info.RemoveMember("CropInfo");
+
                     rapidjson::Value cropInfo(rapidjson::kObjectType);
                     cropInfo.AddMember("CropName", rapidjson::Value(crop->getCropName().c_str(), archiveDoc->GetAllocator()), archiveDoc->GetAllocator());
                     cropInfo.AddMember("Water", crop->getWater(), archiveDoc->GetAllocator());
@@ -153,7 +161,14 @@ void Land::init() {
     DocumentManager* manager = DocumentManager::getInstance();
 
     std::string plistFilePath = manager->getPath("LandPls");  // The plist file path for the land's sprite
-    std::string spriteframe = "Land-" + std::to_string(crop->getWater())+".png";  // Construct the sprite frame filename
+    
+    // identify is water
+    std::string is_water = "0";
+    if (crop) {
+        is_water = std::to_string(crop->getWater());
+    }
+    // init sprite
+    std::string spriteframe = "Land-" +is_water+".png";  // Construct the sprite frame filename
 
     if (FileUtils::getInstance()->isFileExist(plistFilePath)) {
         // If the plist file exists, load it
@@ -183,13 +198,14 @@ void Land::interact()
     MainCharacter* maincharacter = MainCharacter::getInstance();
     const Item* currentItem = maincharacter->getCurrentItem();
 
-    if (currentItem) {
-        if (crop) {
-            if (crop->harvest_successful()) {
-                delete crop;
-                crop = nullptr;
-            }
+    if (crop) {
+        if (crop->harvest_successful()) {
+            delete crop;
+            crop = nullptr;
         }
+    }
+
+    if (currentItem) {
 
         if (currentItem->type == ItemType::NONE) {
 
@@ -204,7 +220,7 @@ void Land::interact()
         else if (currentItem->type == ItemType::CAULIFLOWER_SEED ||
             currentItem->type == ItemType::PUMPKIN_SEED ||
             currentItem->type == ItemType::POTATO_SEED)
-        {
+             {
             std::string cropName;
             if (currentItem->type == ItemType::CAULIFLOWER_SEED) {
                 cropName = "cauliflower";
@@ -217,10 +233,14 @@ void Land::interact()
             }
 
             //no crop , plant
-            if (!crop) {
-                crop = Crop::createByPlayer(info_.position, parent, cropName, Fertilizer);
+            if (!crop) 
+            {
+               if(MainCharacter::getInstance()->modifyItemQuantity(currentItem->type, -1))
+               {
+                    crop = Crop::createByPlayer(info_.position, parent, cropName, Fertilizer);
+                }
             }
-        }
+             }
         // can watering only if have a crop and havent been watered
         else if (currentItem->type == ItemType::WATERING_CAN && crop && !(crop->getWater())) {
 
@@ -230,13 +250,13 @@ void Land::interact()
             change_archive_in_memory(info_.position);  // Update the archive data
 
             //change show
-            std::string plistFilePath = "LandPls";  // The plist file path for the land's sprite
+            std::string plistFilePath = DocumentManager::getInstance()->getPath("LandPlsw");  // The plist file path for the land's sprite
             std::string spriteframe = "Land-1.png";  // Construct the sprite frame filename next day water is false
             DocumentManager* manager = DocumentManager::getInstance();
 
             if (FileUtils::getInstance()->isFileExist(plistFilePath)) {
                 // If the plist file exists, load it
-                MapLayer::loadPlist(manager->getPath(plistFilePath));
+                MapLayer::loadPlist(plistFilePath);
             }
             else {
                 CCLOG("Error: Plist file %s not found!", plistFilePath.c_str());
@@ -254,6 +274,8 @@ void Land::interact()
         }
 
     }
+
+    init();  //generate picture
 }
 
 // todo Clear the sprite information
@@ -275,8 +297,14 @@ void Land::resume() {
 }
 
 void Land::settle() {
-    if (crop) crop->settle();  // Settle the crop if there is one
+    if (crop) {
+        crop->settle();  // Settle the crop if there is one
+    }
     change_archive_in_memory(info_.position);  // Update the archive data
+
+    if (crop) {
+        crop->init();       // generate sprite
+    }
 
     DocumentManager* manager = DocumentManager::getInstance();
     rapidjson::Document* doc = manager->getDocument(manager->getPath("Land"));

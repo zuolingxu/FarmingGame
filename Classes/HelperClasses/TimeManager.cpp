@@ -120,7 +120,6 @@ void TimeManager::sleep() {
     //archieve memory->disk
     saveGameData();
 
-    //todo
     // 入睡动画在调用这个函数之前
     // 起床动画在这个函数之后
 }
@@ -143,6 +142,7 @@ void TimeManager::updateTime(float dt) {
         // todo
         // 加入瞬移动画
         // 加入入睡动画
+        SceneManager::getInstance()->NextMap("player_house", "15 2");
         sleep(); // 强制主角睡觉
         // 加入起床动画
     }
