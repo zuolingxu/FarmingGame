@@ -3,6 +3,7 @@
 #include "SceneManager.h"
 #include "PlayerSprite.h"
 #include "MainCharacter.h"
+#include "UILogic.h"
 
 TimeManager* TimeManager::instance_ = nullptr;
 
@@ -136,6 +137,7 @@ void TimeManager::updateTime(float dt) {
 
     if (pre_current_time_ != (int)current_time_) {
         //Todo shuaxinshijian
+        UILogic::getInstance()->refreshTimeUI(current_day_, current_time_);
     }
 
     // 判断是否达到2点
