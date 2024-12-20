@@ -1,6 +1,24 @@
 {
-    "Name": "player_house",
-    "TMX": "tiledMap/player_house.tmx"
+  "Name": "player_house",
+  "TMX": "tiledMap/player_house.tmx",
+  "ObjectList": {
+    "9 0": {
+      "Type": "Gate",
+      "Info": {
+        "NextMap": "farm",
+        "NextPosition": "38 16"
+      }
+    },
+    "15 2": {
+      "Type": "Gate",
+      "Info": {
+        "NextMap": "player_house",
+        "NextPosition": "14 2",
+        "Function": "for_sleep"
+      }
+    }
+  }
+
 }
 
 

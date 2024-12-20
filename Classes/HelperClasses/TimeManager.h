@@ -29,9 +29,9 @@ public:
 
     const int SPRING_DAYS = 10;
     const int AUTUMN_DAYS = 10;
-    const float MinutesOfOneDay = 10; // 现实MinuteOfOneDay分钟等于游戏1天
+    const float MinutesOfOneDay = 10; // 现实MinuteOfOneDay=10分钟等于游戏1天
 
-    const std::vector<int> festival_days_ = { 3, 7, 15, 20, 25 };//if first day is festival_day, cant init town_festival,but festival task is setted in fact
+    const std::vector<int> festival_days_ = { 3, 7, 15, 20, 25 };//if next day is festival_day, cant init town_festival,todo festival task is setted
 
 
     static TimeManager* getInstance(); // 获取单例实例 在void SceneManager::createMaps()被调用，开始计时

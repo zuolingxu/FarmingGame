@@ -109,6 +109,21 @@
                 <key>textureRotated</key>
                 <false/>
             </dict>
+            <key>pumpkin-7.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
+                <string>{0,0}</string>
+                <key>spriteSize</key>
+                <string>{16,32}</string>
+                <key>spriteSourceSize</key>
+                <string>{16,32}</string>
+                <key>textureRect</key>
+                <string>{{112,0},{16,32}}</string>
+                <key>textureRotated</key>
+                <false/>
+            </dict>
         </dict>
         <key>metadata</key>
         <dict>
@@ -121,9 +136,9 @@
             <key>realTextureFileName</key>
             <string>pumpkin.png</string>
             <key>size</key>
-            <string>{112,32}</string>
+            <string>{128,32}</string>
             <key>smartupdate</key>
-            <string>$TexturePacker:SmartUpdate:5f80daf42345b9476ff8ca8d49a3a38c:eb581f2ea1344b7d2d1f3015424937b0:86816756f15c8d8063d277bfaaf0e2c8$</string>
+            <string>$TexturePacker:SmartUpdate:5de9f67a91904ba4f27b0110e0e39b83:3b81064a5d0dc235f07559eb25c7f475:86816756f15c8d8063d277bfaaf0e2c8$</string>
             <key>textureFileName</key>
             <string>pumpkin.png</string>
         </dict>

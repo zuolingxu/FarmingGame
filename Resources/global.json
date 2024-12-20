@@ -64,7 +64,19 @@
     "WATERING_CAN":"image/bagobjects-14.png",
     
     "ArialFon": "fonts/arial.ttf",
-    "MarkerFeltFon": "fonst/Marker Felt.ttf"
+    "MarkerFeltFon": "fonst/Marker Felt.ttf",
+
+    "cauliflower": "config/crop_cauliflower.json",
+    "potato": "config/crop_potato.json",
+    "pumpkin": "config/crop_pumpkin.json",
+
+    "iron": "config/mineral_iron.json",
+    "stone": "config/mineral_stone.json",
+
+    "gate": "config/gate.json",
+
+    "Land": "config/Land.json"
+
   },
   "UI": ["ConfigUI"],
   "Map": ["beach", "farm", "town", "town_festival" , "npc1house", "npc2house","chicken_house", "mine", "player_house"]

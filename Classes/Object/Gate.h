@@ -3,11 +3,14 @@
 #include "string"
 
 class Gate final : protected MapObject {
+public:
+	const int sleep_time = 1;
 
 private:
 	MapLayer* parent;
 	std::string NextMap;
 	std::string NextPosition;
+	std::string Function;
 
 public:
 	static MapObject* create(rapidjson::Value& val, MapLayer* parent, const Vec<int>& pos);
@@ -17,7 +20,7 @@ public:
 
 
 
-	explicit Gate(MapLayer* parent, const Vec<int>& pos, std::string NM, std::string NP);
+	explicit Gate(MapLayer* parent, const Vec<int>& pos, std::string NM, std::string NP,std::string FC);
 	~Gate() override;
 	
 	virtual void init() override;

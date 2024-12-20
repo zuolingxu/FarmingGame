@@ -7,11 +7,13 @@ USING_NS_CC;
 #undef GetObject
 #endif
 
-UILogic* uilogic = UILogic::getInstance();
-
-
+static UILogic* uilogic = nullptr;
 Node* UILayer::createUILayer(UILayerType type)
 {
+    if (uilogic == nullptr) {
+        uilogic = UILogic::getInstance();
+    }
+
     UILayer* ret = new UILayer();
     if (ret && ret->initWithType(type))
     {
@@ -111,7 +113,7 @@ void UILayer::createTaskBarLayout()
     taskBarLayout_->setPosition(Vec2(0,0));
     taskBarLayout_->setName("taskbar");
 
-    // Ìí¼Ó¹Ø±Õ°´Å¥
+    // ï¿½ï¿½ï¿½Ó¹Ø±Õ°ï¿½Å¥
     auto closeButton = ui::Button::create("image/exit.png", "image/exit.png");
     closeButton->setPosition(Vec2(420, 300));
     closeButton->setName("CloseButton");
@@ -127,11 +129,11 @@ void UILayer::createBagLayout()
     bagLayout_->setPosition(Vec2(0,0)); 
     bagLayout_->setName("bag");
 
-    // Ìí¼Ó±³°ü¸ñ×Ó
-    const int numSlots = 24; // ÓÐ24¸ö¸ñ×Ó
-    const int columns = 12; // Ã¿ÐÐ12¸ö
-    const int rows = 2; // 2ÐÐ
-    const float slotSize = 20.0f; // Ã¿¸ö¸ñ×ÓµÄ´óÐ¡
+    // ï¿½ï¿½ï¿½Ó±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    const int numSlots = 24; // ï¿½ï¿½24ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    const int columns = 12; // Ã¿ï¿½ï¿½12ï¿½ï¿½
+    const int rows = 2; // 2ï¿½ï¿½
+    const float slotSize = 20.0f; // Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ÓµÄ´ï¿½Ð¡
 
     for (int i = 0; i < numSlots; ++i)
     {
@@ -159,19 +161,19 @@ void UILayer::createStartScreenLayout()
     startScreenLayout_->setPosition(Vec2(0, 0));
     startScreenLayout_->setName("startscreen");
 
-    // Ìí¼Ó¿ªÊ¼°´Å¥
+    // ï¿½ï¿½ï¿½Ó¿ï¿½Ê¼ï¿½ï¿½Å¥
     auto startButton = ui::Button::create("image/TitleButtons-0-4.png", "image/TitleButtons-0-0.png");
     startButton->setPosition(Vec2(100,64));
     startButton->setName("NewButton");
     startScreenLayout_->addChild(startButton);
 
-    // Ìí¼Ó¼ÓÔØ°´Å¥
+    // ï¿½ï¿½ï¿½Ó¼ï¿½ï¿½Ø°ï¿½Å¥
     auto loadButton = ui::Button::create("image/TitleButtons-0-5.png", "image/TitleButtons-0-1.png");
     loadButton->setPosition(Vec2(228, 64));
     loadButton->setName("LoadButton");
     startScreenLayout_->addChild(loadButton);
 
-    // Ìí¼ÓÍË³ö°´Å¥
+    // ï¿½ï¿½ï¿½ï¿½ï¿½Ë³ï¿½ï¿½ï¿½Å¥
     auto exitButton = ui::Button::create("image/TitleButtons-0-7.png", "image/TitleButtons-0-3.png");
     exitButton->setPosition(Vec2(356, 64));
     exitButton->setName("ExitButton");

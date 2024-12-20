@@ -58,7 +58,7 @@
             "CropName": "potato",
             "Water": true,
             "LiveDay": 1,
-            "MaturationDay": 7
+            "MaturationDay": 5
           }
         }
       }

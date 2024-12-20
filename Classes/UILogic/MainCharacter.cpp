@@ -104,8 +104,9 @@ void MainCharacter::loadInventoryFromArchive(const rapidjson::Value& json) {
             }
         }
 
+        // todo check
         // Set current item to the first item in the inventory
-        currentItem = !inventory->empty() ? &inventory->front() : nullptr;
+        // currentItem = !inventory->empty() ? &inventory->front() : nullptr;
     }
     else {
         CCLOG("Invalid JSON format for inventory!");
