@@ -31,9 +31,13 @@ public:
 
     void initLoadArchiveNode(cocos2d::Node* loadArchiveNode);
 
+    void initTimeNode(cocos2d::Node* timeNode);
+
     void initShopNode(cocos2d::Node* shopNode);
 
     void initManufactureNode(cocos2d::Node* manufactureNode);
+
+    void initPopupNode(cocos2d::Node* popupNode);
 
     void refreshBagUI();
 
@@ -74,6 +78,8 @@ private:
 
     void bindManufactureEvents();
 
+    void bindPopupEvents();
+
     void onNewButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 
     void onLoadButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
@@ -94,9 +100,19 @@ private:
 
     void onPumpkinClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 
+    void onSellCauliflowerClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+
+    void onSellPotatoClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+
+    void onSellPumpkinClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+
     void onFertilizerClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 
     void onSoupClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+
+    void onSellButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+
+    void onFeedButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 
     //the logic of tasks
     void initTasks();
@@ -111,6 +127,7 @@ private:
     cocos2d::Node* timeNode_;
     cocos2d::Node* shopNode_;
     cocos2d::Node* manufactureNode_;
+    cocos2d::Node* popupNode_;
 
     std::vector<Item>* bagItems_;
     std::vector<Task> tasks_;

@@ -231,7 +231,7 @@ void MapLayer::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Ev
         "8 13": {
             "Type": "Mineral",
             "Info": {
-                "MineralType": "iron",
+                "MineralType": "IRON",
                 "IsMined": false
             }
         }

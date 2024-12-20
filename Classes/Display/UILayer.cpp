@@ -44,6 +44,9 @@ Node* UILayer::createUILayer(UILayerType type)
             case UILayerType::MANUFACTURE:
                 return ret->manufactureLayout_;
                 break;
+            case UILayerType::POPUP:
+                return ret->popupLayout_;
+                break;
             default:
                 break;
         }
@@ -82,6 +85,7 @@ bool UILayer::initWithType(UILayerType type)
             break;
         case UILayerType::TIME:
             createTimeLayout();
+            uilogic->initTimeNode(timeLayout_);
             break;
         case UILayerType::SHOP:
             createShopLayout();
@@ -90,6 +94,10 @@ bool UILayer::initWithType(UILayerType type)
         case UILayerType::MANUFACTURE:
             createManufactureLayout();
             uilogic->initManufactureNode(manufactureLayout_);
+            break;
+        case UILayerType::POPUP:
+            createPopupLayout();
+            uilogic->initPopupNode(popupLayout_);
             break;
         default:
             break;
@@ -263,56 +271,123 @@ void UILayer::createShopLayout()
     shopLayout_->setPosition(Vec2(0, 0));
     shopLayout_->setName("shop");
 
+    auto label1 = ui::Button::create("image/textBox..png", "image/textBox..png");
+    label1->setScale9Enabled(true);
+    label1->setContentSize(Size(180, 30));
+    label1->setPosition(Vec2(240, 300));
+
+    auto Label1 = ui::Text::create("Purchase zone", "fonts/arial.ttf", 12);
+    Label1->setPosition(Vec2(90, 15));
+    Label1->setColor(Color3B(0, 0, 0));
+    label1->addChild(Label1);
+    shopLayout_->addChild(label1);
+
+    auto label2 = ui::Button::create("image/textBox..png", "image/textBox..png");
+    label2->setScale9Enabled(true);
+    label2->setContentSize(Size(180, 30));
+    label2->setPosition(Vec2(240, 140));
+
+    auto Label2 = ui::Text::create("Sell zone", "fonts/arial.ttf", 12);
+    Label2->setPosition(Vec2(90, 15));
+    Label2->setColor(Color3B(0, 0, 0));
+    label2->addChild(Label2);
+    shopLayout_->addChild(label2);
+
     auto cauliflower = ui::Button::create("image/shop.png", "image/shop.png");
     cauliflower->setScale9Enabled(true);
-    cauliflower->setContentSize(Size(360, 50));
-    cauliflower->setPosition(Vec2(240, 250));
+    cauliflower->setContentSize(Size(360, 36));
+    cauliflower->setPosition(Vec2(240, 252));
     cauliflower->setName("cauliflower");
 
     auto cauliflower_pic = ui::Button::create("image/bagobjects-8.png", "image/bagobjects-8.png");
-    //cauliflower_pic->setScale9Enabled(true);
-    //cauliflower_pic->setContentSize(Size(40, 40));
-    cauliflower_pic->setPosition(Vec2(25, 25));
+    cauliflower_pic->setScale(2.0);
+    cauliflower_pic->setPosition(Vec2(25, 18));
     cauliflower->addChild(cauliflower_pic);
 
-    auto cauliflowerLabel = ui::Text::create("Cauliflower seed     50", "fonts/Marker Felt.ttf", 10);
-    cauliflowerLabel->setPosition(Vec2(180, 25));
+    auto cauliflowerLabel = ui::Text::create("Cauliflower seed     50", "fonts/Marker Felt.ttf", 14);
+    cauliflowerLabel->setPosition(Vec2(180, 18));
     cauliflower->addChild(cauliflowerLabel);
     shopLayout_->addChild(cauliflower);
 
     auto potato = ui::Button::create("image/shop.png", "image/shop.png");
     potato->setScale9Enabled(true);
-    potato->setContentSize(Size(360, 50));
-    potato->setPosition(Vec2(240, 200));
+    potato->setContentSize(Size(360, 36));
+    potato->setPosition(Vec2(240, 216));
     potato->setName("potato");
 
     auto potato_pic = ui::Button::create("image/bagobjects-9.png", "image/bagobjects-9.png");
-    //potato_pic->setScale9Enabled(true);
-    //potato_pic->setContentSize(Size(40, 40));
-    potato_pic->setPosition(Vec2(25, 25));
+    potato_pic->setScale(2.0);
+    potato_pic->setPosition(Vec2(25, 18));
     potato->addChild(potato_pic);
 
-    auto potatoLabel = ui::Text::create("Potato seed        30", "fonts/Marker Felt.ttf", 10);
-    potatoLabel->setPosition(Vec2(180, 25));
+    auto potatoLabel = ui::Text::create("Potato seed         30", "fonts/Marker Felt.ttf", 14);
+    potatoLabel->setPosition(Vec2(180, 18));
     potato->addChild(potatoLabel);
     shopLayout_->addChild(potato);
 
     auto pumpkin = ui::Button::create("image/shop.png", "image/shop.png");
     pumpkin->setScale9Enabled(true);
-    pumpkin->setContentSize(Size(360, 50));
-    pumpkin->setPosition(Vec2(240, 150));
+    pumpkin->setContentSize(Size(360, 36));
+    pumpkin->setPosition(Vec2(240, 180));
     pumpkin->setName("pumpkin");
 
     auto pumpkin_pic = ui::Button::create("image/bagobjects-10.png", "image/bagobjects-10.png");
-    //pumpkin_pic->setScale9Enabled(true);
-    //pumpkin_pic->setContentSize(Size(40, 40));
-    pumpkin_pic->setPosition(Vec2(25, 25));
+    pumpkin_pic->setScale(2.0);
+    pumpkin_pic->setPosition(Vec2(25, 18));
     pumpkin->addChild(pumpkin_pic);
 
-    auto pumpkinLabel = ui::Text::create("Pumpkin seed       80", "fonts/Marker Felt.ttf", 10);
-    pumpkinLabel->setPosition(Vec2(180, 25));
+    auto pumpkinLabel = ui::Text::create("Pumpkin seed       80", "fonts/Marker Felt.ttf", 14);
+    pumpkinLabel->setPosition(Vec2(180, 18));
     pumpkin->addChild(pumpkinLabel);
     shopLayout_->addChild(pumpkin);
+
+    auto sell_cauliflower = ui::Button::create("image/shop.png", "image/shop.png");
+    sell_cauliflower->setScale9Enabled(true);
+    sell_cauliflower->setContentSize(Size(360, 36));
+    sell_cauliflower->setPosition(Vec2(240, 100));
+    sell_cauliflower->setName("sell_cauliflower");
+
+    auto sell_cauliflower_pic = ui::Button::create("image/bagobjects-1.png", "image/bagobjects-1.png");
+    sell_cauliflower_pic->setScale(2.0);
+    sell_cauliflower_pic->setPosition(Vec2(25, 18));
+    sell_cauliflower->addChild(sell_cauliflower_pic);
+
+    auto sell_cauliflowerLabel = ui::Text::create("Cauliflower           100", "fonts/Marker Felt.ttf", 14);
+    sell_cauliflowerLabel->setPosition(Vec2(180, 18));
+    sell_cauliflower->addChild(sell_cauliflowerLabel);
+    shopLayout_->addChild(sell_cauliflower);
+
+    auto sell_potato = ui::Button::create("image/shop.png", "image/shop.png");
+    sell_potato->setScale9Enabled(true);
+    sell_potato->setContentSize(Size(360, 36));
+    sell_potato->setPosition(Vec2(240, 64));
+    sell_potato->setName("sell_potato");
+
+    auto sell_potato_pic = ui::Button::create("image/bagobjects-2.png", "image/bagobjects-2.png");
+    sell_potato_pic->setScale(2.0);
+    sell_potato_pic->setPosition(Vec2(25, 18));
+    sell_potato->addChild(sell_potato_pic);
+
+    auto sell_potatoLabel = ui::Text::create("Potato                60", "fonts/Marker Felt.ttf", 14);
+    sell_potatoLabel->setPosition(Vec2(180, 18));
+    sell_potato->addChild(sell_potatoLabel);
+    shopLayout_->addChild(sell_potato);
+
+    auto sell_pumpkin = ui::Button::create("image/shop.png", "image/shop.png");
+    sell_pumpkin->setScale9Enabled(true);
+    sell_pumpkin->setContentSize(Size(360, 36));
+    sell_pumpkin->setPosition(Vec2(240, 28));
+    sell_pumpkin->setName("sell_pumpkin");
+
+    auto sell_pumpkin_pic = ui::Button::create("image/bagobjects-3.png", "image/bagobjects-3.png");
+    sell_pumpkin_pic->setScale(2.0);
+    sell_pumpkin_pic->setPosition(Vec2(25, 18));
+    sell_pumpkin->addChild(sell_pumpkin_pic);
+
+    auto sell_pumpkinLabel = ui::Text::create("Pumpkin              160", "fonts/Marker Felt.ttf", 14);
+    sell_pumpkinLabel->setPosition(Vec2(180, 18));
+    sell_pumpkin->addChild(sell_pumpkinLabel);
+    shopLayout_->addChild(sell_pumpkin);
 }
 
 
@@ -341,6 +416,46 @@ void UILayer::createManufactureLayout() {
     box->addChild(soup);
 
     manufactureLayout_->addChild(box);
+}
+
+void UILayer::createPopupLayout()
+{
+    popupLayout_ = ui::Layout::create();
+    popupLayout_->setContentSize(Director::getInstance()->getWinSize());
+    popupLayout_->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+    popupLayout_->setPosition(Vec2(0, 0));
+    popupLayout_->setName("popup");
+
+    auto textbox = ui::Button::create("image/textBox..png", "image/textBox..png");
+    textbox->setPosition(Vec2(240, 60));
+    textbox->setScale9Enabled(true);
+    textbox->setContentSize(Size(400, 100));
+    textbox->setName("textbox");
+
+    auto choosebox1 = ui::Button::create("image/selected_tile.png", "image/selected_tile.png");
+    choosebox1->setPosition(Vec2(120, 45));
+    choosebox1->setScale9Enabled(true);
+    choosebox1->setContentSize(Size(180, 18));
+    choosebox1->setName("choose1");
+
+    auto sell = ui::Text::create("Sell", "fonts/Marker Felt.ttf", 14);
+    sell->setPosition(Vec2(28, 9));
+    choosebox1->addChild(sell);
+    textbox->addChild(choosebox1);
+
+    auto choosebox2 = ui::Button::create("image/selected_tile.png", "image/selected_tile.png");
+    choosebox2->setPosition(Vec2(120, 20));
+    choosebox2->setScale9Enabled(true);
+    choosebox2->setContentSize(Size(180, 18));
+    choosebox2->setName("choose2");
+
+    auto feed = ui::Text::create("Feed", "fonts/Marker Felt.ttf", 14);
+    feed->setPosition(Vec2(28, 9));
+    choosebox2->addChild(feed);
+    textbox->addChild(choosebox2);
+
+    popupLayout_->addChild(textbox);
+
 }
 
 void UILayer::initSentence() {
