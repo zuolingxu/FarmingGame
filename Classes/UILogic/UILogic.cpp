@@ -27,7 +27,9 @@ UILogic::UILogic()
     , taskBarNode_(nullptr)
     , mainCharacter_(nullptr)
 {
-//    // 获取其他管理器实例
+    // 获取其他管理器实例
+    initTasks();
+    bagItems_ = new std::vector<Item>();
     saveManager_ = DocumentManager::getInstance();
     mainCharacter_ = MainCharacter::getInstance();
 }
@@ -65,8 +67,19 @@ void UILogic::initNpcNode(cocos2d::Node* npcNode)
 void UILogic::initLoadArchiveNode(cocos2d::Node* loadArchiveNode)
 {
     loadArchiveNode_ = loadArchiveNode;
-    bindTaskBarEvents();
-    updateArchiveUI();
+    refreshArchiveUI();
+}
+
+void UILogic::initShopNode(cocos2d::Node* shopNode)
+{
+    shopNode_ = shopNode;
+    bindShopEvents();
+}
+
+void UILogic::initManufactureNode(cocos2d::Node* manufactureNode)
+{
+    manufactureNode_ = manufactureNode;
+    bindManufactureEvents();
 }
 
 void UILogic::bindStartScreenEvents()
@@ -118,10 +131,10 @@ void UILogic::bindNpcEvents()
 {
     if (!npcNode_) return;
 
-    auto textbox = dynamic_cast<ui::Button*>(npcNode_->getChildByName("textbox"));
-    if (textbox)
+    auto closeButton = dynamic_cast<ui::Button*>(npcNode_->getChildByName("CloseButton"));
+    if (closeButton)
     {
-        textbox->addTouchEventListener(CC_CALLBACK_2(UILogic::onCloseButtonClicked, this));
+        closeButton->addTouchEventListener(CC_CALLBACK_2(UILogic::onCloseButtonClicked, this));
     }
 }
 
@@ -138,6 +151,44 @@ void UILogic::bindLoadArchiveEvents()
         if (archive) {
             archive->addTouchEventListener(CC_CALLBACK_2(UILogic::onArchiveClicked, this));
         }
+    }
+}
+
+void UILogic::bindShopEvents()
+{
+    if (!shopNode_) return;
+
+    auto cauliflower = dynamic_cast<ui::Button*>(shopNode_->getChildByName("cauliflower"));
+    if (cauliflower)
+    {
+        cauliflower->addTouchEventListener(CC_CALLBACK_2(UILogic::onCauliflowerClicked, this));
+    }
+    auto potato = dynamic_cast<ui::Button*>(shopNode_->getChildByName("potato"));
+    if (potato)
+    {
+        potato->addTouchEventListener(CC_CALLBACK_2(UILogic::onPotatoClicked, this));
+    }
+    auto pumpkin = dynamic_cast<ui::Button*>(shopNode_->getChildByName("pumpkin"));
+    if (pumpkin)
+    {
+        pumpkin->addTouchEventListener(CC_CALLBACK_2(UILogic::onPumpkinClicked, this));
+    }
+}
+
+void UILogic::bindManufactureEvents()
+{
+    if (!manufactureNode_) return;
+
+    auto fertilizer = dynamic_cast<ui::Button*>(manufactureNode_->getChildByName("fertilizer"));
+    if (fertilizer)
+    {
+        fertilizer->addTouchEventListener(CC_CALLBACK_2(UILogic::onFertilizerClicked, this));
+    }
+
+    auto soup = dynamic_cast<ui::Button*>(manufactureNode_->getChildByName("soup"));
+    if (fertilizer)
+    {
+        fertilizer->addTouchEventListener(CC_CALLBACK_2(UILogic::onSoupClicked, this));
     }
 }
 
@@ -227,12 +278,64 @@ void UILogic::onArchiveClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType 
     LoadArchive(saveIndex);
 }
 
+void UILogic::onCauliflowerClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type) {
+    if (type != ui::Widget::TouchEventType::ENDED) return;
+
+    auto button = dynamic_cast<ui::Button*>(sender);
+    if (!button) return;
+
+    mainCharacter_->modifyItemQuantity(ItemType::CAULIFLOWER_SEED, 1);
+}
+
+void UILogic::onPotatoClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type) {
+    if (type != ui::Widget::TouchEventType::ENDED) return;
+
+    auto button = dynamic_cast<ui::Button*>(sender);
+    if (!button) return;
+
+    mainCharacter_->modifyItemQuantity(ItemType::POTATO_SEED, 1);
+}
+
+void UILogic::onPumpkinClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type) {
+    if (type != ui::Widget::TouchEventType::ENDED) return;
+
+    auto button = dynamic_cast<ui::Button*>(sender);
+    if (!button) return;
+
+    mainCharacter_->modifyItemQuantity(ItemType::PUMPKIN_SEED, 1);
+}
+
+void UILogic::onFertilizerClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type) {
+    if (type != ui::Widget::TouchEventType::ENDED) return;
+
+    auto button = dynamic_cast<ui::Button*>(sender);
+    if (!button) return;
+    if (mainCharacter_->modifyItemQuantity(ItemType::ROCK, -2)) {
+        mainCharacter_->modifyItemQuantity(ItemType::FERTILIZER, 1);
+    }
+    else {
+        return;
+    }
+}
+
+void UILogic::onSoupClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type) {
+    if (type != ui::Widget::TouchEventType::ENDED) return;
+
+    auto button = dynamic_cast<ui::Button*>(sender);
+    if (!button) return;
+
+    if (mainCharacter_->modifyItemQuantity(ItemType::CAULIFLOWER, -2)) {
+        mainCharacter_->modifyItemQuantity(ItemType::SOUP, 1);
+    }
+    else {
+        return;
+    }
+}
+
 void UILogic::useItemFromBag(int slotIndex)
 {
 
-    auto& item = bagItems_[slotIndex];
-
-    refreshBagUI();
+    auto& item = (*bagItems_)[slotIndex];
 
     // TODO:将该物品返回给MainCharacter
     mainCharacter_->setCurrentItem(item.type);
@@ -240,8 +343,8 @@ void UILogic::useItemFromBag(int slotIndex)
 
 void UILogic::LoadArchive(int saveIndex) {
 
-
-    updateArchiveUI();
+    //TODO:Load archive,change map.
+    refreshArchiveUI();
 }
 
 void UILogic::onTaskItemClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
@@ -262,9 +365,11 @@ void UILogic::onTaskItemClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType
     updateTaskUI();
 }
 
-void UILogic::updateBagItems(std::vector<Item> bagitem) {
+void UILogic::updateBagItems(std::vector<Item>* bagitem) {
     bagItems_ = bagitem;
+    refreshBagUI();
 }
+
 
 void UILogic::refreshBagUI()
 {
@@ -286,16 +391,16 @@ void UILogic::refreshBagUI()
 
         slot->removeAllChildren(); 
 
-        if (i < (int)bagItems_.size())
+        if (i < (int)(*bagItems_).size())
         {
-            const auto& item = bagItems_[i];
+            const auto& item = (*bagItems_)[i];
             if (!item.iconPath.empty())
             {
                 auto itemSprite = Sprite::create(item.iconPath);
                 if (itemSprite)
                 {
-                    itemSprite->setContentSize(Size(slotSize, slotSize));
-                    itemSprite->setPosition(Vec2(col * slotSize + slotSize / 2 + 120, row * slotSize + slotSize / 2 ));
+                    itemSprite->setContentSize(Size(slotSize-2, slotSize-2));
+                    itemSprite->setPosition(Vec2( slotSize / 2 ,  slotSize / 2 ));
                     slot->addChild(itemSprite);
                 }
 
@@ -325,10 +430,10 @@ void UILogic::updateTaskUI()
         auto taskButton = ui::Button::create("image/textBox..png", "image/textBox..png");
         taskButton->setScale9Enabled(true);
         taskButton->setContentSize(Size(360, 50));
-        taskButton->setPosition(Vec2(240, 350 - i * 50));
+        taskButton->setPosition(Vec2(240, 250 - i * 50));
         taskButton->setName("Task_" + std::to_string(i));
 
-        auto taskLabel = ui::Text::create(task.description, "Arial", 10);
+        auto taskLabel = ui::Text::create(task.description, "fonts/Marker Felt.ttf", 10);
         taskLabel->setPosition(Vec2(180,25));
         taskButton->addChild(taskLabel);
 
@@ -347,7 +452,7 @@ void UILogic::updateTaskUI()
     }
 }
 
-void UILogic::updateArchiveUI() {
+void UILogic::refreshArchiveUI() {
     if (!loadArchiveNode_) return;
 
     loadArchiveNode_->removeAllChildren();
@@ -364,14 +469,76 @@ void UILogic::updateArchiveUI() {
         archiveButton->setPosition(Vec2(240, y));
         archiveButton->setName("Save_" + std::to_string(i));
 
-        loadArchiveNode_->addChild(archiveButton);
-
-        auto archiveLabel = ui::Text::create("Day:"+std::to_string(save.value["day"].GetInt())+"  Money:"+std::to_string(save.value["money"].GetInt()), "Arial", 10);
+        auto archiveLabel = ui::Text::create("Day:"+std::to_string(save.value["day"].GetInt())+"  Money:"+std::to_string(save.value["money"].GetInt()), "fonts/Marker Felt.ttf", 10);
         archiveLabel->setPosition(Vec2(180, 25));
         archiveButton->addChild(archiveLabel);
 
         loadArchiveNode_->addChild(archiveButton);
         i++;
+    }
+}
+
+void UILogic::refreshTimeUI(int day_,float hour_) {
+    if (!timeNode_) return;
+
+    auto displayer= dynamic_cast<ui::Button*>(timeNode_->getChildByName("displayer"));
+    displayer->removeChild(timeNode_->getChildByName("day"));
+    displayer->removeChild(timeNode_->getChildByName("hour"));
+
+    auto day = ui::Text::create("Day: "+std::to_string(day_), "fonts/Marker Felt.ttf", 10);
+    day->setPosition(Vec2(20, 35));
+    day->setName("day");
+    displayer->addChild(day);
+
+    auto hour = ui::Text::create(std::to_string(hour_)+":00", "fonts/Marker Felt.ttf", 10);
+    hour->setPosition(Vec2(20, 15));
+    hour->setName("hour");
+    displayer->addChild(hour);
+}
+
+void UILogic::refreshPowerUI(int power_) {
+    if (!timeNode_) return;
+
+    auto displayer = dynamic_cast<ui::Button*>(timeNode_->getChildByName("displayer"));
+    displayer->removeChild(timeNode_->getChildByName("power"));
+
+    auto power = ui::Text::create("Power: "+std::to_string(power_), "fonts/Marker Felt.ttf", 10);
+    power->setPosition(Vec2(20, 5));
+    power->setName("power");
+    displayer->addChild(power);
+}
+
+void UILogic::refreshNpcUI(std::string name) {
+    if (!npcNode_) return;
+
+    if (!(name == "abigail" || name == "caroline" || name == "haley")) {
+        return;
+    }
+    npcNode_->removeChild(npcNode_->getChildByName("potrait"));
+
+    if (name == "abigail") {
+        auto potrait = ui::Button::create("image/abi.png", "image/abi.png");
+        potrait->setPosition(Vec2(30, 120));
+        potrait->setScale9Enabled(true);
+        potrait->setContentSize(Size(40, 40));
+        potrait->setName("portrait");
+        npcNode_->addChild(potrait);
+    }
+    else if (name == "caroline") {
+        auto potrait = ui::Button::create("image/caro.png", "image/caro.png");
+        potrait->setPosition(Vec2(30, 120));
+        potrait->setScale9Enabled(true);
+        potrait->setContentSize(Size(40, 40));
+        potrait->setName("portrait");
+        npcNode_->addChild(potrait);
+    }
+    else {
+        auto potrait = ui::Button::create("image/hal.png", "image/hal.png");
+        potrait->setPosition(Vec2(30, 120));
+        potrait->setScale9Enabled(true);
+        potrait->setContentSize(Size(40, 40));
+        potrait->setName("portrait");
+        npcNode_->addChild(potrait);
     }
 }
 

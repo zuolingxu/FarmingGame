@@ -10,7 +10,10 @@ enum class UILayerType {
     BAG,
     TASK_BAR,
     NPC,
-    LOAD_ARCHIVE
+    LOAD_ARCHIVE,
+    TIME,
+    SHOP,
+    MANUFACTURE
 };
 
 class UILayer : public cocos2d::Ref
@@ -36,7 +39,9 @@ public:
     cocos2d::ui::Layout* getStartScreenLayout() const { return startScreenLayout_; }
     cocos2d::ui::Layout* getnpcLayout() const { return npcLayout_; }
     cocos2d::ui::Layout* getloadArchiveLayout() const { return loadArchiveLayout_; }
-        
+    cocos2d::ui::Layout* getTimeLayout() const { return timeLayout_; }
+    cocos2d::ui::Layout* getShopLayout() const { return shopLayout_; }
+    cocos2d::ui::Layout* getManufactureLayout() const { return manufactureLayout_; }
 
 private:
     // UI 组件
@@ -45,6 +50,9 @@ private:
     cocos2d::ui::Layout* startScreenLayout_;
     cocos2d::ui::Layout* npcLayout_;
     cocos2d::ui::Layout* loadArchiveLayout_;
+    cocos2d::ui::Layout* timeLayout_;
+    cocos2d::ui::Layout* shopLayout_;
+    cocos2d::ui::Layout* manufactureLayout_;
     std::vector<std::string> Sentence;
 
     // 创建各个 UI 组件的方法
@@ -53,5 +61,10 @@ private:
     void createStartScreenLayout();
     void createNpcLayout();
     void createLoadArchiveLayout();
+    void createTimeLayout();
+    void createShopLayout();
+    void createManufactureLayout();
+
     void initSentence();
+
 };

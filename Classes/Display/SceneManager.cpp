@@ -68,13 +68,27 @@ SceneManager* SceneManager::getInstance()
 		Node* start_screen = UILayer::createUILayer(UILayerType::START_SCREEN);
 		Node* bag = UILayer::createUILayer(UILayerType::BAG);
 		Node* task_bar = UILayer::createUILayer(UILayerType::TASK_BAR);
+		Node* npc = UILayer::createUILayer(UILayerType::NPC);
+		Node* load_archive = UILayer::createUILayer(UILayerType::LOAD_ARCHIVE);
+		Node* time = UILayer::createUILayer(UILayerType::TIME);
+		Node* shop = UILayer::createUILayer(UILayerType::SHOP);
+		Node* manufacture = UILayer::createUILayer(UILayerType::MANUFACTURE);
 		instance_->permanent_node_->addChild(start_screen, BACK_UI_ZORDER);
 		instance_->permanent_node_->addChild(bag, BACK_UI_ZORDER);
 		instance_->permanent_node_->addChild(task_bar, BACK_UI_ZORDER);
+		instance_->permanent_node_->addChild(npc, BACK_UI_ZORDER);
+		instance_->permanent_node_->addChild(load_archive, BACK_UI_ZORDER);
+		instance_->permanent_node_->addChild(time, BACK_UI_ZORDER);
+		instance_->permanent_node_->addChild(shop, BACK_UI_ZORDER);
+		instance_->permanent_node_->addChild(manufacture, BACK_UI_ZORDER);
 		UILogic* uilogic = UILogic::getInstance();
 		uilogic->initStartScreenNode(start_screen);
 		uilogic->initStartScreenNode(bag);
-		uilogic->initStartScreenNode(task_bar);
+		uilogic->initTaskBarNode(task_bar);
+		uilogic->initNpcNode(npc);
+		uilogic->initLoadArchiveNode(load_archive);
+		uilogic->initShopNode(shop);
+		uilogic->initManufactureNode(manufacture);
 	}
 	return instance_;
 }
@@ -268,7 +282,7 @@ void SceneManager::NextMapCallBack::assemble()
 	}
 	else 
 	{
-		getInstance()->showUILayer("bag");
+		getInstance()->showUILayer("time");
 	}
 
 	Director::getInstance()->replaceScene(TransitionFade::create(0.5f, next));
