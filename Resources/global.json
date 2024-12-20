@@ -42,6 +42,10 @@
     "loading_bar": "image/loading_bar.png",
     "FocusPic": "image/selected_tile.png",
     
+    "iron": "config/mineral_iron.json",
+    "stone": "config/mineral_stone.json",
+    "gate": "config/gate.json",
+    
     "FISH":"image/bagobjects-0.png",
     "CAULIFLOWER":"image/bagobjects-1.png",
     "POTATO":"image/bagobjects-2.png",
@@ -49,6 +53,7 @@
     "SOUP":"image/bagobjects-4.png",
     "FERTILIZER":"image/bagobjects-5.png",
     "IRON":"image/bagobjects-6.png",
+    "ROCK":"image/bagobjects-7.png",
     "STONE":"image/bagobjects-7.png",
     "CAULIFLOWER_SEED":"image/bagobjects-8.png",
     "POTATO_SEED":"image/bagobjects-9.png",
