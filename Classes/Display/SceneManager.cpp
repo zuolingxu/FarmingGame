@@ -46,7 +46,7 @@ void SceneManager::createMapWithDocument(rapidjson::Document* doc)
 		 const_object = &(*doc)["ObjectList"];
 	}
 	rapidjson::Document* archive_doc = manager->getArchiveDocument();
-	if ((*archive_doc)["Map"].HasMember(name.c_str()))
+	if (archive_doc != nullptr && (*archive_doc)["Map"].HasMember(name.c_str()))
 	{
 		archive_object = &(*archive_doc)["Map"][name.c_str()];
 	}
@@ -96,8 +96,8 @@ SceneManager* SceneManager::getInstance()
 
 void SceneManager::createMaps()
 {
-	TimeManager::getInstance();
-	if (DocumentManager::getInstance()->getArchiveDocument() != nullptr && map_.empty()){
+	if (DocumentManager::getInstance()->getArchiveDocument() != nullptr){
+		TimeManager::getInstance();
 		DocumentManager* manager = DocumentManager::getInstance();
 		const rapidjson::Document* doc = manager->getDocument(manager->getPath("global"));
 		for (const rapidjson::Value& layer : (*doc)["Map"].GetArray())
@@ -109,7 +109,8 @@ void SceneManager::createMaps()
 
 void SceneManager::clearMaps()
 {
-	if (DocumentManager::getInstance()->getArchiveDocument() == nullptr && !map_.empty()){
+	if (DocumentManager::getInstance()->getArchiveDocument() == nullptr){
+		TimeManager::cleanup();
 		for (auto& map : map_)
 		{
 			map.second->clearObjects();
@@ -130,38 +131,50 @@ void SceneManager::settle()
 }
 
 
-//void SceneManager::hideUILayer() const
-//{
-//	for (auto layer : permanent_node_->getChildren())
-//	{
-//		layer->setVisible(false);
-//		layer->pause();
-//		layer->setLocalZOrder(BACK_UI_ZORDER);
-//	}
-//	permanent_node_->setVisible(false);
-//	permanent_node_->setLocalZOrder(BACK_UI_ZORDER);
-//}
-
-void SceneManager::showUILayer(const std::string& UI_name) const 
+void SceneManager::hideUILayer(const std::string& UI_name)
 {
-	permanent_node_->setVisible(true);
-	// map_.at(current_map_name_)->pause();
-
-	permanent_node_->setLocalZOrder(FRONT_UI_ZORDER);
-	for (auto layer : permanent_node_->getChildren())
-	{
-		if (layer->getName() == UI_name)
-		{
-			layer->setVisible(true);
-			layer->resume();
-			layer->setLocalZOrder(FRONT_UI_ZORDER);
-		}
-		else
-		{
+	if (UI_name == "ALL") {
+		for (auto layer : permanent_node_->getChildren()) {
 			layer->setVisible(false);
-			layer->pause();
 			layer->setLocalZOrder(BACK_UI_ZORDER);
+			layer->pause();
 		}
+		current_UI_name_.clear();
+	}
+	else if (UI_name == "CURRENT") {
+		if (!current_UI_name_.empty()) {
+			Node* layer = permanent_node_->getChildByName(current_UI_name_);
+			if (layer != nullptr) {
+				layer->setVisible(false);
+				layer->setLocalZOrder(BACK_UI_ZORDER);
+				layer->pause();
+			}
+			current_UI_name_.clear();
+		}
+	}
+	else {
+		Node* layer = permanent_node_->getChildByName(UI_name);
+		if (layer != nullptr) {
+			layer->setVisible(false);
+			layer->setLocalZOrder(BACK_UI_ZORDER);
+			layer->pause();
+			current_UI_name_.clear();
+		}
+	}
+
+}
+
+void SceneManager::showUILayer(const std::string& UI_name, bool base)
+{
+	Node* layer = permanent_node_->getChildByName(UI_name);
+	if (layer != nullptr) {
+		if (!base) {
+			hideUILayer("CURRENT");
+			current_UI_name_ = UI_name;
+		}
+		layer->setVisible(true);
+		layer->setLocalZOrder(FRONT_UI_ZORDER + base ? -1 : 0);
+		layer->resume();
 	}
 }
 
@@ -276,14 +289,16 @@ void SceneManager::NextMapCallBack::assemble()
 
 	next_map->release();
 	getInstance()->permanent_node_->setParent(nullptr);
-	next->addChild(getInstance()->permanent_node_, BACK_UI_ZORDER);
+	next->addChild(getInstance()->permanent_node_, FRONT_UI_ZORDER);
+	getInstance()->hideUILayer("ALL");
 	if (map_name == "introduction") 
 	{
-		getInstance()->showUILayer("taskbar");
+		getInstance()->showUILayer("startscreen", true);
 	}
 	else 
 	{
-		getInstance()->showUILayer("time");
+		getInstance()->showUILayer("bag", true);
+		getInstance()->showUILayer("time", true);
 	}
 
 	Director::getInstance()->replaceScene(TransitionFade::create(0.5f, next));

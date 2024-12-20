@@ -138,14 +138,14 @@ void UILayer::createBagLayout()
 
     for (int i = 0; i < numSlots; ++i)
     {
-        int row = i / columns;
+        int row = i / columns ;
         int col = i % columns;
 
         auto slot = ui::Button::create("image/frame-0.png", "image/frame-1.png");
         slot->setScale9Enabled(true);
         slot->setContentSize(Size(slotSize, slotSize));
         float x =  col * slotSize  + slotSize / 2 + 120;
-        float y =  row * slotSize  + slotSize / 2  ;
+        float y =  (1-row) * slotSize  + slotSize / 2  ;
         slot->setPosition(Vec2(x, y));
         slot->setName("Slot_" + std::to_string(i));
 

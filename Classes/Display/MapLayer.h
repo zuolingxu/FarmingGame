@@ -130,9 +130,6 @@ private:
 	void onMouseMove(cocos2d::Event* event);
 	void onMouseUp(cocos2d::Event* event);
 
-	// changes for CallBacks
-	void changeHolding(int num);
-
 	// refocus will be called when mouse pos changed, player pos changed
 	void refocus();
 };

@@ -119,6 +119,7 @@ private:
 
     static UILogic* instance_;
 
+    int UI_num = 0;
     cocos2d::Node* startScreenNode_;
     cocos2d::Node* bagNode_;
     cocos2d::Node* taskBarNode_;
@@ -131,9 +132,6 @@ private:
 
     std::vector<Item>* bagItems_;
     std::vector<Task> tasks_;
-
-    DocumentManager* saveManager_;
-    MainCharacter* mainCharacter_;
 };
 
 
