@@ -26,6 +26,9 @@ public:
 	// This will call every settle function in every MapLayer
 	void settle();
 
+	// get the name of current map
+	std::string getCurrentMapName() { return current_map_name_; }
+
 	// change UI render order
 	// showUILayer will show the UI on the top of the map
 	// UI_name is the name of the Layer, TODO: decide how to give the name

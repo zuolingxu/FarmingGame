@@ -3,6 +3,7 @@
 #include "SceneManager.h"
 #include "PlayerSprite.h"
 #include "MainCharacter.h"
+#include "UILogic.h"
 
 TimeManager* TimeManager::instance_ = nullptr;
 
@@ -16,7 +17,7 @@ TimeManager::TimeManager() : current_day_(1), current_time_(6.0f), is_paused_(fa
         current_day_ = (*doc)["key_info"]["day"].GetInt(); // 读取游戏天数
     }
     if (doc->HasMember("key_info") && (*doc)["key_info"].HasMember("season")) {
-        season = (*doc)["key_info"]["season"].GetString(); // 读取游戏天数
+        season = (*doc)["key_info"]["season"].GetString(); // 读取游戏季节
     }
 
     // 初始化调度器
@@ -50,10 +51,12 @@ void TimeManager::startNewGame() {
 
 void TimeManager::endOfDay() {
     // 一天结束时的逻辑
-    settleAllObjects(); // 调用所有物品的 settle 函数
     current_day_++; // 增加游戏天数
+
+    settleAllObjects(); // 调用所有物品的 settle 函数
+    
     current_time_ = 0.0f;
-    if (1 <= current_day_ % 20 <= 10)
+    if (1 <= (current_day_ % 20) && (current_day_ % 20) <= 10)
         season = "spring";
     else
         season = "autumn";
@@ -120,7 +123,6 @@ void TimeManager::sleep() {
     //archieve memory->disk
     saveGameData();
 
-    //todo
     // 入睡动画在调用这个函数之前
     // 起床动画在这个函数之后
 }
@@ -135,6 +137,7 @@ void TimeManager::updateTime(float dt) {
 
     if (pre_current_time_ != (int)current_time_) {
         //Todo shuaxinshijian
+        UILogic::getInstance()->refreshTimeUI(current_day_, current_time_);
     }
 
     // 判断是否达到2点
@@ -143,6 +146,7 @@ void TimeManager::updateTime(float dt) {
         // todo
         // 加入瞬移动画
         // 加入入睡动画
+        SceneManager::getInstance()->NextMap("player_house", "14 2");
         sleep(); // 强制主角睡觉
         // 加入起床动画
     }

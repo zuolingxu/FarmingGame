@@ -51,7 +51,7 @@ void SceneManager::createMapWithDocument(rapidjson::Document* doc)
 	}
 
 	bool create_able = false; 
-	if (name == "farm" || name == "town") { // TODO: delete test condition( name == "town")
+	if (name == "farm") {
 		create_able = true;
 	}
 	MapLayer* map = MapLayer::createWithDocument(tmx_path, backGroundColor, const_object, archive_object, create_able);

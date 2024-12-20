@@ -139,11 +139,11 @@ enum class ItemType {
 	WATERING_CAN,      // Watering Can
 
 	// Stone
-	ROCK,              // ordinary stone
-	IRON,              // iron ore
+	ROCK,              // ordinary stone  //some misunderstand : mineral in maplayer is stone ,in hands is ROCK
+	IRON,              // iron ore        //in maplayer is iron ,in hands is IRON
 
 	// Default (no item)
-	NONE               // No Item
+	NONE               // No Item      MainCharacter::getinstance()->getcurrentItem()==nullptr
 };
 //need change MainCharacter::itemTypeToString if change
 
