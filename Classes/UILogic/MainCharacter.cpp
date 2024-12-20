@@ -19,6 +19,8 @@ bool MainCharacter::modifyEnergy(int delta) {
         energy = energy + delta;
     }
     //todo xianshitili
+    UILogic::getInstance()->refreshPowerUI(energy);
+
     return 1;
            
 }
@@ -36,6 +38,7 @@ bool MainCharacter::modifyMoney(int delta) {
         money = money + delta;
     }
     //todo xianshijinqian
+    UILogic::getInstance()->refreshMoneyUI(money);
     return 1;
 
 }
