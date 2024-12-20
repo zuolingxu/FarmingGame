@@ -13,7 +13,7 @@
       "Type": "Gate",
       "Info": {
         "NextMap": "player_house",
-        "NextPosition": "15 2",
+        "NextPosition": "14 2",
         "Function": "for_sleep"
       }
     }

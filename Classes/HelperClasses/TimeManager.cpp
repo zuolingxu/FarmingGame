@@ -50,8 +50,10 @@ void TimeManager::startNewGame() {
 
 void TimeManager::endOfDay() {
     // 一天结束时的逻辑
-    settleAllObjects(); // 调用所有物品的 settle 函数
     current_day_++; // 增加游戏天数
+
+    settleAllObjects(); // 调用所有物品的 settle 函数
+    
     current_time_ = 0.0f;
     if (1 <= (current_day_ % 20) && (current_day_ % 20) <= 10)
         season = "spring";
@@ -142,7 +144,7 @@ void TimeManager::updateTime(float dt) {
         // todo
         // 加入瞬移动画
         // 加入入睡动画
-        SceneManager::getInstance()->NextMap("player_house", "15 2");
+        SceneManager::getInstance()->NextMap("player_house", "14 2");
         sleep(); // 强制主角睡觉
         // 加入起床动画
     }

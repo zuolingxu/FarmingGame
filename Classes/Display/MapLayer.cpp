@@ -298,7 +298,7 @@ void MapLayer::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Ev
         changeWithSingleFrame(obj.sprite, "cow-1.png");
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F3:
-        MainCharacter::getInstance()->setCurrentItem(ItemType::HOE);
+        TimeManager::getInstance()->sleep();
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F4:
         addPlayerSpriteWithDocument(obj2, manager->getDocument(manager->getPath("Cow")));
@@ -314,10 +314,10 @@ void MapLayer::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Ev
         MainCharacter::getInstance()->setCurrentItem(ItemType::CAULIFLOWER_SEED);
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F8:
-        manager->saveArchiveDocument();
+        MainCharacter::getInstance()->setCurrentItem(ItemType::HOE);
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F9:
-        TimeManager::getInstance()->sleep();
+        MainCharacter::getInstance()->setCurrentItem(ItemType::PICKAXE);
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F10:
       
