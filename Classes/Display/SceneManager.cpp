@@ -283,7 +283,7 @@ void SceneManager::NextMapCallBack::assemble()
 	}
 	else 
 	{
-		getInstance()->showUILayer("shop");
+		getInstance()->showUILayer("time");
 	}
 
 	Director::getInstance()->replaceScene(TransitionFade::create(0.5f, next));

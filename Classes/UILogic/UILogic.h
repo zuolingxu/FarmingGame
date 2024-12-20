@@ -31,6 +31,8 @@ public:
 
     void initLoadArchiveNode(cocos2d::Node* loadArchiveNode);
 
+    void initTimeNode(cocos2d::Node* timeNode);
+
     void initShopNode(cocos2d::Node* shopNode);
 
     void initManufactureNode(cocos2d::Node* manufactureNode);

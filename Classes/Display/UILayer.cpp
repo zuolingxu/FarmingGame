@@ -85,6 +85,7 @@ bool UILayer::initWithType(UILayerType type)
             break;
         case UILayerType::TIME:
             createTimeLayout();
+            uilogic->initTimeNode(timeLayout_);
             break;
         case UILayerType::SHOP:
             createShopLayout();

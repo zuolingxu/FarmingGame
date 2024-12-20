@@ -355,7 +355,7 @@ void UILogic::onSellCauliflowerClicked(cocos2d::Ref* sender, ui::Widget::TouchEv
     if (!button) return;
 
     if (mainCharacter_->modifyItemQuantity(ItemType::CAULIFLOWER, -1)) {
-        //mainCharacter_->modifyItemQuantity(ItemType::FERTILIZER, 1);
+        mainCharacter_->modifyMoney(100);
     }
     else {
         return;
@@ -369,7 +369,7 @@ void UILogic::onSellPotatoClicked(cocos2d::Ref* sender, ui::Widget::TouchEventTy
     if (!button) return;
 
     if (mainCharacter_->modifyItemQuantity(ItemType::POTATO, -1)) {
-        //mainCharacter_->modifyItemQuantity(ItemType::FERTILIZER, 1);
+        mainCharacter_->modifyMoney(60);
     }
     else {
         return;
@@ -383,7 +383,7 @@ void UILogic::onSellPumpkinClicked(cocos2d::Ref* sender, ui::Widget::TouchEventT
     if (!button) return;
 
     if (mainCharacter_->modifyItemQuantity(ItemType::PUMPKIN, -1)) {
-        //mainCharacter_->modifyItemQuantity(ItemType::FERTILIZER, 1);
+        mainCharacter_->modifyMoney(160);
     }
     else {
         return;
@@ -432,6 +432,18 @@ void UILogic::useItemFromBag(int slotIndex)
 
     // TODO:将该物品返回给MainCharacter
     mainCharacter_->setCurrentItem(item.type);
+    for (int i = 0; i < 24; ++i) {
+        auto slot = dynamic_cast<ui::Button*>(bagNode_->getChildByName("Slot_" + std::to_string(i)));
+        auto selected = slot->getChildByName("selected");
+        if (selected) {
+            slot->removeChildByName("selected");
+        }
+    }
+    auto slot = bagNode_->getChildByName("Slot" + std::to_string(slotIndex));
+    auto selected = ui::Button::create("selected_tile.png", "selected_tile.png");
+    selected->setScale9Enabled(true);
+    selected->setContentSize(Size(20, 20));
+    slot->addChild(selected);
 }
 
 void UILogic::LoadArchive(int saveIndex) {
@@ -575,16 +587,19 @@ void UILogic::refreshTimeUI(int day_,float hour_) {
     if (!timeNode_) return;
 
     auto displayer= dynamic_cast<ui::Button*>(timeNode_->getChildByName("displayer"));
-    displayer->removeChild(timeNode_->getChildByName("day"));
-    displayer->removeChild(timeNode_->getChildByName("hour"));
+    displayer->removeChild(displayer->getChildByName("day"));
+    displayer->removeChild(displayer->getChildByName("hour"));
 
     auto day = ui::Text::create("Day: "+std::to_string(day_), "fonts/Marker Felt.ttf", 10);
     day->setPosition(Vec2(48, 35));
+    day->setColor(Color3B(93, 59, 23));
     day->setName("day");
     displayer->addChild(day);
 
-    auto hour = ui::Text::create(std::to_string(hour_)+":00", "fonts/Marker Felt.ttf", 10);
+    int Hour = static_cast<int>(hour_);
+    auto hour = ui::Text::create(std::to_string(Hour)+":00", "fonts/Marker Felt.ttf", 10);
     hour->setPosition(Vec2(48, 25));
+    hour->setColor(Color3B(93, 59, 23));
     hour->setName("hour");
     displayer->addChild(hour);
 }
@@ -593,10 +608,11 @@ void UILogic::refreshPowerUI(int power_) {
     if (!timeNode_) return;
 
     auto displayer = dynamic_cast<ui::Button*>(timeNode_->getChildByName("displayer"));
-    displayer->removeChild(timeNode_->getChildByName("power"));
+    displayer->removeChild(displayer->getChildByName("power"));
 
     auto power = ui::Text::create("Power:"+std::to_string(power_), "fonts/Marker Felt.ttf", 10);
     power->setPosition(Vec2(53, 65));
+    power->setColor(Color3B(93, 59, 23));
     power->setName("power");
     displayer->addChild(power);
 }
@@ -605,10 +621,11 @@ void UILogic::refreshMoneyUI(int money_) {
     if (!timeNode_) return;
 
     auto displayer = dynamic_cast<ui::Button*>(timeNode_->getChildByName("displayer"));
-    displayer->removeChild(timeNode_->getChildByName("money"));
+    displayer->removeChild(displayer->getChildByName("money"));
 
     auto money = ui::Text::create("Money:" + std::to_string(money_), "fonts/Marker Felt.ttf", 10);
     money->setPosition(Vec2(45, 7));
+    money->setColor(Color3B(93, 59, 23));
     money->setName("money");
     displayer->addChild(money);
 }
