@@ -70,3 +70,8 @@ void MusicManager::setEffectVolume(float volume) {
         AudioEngine::setVolume(effectId, volume);
     }
 }
+
+void MusicManager::playMusicOfScene(const std::string& scene) {
+    std::string filename = "Audio/" + scene + ".mp3";
+    playBackgroundMusic(filename, true);
+};
