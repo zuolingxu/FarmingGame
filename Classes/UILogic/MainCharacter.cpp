@@ -124,7 +124,7 @@ MainCharacter* MainCharacter::getInstance() {
 }
 
 
-const std::vector<Item>const* MainCharacter::getInventory() const {
+std::vector<Item>* MainCharacter::getInventory() const {
     return inventory;// Return the list of items in the inventory
 }
 

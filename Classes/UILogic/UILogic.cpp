@@ -199,16 +199,17 @@ void UILogic::bindManufactureEvents()
 {
     if (!manufactureNode_) return;
 
-    auto fertilizer = dynamic_cast<ui::Button*>(manufactureNode_->getChildByName("fertilizer"));
+    auto box = dynamic_cast<ui::Button*>(manufactureNode_->getChildByName("box"));
+    auto fertilizer = dynamic_cast<ui::Button*>(box->getChildByName("fertilizer"));
     if (fertilizer)
     {
         fertilizer->addTouchEventListener(CC_CALLBACK_2(UILogic::onFertilizerClicked, this));
     }
 
-    auto soup = dynamic_cast<ui::Button*>(manufactureNode_->getChildByName("soup"));
-    if (fertilizer)
+    auto soup = dynamic_cast<ui::Button*>(box->getChildByName("soup"));
+    if (soup)
     {
-        fertilizer->addTouchEventListener(CC_CALLBACK_2(UILogic::onSoupClicked, this));
+        soup->addTouchEventListener(CC_CALLBACK_2(UILogic::onSoupClicked, this));
     }
 }
 
@@ -235,6 +236,7 @@ void UILogic::onNewButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventTyp
     while (!DocumentManager::getInstance()->createArchiveDocument(i)) { i++; }
     SceneManager::getInstance()->NextMap("player_house", "14 2");
     refreshArchiveUI();
+    updateBagItems(MainCharacter::getInstance()->getInventory());
 }
 
 void UILogic::onLoadButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
@@ -296,7 +298,9 @@ void UILogic::onCauliflowerClicked(cocos2d::Ref* sender, ui::Widget::TouchEventT
     auto button = dynamic_cast<ui::Button*>(sender);
     if (!button) return;
 
-    MainCharacter::getInstance()->modifyItemQuantity(ItemType::CAULIFLOWER_SEED, 1);
+    if (MainCharacter::getInstance()->modifyMoney(-50)) {
+        MainCharacter::getInstance()->modifyItemQuantity(ItemType::CAULIFLOWER_SEED, 1);
+    }
 }
 
 void UILogic::onPotatoClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type) {
@@ -304,8 +308,9 @@ void UILogic::onPotatoClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType t
 
     auto button = dynamic_cast<ui::Button*>(sender);
     if (!button) return;
-
-    MainCharacter::getInstance()->modifyItemQuantity(ItemType::POTATO_SEED, 1);
+    if (MainCharacter::getInstance()->modifyMoney(-30)) {
+        MainCharacter::getInstance()->modifyItemQuantity(ItemType::POTATO_SEED, 1);
+    }
 }
 
 void UILogic::onPumpkinClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type) {
@@ -314,7 +319,9 @@ void UILogic::onPumpkinClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType 
     auto button = dynamic_cast<ui::Button*>(sender);
     if (!button) return;
 
-    MainCharacter::getInstance()->modifyItemQuantity(ItemType::PUMPKIN_SEED, 1);
+    if (MainCharacter::getInstance()->modifyMoney(-80)) {
+        MainCharacter::getInstance()->modifyItemQuantity(ItemType::PUMPKIN_SEED, 1);
+    }
 }
 
 void UILogic::onSellCauliflowerClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type) {
@@ -387,6 +394,12 @@ void UILogic::onSoupClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType typ
 }
 
 void UILogic::onSellButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type) {
+    if (type != ui::Widget::TouchEventType::ENDED) return;
+
+    auto button = dynamic_cast<ui::Button*>(sender);
+    if (!button) return;
+
+    MainCharacter::getInstance()->modifyMoney(100);
 
 }
 
@@ -446,10 +459,15 @@ void UILogic::onTaskItemClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType
 
 void UILogic::updateBagItems(std::vector<Item>* bagitem) {
     bagItems_ = bagitem;
+
+    for (int i = 0; i < 24; i++) {
+        auto slot = dynamic_cast<ui::Button*>(bagNode_->getChildByName("Slot_" + std::to_string(i)));
+        slot->setEnabled(true);
+    }
+
     for (size_t i = (*bagItems_).size(); i < 24; i++) {
         auto slot = dynamic_cast<ui::Button*>(bagNode_->getChildByName("Slot_" + std::to_string(i)));
         slot->setEnabled(false);
-        slot->setBright(true);
     }
     refreshBagUI();
 }
@@ -490,9 +508,9 @@ void UILogic::refreshBagUI()
                 if (item.quantity > 1)
                 {
                     auto quantityLabel = ui::Text::create(std::to_string(item.quantity), "fonts/arial.ttf", 8);
-                    quantityLabel->setTextColor(Color4B::WHITE);
+                    quantityLabel->setColor(Color3B(0,0,0));
                     quantityLabel->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
-                    quantityLabel->setPosition(Vec2( slotSize / 2 +7,  slotSize / 2 -7));
+                    quantityLabel->setPosition(Vec2( slotSize / 2 + 8,  0));
                     slot->addChild(quantityLabel);
                 }
             }
@@ -657,8 +675,8 @@ void UILogic::completeTask(int taskIndex)
 }
 
 void UILogic::initTasks() {
-    tasks_.push_back(Task("TASK:Plant a seed by yourself!", true));
-    tasks_.push_back(Task("TASK:Say hello to Haley in the town!", true));
-    tasks_.push_back(Task("TASK:Join a festival with the residents in the town!", true));
-    tasks_.push_back(Task("TASK:Catch a fish by the beach!", true));
+    tasks_.push_back(Task("TASK:Plant a seed by yourself!", false));
+    tasks_.push_back(Task("TASK:Say hello to Haley in the town!", false));
+    tasks_.push_back(Task("TASK:Join a festival with the residents in the town!", false));
+    tasks_.push_back(Task("TASK:Catch a fish by the beach!", false));
 }

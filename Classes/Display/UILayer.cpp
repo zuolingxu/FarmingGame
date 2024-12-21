@@ -402,6 +402,7 @@ void UILayer::createManufactureLayout() {
     box->setScale9Enabled(true);
     box->setContentSize(Size(360, 240));
     box->setPosition(Vec2(240, 160));
+    box->setName("box");
 
     auto fertilizer = ui::Button::create("image/bagobjects-5.png", "image/bagobjects-5.png");
     fertilizer->setScale(2.5);
