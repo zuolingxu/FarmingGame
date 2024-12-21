@@ -71,9 +71,15 @@ MainCharacter::MainCharacter():currentItem(nullptr),money(0) {
         }
     }
 
-    //todo shuaxinbeibao
+    //energy time money item
+    // energy
+    UILogic::getInstance()->refreshPowerUI(energy);
+    // money
+    UILogic::getInstance()->refreshMoneyUI(money);
     // show bag item in ui
      UILogic::getInstance()->updateBagItems(inventory);
+
+     //time in timemanager
 
 }
 
