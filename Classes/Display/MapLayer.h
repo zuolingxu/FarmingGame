@@ -1,8 +1,8 @@
 #pragma once
+#include <vector>
 #include "json/document.h"
 #include "cocos2d.h"
 #include "PlayerSprite.h"
-#include <vector>
 #include "HelperClasses.h"
 #include "MapObject.h"
 
@@ -23,7 +23,6 @@ public:
 
 	// This Function will delete the pointer, collision and sprite on certain place
 	// It will delete the Object after 0.02s
-	// TODO: UnTested
 	void removeObject(MapObject::ObjectInfo& obj);
 
 	// to know if a place has a collision, the pos should be a pixel position
@@ -55,8 +54,8 @@ public:
 
 	friend class SceneManager;
 	// These function is for SceneManager
-	static MapLayer* createWithDocument(const std::string& tmx_path, const cocos2d::Color3B& background_color, 
-		rapidjson::Value* const_object, rapidjson::Value* archive_object, bool create_able = false);
+	static MapLayer* createWithDocument(rapidjson::Document* doc
+	);
 
 	// Make this layer to front, and load tmx file
 	cocos2d::Node* toFront(PlayerSprite* main_player);
@@ -86,7 +85,9 @@ private:
 	// These data member will be initialized when map layer is created
 	std::vector<std::vector<MapObject*>> interact_map_; //  Store Objects
 	std::vector<std::vector<bool>> collision_map_; //  Use a bitset to represent collision
+	std::string map_name_; //  Store map name
 	std::string tmx_name_; //  Store tmx file name, for loading tmx file when toFront()
+	std::string music_name_ = "Default"; //  Store music name
 	cocos2d::Color3B background_color_; //  Store background color
 	std::vector<cocos2d::Sprite*> players_; //  Store all PlayerSprite
 
@@ -102,11 +103,10 @@ private:
 	cocos2d::Vec2 mouse_pos_ = cocos2d::Vec2::ZERO; //  Store the mouse position, for reFocus
 	Vec<int> focus_pos_; //  Store the focus position
 	bool is_front_ = false; //  represent whether the layer is being displayed
-	bool create_abled = false;
+	bool create = false;
 
 	// private Constructor and Destructor
-	MapLayer(const std::string& tmx_path, const cocos2d::Color3B& background_color, 
-		rapidjson::Value* const_object, rapidjson::Value* archive_object, bool create_able);
+	MapLayer(rapidjson::Document* doc);
 	~MapLayer() = default;
 
 	// These function is for Create step
