@@ -59,7 +59,119 @@
           "IsMined": false
         }
       },
-      "8 14": {
+      "32 8": {
+        "Type": "Mineral",
+        "Info": {
+          "MineralType": "iron",
+          "IsMined": false
+        }
+      },
+      "21 8": {
+        "Type": "Mineral",
+        "Info": {
+          "MineralType": "iron",
+          "IsMined": false
+        }
+      },
+      "11 9": {
+        "Type": "Mineral",
+        "Info": {
+          "MineralType": "iron",
+          "IsMined": false
+        }
+      },
+      "16 10": {
+        "Type": "Mineral",
+        "Info": {
+          "MineralType": "iron",
+          "IsMined": false
+        }
+      },
+      "23 9": {
+        "Type": "Mineral",
+        "Info": {
+          "MineralType": "iron",
+          "IsMined": false
+        }
+      },
+      "2 10": {
+        "Type": "Mineral",
+        "Info": {
+          "MineralType": "stone",
+          "IsMined": false
+        }
+      },
+      "2 12": {
+        "Type": "Mineral",
+        "Info": {
+          "MineralType": "stone",
+          "IsMined": false
+        }
+      },
+      "35 7": {
+        "Type": "Mineral",
+        "Info": {
+          "MineralType": "stone",
+          "IsMined": false
+        }
+      },
+      "31 13": {
+        "Type": "Mineral",
+        "Info": {
+          "MineralType": "stone",
+          "IsMined": false
+        }
+      },
+      "21 10": {
+        "Type": "Mineral",
+        "Info": {
+          "MineralType": "stone",
+          "IsMined": false
+        }
+      },
+      "25 8": {
+        "Type": "Mineral",
+        "Info": {
+          "MineralType": "stone",
+          "IsMined": false
+        }
+      },
+      "12 6": {
+        "Type": "Mineral",
+        "Info": {
+          "MineralType": "stone",
+          "IsMined": false
+        }
+      },
+      "31 14": {
+        "Type": "Mineral",
+        "Info": {
+          "MineralType": "stone",
+          "IsMined": false
+        }
+      },
+      "19 10": {
+        "Type": "Mineral",
+        "Info": {
+          "MineralType": "stone",
+          "IsMined": false
+        }
+      },
+      "24 9": {
+        "Type": "Mineral",
+        "Info": {
+          "MineralType": "stone",
+          "IsMined": false
+        }
+      },
+      "33 12": {
+        "Type": "Mineral",
+        "Info": {
+          "MineralType": "stone",
+          "IsMined": false
+        }
+      },
+      "37 11": {
         "Type": "Mineral",
         "Info": {
           "MineralType": "stone",

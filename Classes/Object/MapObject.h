@@ -11,7 +11,7 @@ public:
 	struct ObjectInfo
 	{
 		//interact map
-		cocos2d::Sprite* sprite; //  pointer to the sprite, if not loaded then nullptr
+		cocos2d::Sprite* sprite = nullptr; //  pointer to the sprite, if not loaded then nullptr
 		Vec<int> size;           //  Size of the Sprite
 		Vec<int> position;       //  Grid position of the Sprite
 	};

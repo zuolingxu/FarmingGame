@@ -70,6 +70,7 @@ void SceneManager::createMaps()
 {
 	if (DocumentManager::getInstance()->getArchiveDocument() != nullptr && map_.size() <= 1){
 		TimeManager::getInstance();
+		MainCharacter::getInstance();
 		DocumentManager* manager = DocumentManager::getInstance();
 		const rapidjson::Document* doc = manager->getDocument(manager->getPath("global"));
 		for (const rapidjson::Value& layer : (*doc)["Map"].GetArray())
@@ -81,16 +82,16 @@ void SceneManager::createMaps()
 
 void SceneManager::clearMaps()
 {
-	if (DocumentManager::getInstance()->getArchiveDocument() == nullptr && !map_.size() > 1){
-		TimeManager::cleanup();
+	if (DocumentManager::getInstance()->getArchiveDocument() == nullptr && map_.size() > 1){
 		for (auto& map : map_)
 		{
 			map.second->clearObjects();
 			map.second->release();
 		}
+		MainCharacter::cleanup();
+		TimeManager::cleanup();
 		map_.clear();
 	}
-	// TODO: clearMainCharacter
 }
 
 
@@ -206,8 +207,8 @@ void SceneManager::NextMapCallBack::start()
 	}
 	else
 	{
-		Director::getInstance()->replaceScene(loading_scene);
 		getInstance()->map_.at(getInstance()->current_map_name_)->toBack();
+		Director::getInstance()->replaceScene(loading_scene);
 	}
 	loading_per = 5.0f;
 }

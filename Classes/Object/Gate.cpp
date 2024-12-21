@@ -42,6 +42,8 @@ void Gate::interact()
 		}
 		else if (Function == "for_fishing")
 		{
+			if (MainCharacter::getInstance()->getCurrentItemType() != ItemType::FISHING_ROD)
+				return;
 			UILogic::getInstance()->refreshFishUI();
 			SceneManager::getInstance()->showUILayer("fish");
 

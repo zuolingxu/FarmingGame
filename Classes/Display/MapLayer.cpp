@@ -55,7 +55,7 @@ MapLayer::MapLayer(rapidjson::Document* doc)
         tiled_map_ = TMXTiledMap::create(tmx_name_);
         tiled_map_->retain();
         Vec<int> size = tiled_map_->getMapSize();
-        interact_map_ = std::vector(size.X(), std::vector<::MapObject*>(size.Y(), nullptr));
+        interact_map_ = std::vector(size.X(), std::vector<MapObject*>(size.Y(), nullptr));
         collision_map_ = std::vector(size.X(), std::vector<bool>(size.Y(), false));
         addCollisions();
         tiled_map_->release();
@@ -104,21 +104,24 @@ void MapLayer::addTiledMap()
 
 void MapLayer::addObject(const Vec<int>& pos, rapidjson::Value& val)
 {
-    MapObject* obj = ::MapObject::create(val, this, pos);
-    obj->retain();
-    Vec<int> size = obj->getInfo().size;
-    Vec<int> pos2 = pos + size;
-    bool collision = obj->hasCollision();
-    for (int x = pos.X(); x < pos2.X(); x++)
+    MapObject* obj = MapObject::create(val, this, pos);
+    if (obj != nullptr)
     {
-	    for (int y = pos.Y(); y < pos2.Y(); y++)
-	    {
-		    if (inVecRange(interact_map_, {x,y}))
-		    {
-			    interact_map_[x][y] = obj;
-                collision_map_[x][y] = collision_map_[x][y] == true || collision;
-		    }
-	    }
+        obj->retain();
+        Vec<int> size = obj->getInfo().size;
+        Vec<int> pos2 = pos + size;
+        bool collision = obj->hasCollision();
+        for (int x = pos.X(); x < pos2.X(); x++)
+        {
+            for (int y = pos.Y(); y < pos2.Y(); y++)
+            {
+                if (inVecRange(interact_map_, { x,y }))
+                {
+                    interact_map_[x][y] = obj;
+                    collision_map_[x][y] = collision_map_[x][y] == true || collision;
+                }
+            }
+        }
     }
 }
 
@@ -222,7 +225,6 @@ void MapLayer::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Ev
     case cocos2d::EventKeyboard::KeyCode::KEY_ESCAPE:
         // TODO: DIALOGUE
         DocumentManager::getInstance()->freeArchiveDocument();
-        MainCharacter::cleanup();
         SceneManager::getInstance()->NextMap("introduction");
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_E:
@@ -552,6 +554,15 @@ void MapLayer::clearObjects()
 	    for (MapObject* object : row)
 	    {
             if (object != nullptr) {
+                Vec<int> pos1 = object->getInfo().position;
+                Vec<int> pos2 = object->getInfo().size + pos1;
+                for (int i = pos1.X(); i < pos2.X(); i++)
+                {
+                    for (int j = pos1.Y(); j < pos2.Y(); j++)
+                    {
+	                    interact_map_[i][j] = nullptr;
+                    }
+                }
                 object->clear();
                 object->release();
             }
@@ -670,7 +681,6 @@ void MapLayer::removeObject(MapObject::ObjectInfo& obj)
                 }
             }
         }
-
     }
 
     if (obj.sprite != nullptr)
