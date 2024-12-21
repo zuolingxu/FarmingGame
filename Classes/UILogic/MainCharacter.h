@@ -11,6 +11,7 @@ public:
     const int MAX_QUANTITY = 10000;  //item max quantity
     const int MAX_ENERGY = 500;
     const int MAX_MONEY = 114514;
+    const int MAX_LEVEL = 20;
 
     const int Tilling_the_soil_consumes_energy = -5;
     const int Getting_mineral_consumes_energy = -5;
@@ -31,6 +32,8 @@ private:
     int energy = MAX_ENERGY;           // every time inter game is 6:00 energy is 100, dont need to load from archive or save in archive
 
     int money;
+
+    int level;
 
     // Private constructor to prevent direct creation of an instance
     MainCharacter();
@@ -68,6 +71,9 @@ public:
     // Modify the quantity of a specified item in the backpack (+n or -n)
     bool modifyItemQuantity(ItemType type, int delta);
 
+    //
+    bool modifylevel(int delta);
+
     // Clean up the singleton instance
     static void cleanup();
 
@@ -84,4 +90,6 @@ public:
     void eat_food_and_gain_energy(ItemType type);
 
     void change_archive_in_memory();
+
+    void level_gift(); //give gift when levels up
 };

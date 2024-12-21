@@ -67,6 +67,7 @@ void TimeManager::endOfDay() {
     else
         season = "autumn";
 
+    MainCharacter::getInstance()->modifylevel(1);// levels up
 
     // change in archive
     // ∂¡»°µ±«∞¥Êµµ

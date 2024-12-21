@@ -60,9 +60,6 @@ void Gate::interact()
 
 		}
 
-
-
-
 		//todo
 		//  if(is_fishing)
 	}
