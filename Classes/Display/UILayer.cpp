@@ -44,8 +44,8 @@ Node* UILayer::createUILayer(UILayerType type)
             case UILayerType::MANUFACTURE:
                 return ret->manufactureLayout_;
                 break;
-            case UILayerType::POPUP:
-                return ret->popupLayout_;
+            case UILayerType::FISHING:
+                return ret->fishLayout_;
                 break;
             default:
                 break;
@@ -95,9 +95,9 @@ bool UILayer::initWithType(UILayerType type)
             createManufactureLayout();
             uilogic->initManufactureNode(manufactureLayout_);
             break;
-        case UILayerType::POPUP:
-            createPopupLayout();
-            uilogic->initPopupNode(popupLayout_);
+        case UILayerType::FISHING:
+            createFishLayout();
+            uilogic->initFishNode(fishLayout_);
             break;
         default:
             break;
@@ -197,7 +197,7 @@ void UILayer::createNpcLayout()
     static int count = 1;
     int i = count % 5;
     auto sentence = ui::Text::create(Sentence[i], "fonts/Marker Felt.ttf", 18);
-    i++;
+    count++;
     sentence->setPosition(Vec2(200, 65));
     textbox->addChild(sentence);
     npcLayout_->addChild(textbox);
@@ -402,6 +402,7 @@ void UILayer::createManufactureLayout() {
     box->setScale9Enabled(true);
     box->setContentSize(Size(360, 240));
     box->setPosition(Vec2(240, 160));
+    box->setName("box");
 
     auto fertilizer = ui::Button::create("image/bagobjects-5.png", "image/bagobjects-5.png");
     fertilizer->setScale(2.5);
@@ -418,44 +419,25 @@ void UILayer::createManufactureLayout() {
     manufactureLayout_->addChild(box);
 }
 
-void UILayer::createPopupLayout()
+void UILayer::createFishLayout()
 {
-    popupLayout_ = ui::Layout::create();
-    popupLayout_->setContentSize(Director::getInstance()->getWinSize());
-    popupLayout_->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
-    popupLayout_->setPosition(Vec2(0, 0));
-    popupLayout_->setName("popup");
+    fishLayout_ = ui::Layout::create();
+    fishLayout_->setContentSize(Director::getInstance()->getWinSize());
+    fishLayout_->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+    fishLayout_->setPosition(Vec2(0,0));
+    fishLayout_->setName("fish");
 
-    auto textbox = ui::Button::create("image/textBox..png", "image/textBox..png");
-    textbox->setPosition(Vec2(240, 60));
-    textbox->setScale9Enabled(true);
-    textbox->setContentSize(Size(400, 100));
-    textbox->setName("textbox");
+    auto fishbox = ui::Button::create("image/fish.png", "image/fish.png");
+    fishbox->setPosition(Vec2(260, 240));
+    fishbox->setName("fishbox");
 
-    auto choosebox1 = ui::Button::create("image/selected_tile.png", "image/selected_tile.png");
-    choosebox1->setPosition(Vec2(120, 45));
-    choosebox1->setScale9Enabled(true);
-    choosebox1->setContentSize(Size(180, 18));
-    choosebox1->setName("choose1");
+    auto closeButton = ui::Button::create("image/exit.png", "image/exit.png");
+    closeButton->setScale(0.7);
+    closeButton->setPosition(Vec2(296, 265));
+    closeButton->setName("CloseButton");
 
-    auto sell = ui::Text::create("Sell", "fonts/Marker Felt.ttf", 14);
-    sell->setPosition(Vec2(28, 9));
-    choosebox1->addChild(sell);
-    textbox->addChild(choosebox1);
-
-    auto choosebox2 = ui::Button::create("image/selected_tile.png", "image/selected_tile.png");
-    choosebox2->setPosition(Vec2(120, 20));
-    choosebox2->setScale9Enabled(true);
-    choosebox2->setContentSize(Size(180, 18));
-    choosebox2->setName("choose2");
-
-    auto feed = ui::Text::create("Feed", "fonts/Marker Felt.ttf", 14);
-    feed->setPosition(Vec2(28, 9));
-    choosebox2->addChild(feed);
-    textbox->addChild(choosebox2);
-
-    popupLayout_->addChild(textbox);
-
+    fishLayout_->addChild(fishbox);
+    fishLayout_->addChild(closeButton);
 }
 
 void UILayer::initSentence() {

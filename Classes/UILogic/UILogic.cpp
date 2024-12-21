@@ -84,10 +84,10 @@ void UILogic::initManufactureNode(cocos2d::Node* manufactureNode)
     bindManufactureEvents();
 }
 
-void UILogic::initPopupNode(cocos2d::Node* popupNode)
+void UILogic::initFishNode(cocos2d::Node* fishNode)
 {
-    popupNode_ = popupNode;
-    bindPopupEvents();
+    fishNode_ = fishNode;
+    bindFishEvents();
 }
 
 void UILogic::bindStartScreenEvents()
@@ -131,7 +131,7 @@ void UILogic::bindTaskBarEvents()
 
     auto closeButton = dynamic_cast<ui::Button*>(taskBarNode_->getChildByName("CloseButton"));
     if (closeButton) {
-        closeButton->addTouchEventListener(CC_CALLBACK_2(UILogic::onCloseButtonClicked, this));
+        closeButton->addTouchEventListener(CC_CALLBACK_2(UILogic::onCloseTaskBarClicked, this));
     }
 }
 
@@ -142,7 +142,7 @@ void UILogic::bindNpcEvents()
     auto closeButton = dynamic_cast<ui::Button*>(npcNode_->getChildByName("CloseButton"));
     if (closeButton)
     {
-        closeButton->addTouchEventListener(CC_CALLBACK_2(UILogic::onCloseButtonClicked, this));
+        closeButton->addTouchEventListener(CC_CALLBACK_2(UILogic::onCloseNpcClicked, this));
     }
 }
 
@@ -199,33 +199,27 @@ void UILogic::bindManufactureEvents()
 {
     if (!manufactureNode_) return;
 
-    auto fertilizer = dynamic_cast<ui::Button*>(manufactureNode_->getChildByName("fertilizer"));
+    auto box = dynamic_cast<ui::Button*>(manufactureNode_->getChildByName("box"));
+    auto fertilizer = dynamic_cast<ui::Button*>(box->getChildByName("fertilizer"));
     if (fertilizer)
     {
         fertilizer->addTouchEventListener(CC_CALLBACK_2(UILogic::onFertilizerClicked, this));
     }
 
-    auto soup = dynamic_cast<ui::Button*>(manufactureNode_->getChildByName("soup"));
-    if (fertilizer)
+    auto soup = dynamic_cast<ui::Button*>(box->getChildByName("soup"));
+    if (soup)
     {
-        fertilizer->addTouchEventListener(CC_CALLBACK_2(UILogic::onSoupClicked, this));
+        soup->addTouchEventListener(CC_CALLBACK_2(UILogic::onSoupClicked, this));
     }
 }
 
-void UILogic::bindPopupEvents()
+void UILogic::bindFishEvents()
 {
-    if (!popupNode_) return;
+    if (!fishNode_) return;
 
-    auto sell = dynamic_cast<ui::Button*>(manufactureNode_->getChildByName("choosebox1"));
-    if (sell)
-    {
-        sell->addTouchEventListener(CC_CALLBACK_2(UILogic::onSellButtonClicked, this));
-    }
-
-    auto feed = dynamic_cast<ui::Button*>(manufactureNode_->getChildByName("choosebox2"));
-    if (feed)
-    {
-        feed->addTouchEventListener(CC_CALLBACK_2(UILogic::onFeedButtonClicked, this));
+    auto closeButton = dynamic_cast<ui::Button*>(fishNode_->getChildByName("CloseButton"));
+    if (closeButton) {
+        closeButton->addTouchEventListener(CC_CALLBACK_2(UILogic::onCloseFishClicked, this));
     }
 }
 
@@ -235,6 +229,7 @@ void UILogic::onNewButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventTyp
     while (!DocumentManager::getInstance()->createArchiveDocument(i)) { i++; }
     SceneManager::getInstance()->NextMap("player_house", "14 2");
     refreshArchiveUI();
+    updateBagItems(MainCharacter::getInstance()->getInventory());
 }
 
 void UILogic::onLoadButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
@@ -247,22 +242,33 @@ void UILogic::onExitButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventTy
 {
 
     Director::getInstance()->end();
-
 }
 
-void UILogic::onCloseButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
+void UILogic::onCloseTaskBarClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
 {
     if (type != ui::Widget::TouchEventType::ENDED) return;
 
-    if (bagNode_)
-    {
-        bagNode_->setVisible(false);
+    if (taskBarNode_) {
+        taskBarNode_->setVisible(false);
     }
+}
+
+void UILogic::onCloseNpcClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
+{
+    if (type != ui::Widget::TouchEventType::ENDED) return;
 
     if (npcNode_) {
         npcNode_->setVisible(false);
     }
+}
 
+void UILogic::onCloseFishClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
+{
+    if (type != ui::Widget::TouchEventType::ENDED) return;
+
+    if (fishNode_) {
+        fishNode_->setVisible(false);
+    }
 }
 
 void UILogic::onBagSlotClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
@@ -296,7 +302,9 @@ void UILogic::onCauliflowerClicked(cocos2d::Ref* sender, ui::Widget::TouchEventT
     auto button = dynamic_cast<ui::Button*>(sender);
     if (!button) return;
 
-    MainCharacter::getInstance()->modifyItemQuantity(ItemType::CAULIFLOWER_SEED, 1);
+    if (MainCharacter::getInstance()->modifyMoney(-50)) {
+        MainCharacter::getInstance()->modifyItemQuantity(ItemType::CAULIFLOWER_SEED, 1);
+    }
 }
 
 void UILogic::onPotatoClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type) {
@@ -304,8 +312,9 @@ void UILogic::onPotatoClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType t
 
     auto button = dynamic_cast<ui::Button*>(sender);
     if (!button) return;
-
-    MainCharacter::getInstance()->modifyItemQuantity(ItemType::POTATO_SEED, 1);
+    if (MainCharacter::getInstance()->modifyMoney(-30)) {
+        MainCharacter::getInstance()->modifyItemQuantity(ItemType::POTATO_SEED, 1);
+    }
 }
 
 void UILogic::onPumpkinClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type) {
@@ -314,7 +323,9 @@ void UILogic::onPumpkinClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType 
     auto button = dynamic_cast<ui::Button*>(sender);
     if (!button) return;
 
-    MainCharacter::getInstance()->modifyItemQuantity(ItemType::PUMPKIN_SEED, 1);
+    if (MainCharacter::getInstance()->modifyMoney(-80)) {
+        MainCharacter::getInstance()->modifyItemQuantity(ItemType::PUMPKIN_SEED, 1);
+    }
 }
 
 void UILogic::onSellCauliflowerClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type) {
@@ -386,13 +397,6 @@ void UILogic::onSoupClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType typ
     }
 }
 
-void UILogic::onSellButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type) {
-
-}
-
-void UILogic::onFeedButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type) {
-
-}
 
 void UILogic::useItemFromBag(int slotIndex)
 {
@@ -446,10 +450,15 @@ void UILogic::onTaskItemClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType
 
 void UILogic::updateBagItems(std::vector<Item>* bagitem) {
     bagItems_ = bagitem;
+
+    for (int i = 0; i < 24; i++) {
+        auto slot = dynamic_cast<ui::Button*>(bagNode_->getChildByName("Slot_" + std::to_string(i)));
+        slot->setEnabled(true);
+    }
+
     for (size_t i = (*bagItems_).size(); i < 24; i++) {
         auto slot = dynamic_cast<ui::Button*>(bagNode_->getChildByName("Slot_" + std::to_string(i)));
         slot->setEnabled(false);
-        slot->setBright(true);
     }
     refreshBagUI();
 }
@@ -490,9 +499,9 @@ void UILogic::refreshBagUI()
                 if (item.quantity > 1)
                 {
                     auto quantityLabel = ui::Text::create(std::to_string(item.quantity), "fonts/arial.ttf", 8);
-                    quantityLabel->setTextColor(Color4B::WHITE);
+                    quantityLabel->setColor(Color3B(0,0,0));
                     quantityLabel->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
-                    quantityLabel->setPosition(Vec2( slotSize / 2 +7,  slotSize / 2 -7));
+                    quantityLabel->setPosition(Vec2( slotSize / 2 + 8,  0));
                     slot->addChild(quantityLabel);
                 }
             }
@@ -618,31 +627,55 @@ void UILogic::refreshNpcUI(std::string name) {
     if (!(name == "Abigail" || name == "Caroline" || name == "Haley")) {
         return;
     }
-    npcNode_->removeChild(npcNode_->getChildByName("potrait"));
+    npcNode_->removeChild(npcNode_->getChildByName("portrait"));
 
     if (name == "Abigail") {
         auto potrait = ui::Button::create("image/abi.png", "image/abi.png");
-        potrait->setPosition(Vec2(30, 120));
-        potrait->setScale9Enabled(true);
-        potrait->setContentSize(Size(40, 40));
+        potrait->setPosition(Vec2(90, 142));
         potrait->setName("portrait");
         npcNode_->addChild(potrait);
     }
     else if (name == "Caroline") {
         auto potrait = ui::Button::create("image/caro.png", "image/caro.png");
-        potrait->setPosition(Vec2(30, 120));
-        potrait->setScale9Enabled(true);
-        potrait->setContentSize(Size(40, 40));
+        potrait->setPosition(Vec2(90, 142));
         potrait->setName("portrait");
         npcNode_->addChild(potrait);
     }
     else {
         auto potrait = ui::Button::create("image/hal.png", "image/hal.png");
-        potrait->setPosition(Vec2(30, 120));
-        potrait->setScale9Enabled(true);
-        potrait->setContentSize(Size(40, 40));
+        potrait->setPosition(Vec2(90, 142));
         potrait->setName("portrait");
         npcNode_->addChild(potrait);
+    }
+}
+
+void UILogic::refreshFishUI() {
+    static int count = 0;
+    int i = count % 3;
+    count++;
+    if (i == 0) {
+        auto fishbox = fishNode_->getChildByName("fishbox");
+        fishbox->removeAllChildren();
+        auto fish= ui::Button::create("image/bagobjects-0.png", "image/bagobjects-0.png");
+        fish->setPosition(Vec(19, 21));
+        fishbox->addChild(fish);
+        MainCharacter::getInstance()->modifyItemQuantity(ItemType::FISH, 1);
+    }
+    else if (i == 1) {
+        auto fishbox = fishNode_->getChildByName("fishbox");
+        fishbox->removeAllChildren();
+        auto fish = ui::Button::create("image/bagobjects-7.png", "image/bagobjects-7.png");
+        fish->setPosition(Vec(19, 21));
+        fishbox->addChild(fish);
+        MainCharacter::getInstance()->modifyItemQuantity(ItemType::ROCK, 1);
+    }
+    else {
+        auto fishbox = fishNode_->getChildByName("fishbox");
+        fishbox->removeAllChildren();
+        auto fish = ui::Text::create("Nothing!", "fonts/Marker Felt.ttf", 12);
+        fish->setColor(Color3B(0, 0, 0));
+        fish->setPosition(Vec(50, 20));
+        fishbox->addChild(fish);
     }
 }
 
@@ -657,8 +690,8 @@ void UILogic::completeTask(int taskIndex)
 }
 
 void UILogic::initTasks() {
-    tasks_.push_back(Task("TASK:Plant a seed by yourself!", true));
-    tasks_.push_back(Task("TASK:Say hello to Haley in the town!", true));
-    tasks_.push_back(Task("TASK:Join a festival with the residents in the town!", true));
-    tasks_.push_back(Task("TASK:Catch a fish by the beach!", true));
+    tasks_.push_back(Task("TASK:Plant a seed by yourself!", false));
+    tasks_.push_back(Task("TASK:Say hello to Haley in the town!", false));
+    tasks_.push_back(Task("TASK:Join a festival with the residents in the town!", false));
+    tasks_.push_back(Task("TASK:Catch a fish by the beach!", false));
 }

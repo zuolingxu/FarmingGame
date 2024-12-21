@@ -43,6 +43,7 @@ SceneManager* SceneManager::getInstance()
 		Node* time = UILayer::createUILayer(UILayerType::TIME);
 		Node* shop = UILayer::createUILayer(UILayerType::SHOP);
 		Node* manufacture = UILayer::createUILayer(UILayerType::MANUFACTURE);
+		Node* fish = UILayer::createUILayer(UILayerType::FISHING);
 		instance_->permanent_node_->addChild(start_screen, BACK_UI_ZORDER);
 		instance_->permanent_node_->addChild(bag, BACK_UI_ZORDER);
 		instance_->permanent_node_->addChild(task_bar, BACK_UI_ZORDER);
@@ -51,6 +52,7 @@ SceneManager* SceneManager::getInstance()
 		instance_->permanent_node_->addChild(time, BACK_UI_ZORDER);
 		instance_->permanent_node_->addChild(shop, BACK_UI_ZORDER);
 		instance_->permanent_node_->addChild(manufacture, BACK_UI_ZORDER);
+		instance_->permanent_node_->addChild(fish, BACK_UI_ZORDER);
 		UILogic* uilogic = UILogic::getInstance();
 		uilogic->initStartScreenNode(start_screen);
 		uilogic->initStartScreenNode(bag);
@@ -59,6 +61,7 @@ SceneManager* SceneManager::getInstance()
 		uilogic->initLoadArchiveNode(load_archive);
 		uilogic->initShopNode(shop);
 		uilogic->initManufactureNode(manufacture);
+		uilogic->initFishNode(fish);
 	}
 	return instance_;
 }

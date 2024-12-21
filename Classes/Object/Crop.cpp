@@ -70,6 +70,12 @@ bool Crop::harvest_successful() {
 
         return true;
     }
+    else if (LiveDay == 0) {
+        // Remove the sprite from the scene
+        info.sprite->removeFromParentAndCleanup(true);
+        info.sprite = nullptr;
+        return true;
+    }
     return false;
 }
 

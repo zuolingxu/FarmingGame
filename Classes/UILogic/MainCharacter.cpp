@@ -43,6 +43,49 @@ bool MainCharacter::modifyMoney(int delta) {
 
 }
 
+bool MainCharacter::modifylevel(int delta) {
+    // If delta is 0, return immediately (no change)
+    if (delta == 0) return 1;  // 1 indicates success, quantity is unchanged
+    else if (delta < 0) return 0;
+
+    else if (level + delta > MAX_LEVEL) {
+        level = MAX_LEVEL;
+    }
+    else {
+        level += delta;
+
+        level_gift();
+    }
+    //todo xianshilevel
+    // UILogic::getInstance()->refreshLevel(level);
+
+    return 1;
+
+}
+
+void MainCharacter::level_gift() {
+    switch (level%4) {
+  
+        case 1:
+            modifyItemQuantity(ItemType::POTATO, 4);
+            break;
+        case 2:
+            modifyItemQuantity(ItemType::POTATO_SEED,30);
+            break;
+        case 3:
+            modifyItemQuantity(ItemType::PUMPKIN_SEED,30);
+            break;
+        case 0:
+            modifyItemQuantity(ItemType::CAULIFLOWER_SEED, 30);
+            break;
+    }
+    if(level==3)
+        modifyItemQuantity(ItemType::FISHING_ROD, 1);
+
+    return;
+}
+
+
 //todo shuaxinbeibao
 //todo xianshitili
 // init from archive
@@ -69,11 +112,24 @@ MainCharacter::MainCharacter():currentItem(nullptr),money(0) {
         else {
             CCLOG("Archive document is missing or malformed!");
         }
+        // level
+        if (doc->HasMember("key_info") && (*doc)["key_info"].HasMember("level")) {
+            level = (*doc)["key_info"]["level"].GetInt(); // ��ȡ��Ϸ��Ǯ
+        }
+        else {
+            CCLOG("Archive document is missing or malformed!");
+        }
     }
 
-    //todo shuaxinbeibao
+    //energy time money item
+    // energy
+    UILogic::getInstance()->refreshPowerUI(energy);
+    // money
+    UILogic::getInstance()->refreshMoneyUI(money);
     // show bag item in ui
      UILogic::getInstance()->updateBagItems(inventory);
+
+     //time in timemanager
 
 }
 
@@ -124,7 +180,7 @@ MainCharacter* MainCharacter::getInstance() {
 }
 
 
-const std::vector<Item>const* MainCharacter::getInventory() const {
+std::vector<Item>* MainCharacter::getInventory() const {
     return inventory;// Return the list of items in the inventory
 }
 
@@ -238,8 +294,11 @@ void MainCharacter::change_archive_in_memory() {
             doc->AddMember("key_info", keyInfo, doc->GetAllocator());
         }
 
-        // ���½�Ǯ
+        // money to archive
         (*doc)["key_info"]["money"].SetInt(money);
+
+        // level to archive
+        (*doc)["key_info"]["level"].SetInt(level);
 
         // ȷ�� "belongings" �������
         if (!doc->HasMember("belongings")) {

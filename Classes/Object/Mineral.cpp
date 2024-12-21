@@ -65,7 +65,9 @@ void Mineral::interact() {
     }
     if (MainCharacter::getInstance()->getCurrentItemType() != ItemType::PICKAXE)
         return;
-
+    // 减少体力，增加物品
+    if ((MainCharacter::getInstance()->modifyEnergy(MainCharacter::getInstance()->Getting_mineral_consumes_energy)) != 1)
+        return;
     // 挖掘矿石
     // 将矿石标记为已挖掘
     isMined = true;
@@ -83,8 +85,7 @@ void Mineral::interact() {
         info_.sprite = nullptr;
     }
 
-    // 减少体力，增加物品
-    MainCharacter::getInstance()->modifyEnergy(MainCharacter::getInstance()->Getting_mineral_consumes_energy);
+
     ItemType it = Item::stringToItemType(mineralType);
     MainCharacter::getInstance()->modifyItemQuantity(it, 1);
 }
