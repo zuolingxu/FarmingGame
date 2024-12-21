@@ -114,14 +114,16 @@ void MapLayer::removeObject(MapObject::ObjectInfo& obj)
 {
 	Vec<int> pos = obj.position;
     Vec<int> pos2 = pos + obj.size;
+    removeSpriteFromLayer(obj.sprite);
+    obj.sprite = nullptr;
     if (inVecRange(interact_map_, pos) && interact_map_[pos.X()][pos.Y()] != nullptr)
     {
+        MapObject* ptr =  interact_map_[pos.X()][pos.Y()];
     	Director::getInstance()->getScheduler()->schedule(
-            [this, pos](float deltaTime){
-				interact_map_[pos.X()][pos.Y()]->release();
+            [ptr](float deltaTime){
+                ptr->release();
     	},this, 0, 0, 0.02f, false, "delete_object");
 
-        interact_map_[pos.X()][pos.Y()];
         for (int x = pos.X(); x < pos2.X(); x++)
         {
             for (int y = pos.Y(); y < pos2.Y(); y++)
@@ -721,9 +723,9 @@ void MapLayer::updateMaps(const Vec<int>& old_pos, const Vec<int>& new_pos, cons
             }
 
             Vec<int> new_pos2 = new_pos + size;
-            for (int i = old_pos.X(); i < old_pos2.X(); ++i)
+            for (int i = new_pos.X(); i < new_pos2.X(); ++i)
             {
-                for (int j = old_pos.Y(); j < old_pos2.Y(); ++j)
+                for (int j = new_pos.Y(); j < new_pos2.Y(); ++j)
                 {
                     if (inVecRange(collision_map_, Vec<int>(i, j)))
                     {
