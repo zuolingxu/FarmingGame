@@ -2,13 +2,21 @@
   "Name": "beach",
   "TMX": "TiledMap/beach.tmx",
   "Audio": "Audio/Beach.mp3",
-  "BackGroundColor": [ 51, 102, 153 ],
+  "BackGroundColor": [ 0, 79, 152],
   "ObjectList": {
     "0 17": {
       "Type": "Gate",
       "Info": {
         "NextMap": "town",
         "NextPosition": "49 16"
+      }
+    },
+    "12 5": {
+      "Type": "Gate",
+      "Info": {
+        "NextMap": "beach",
+        "NextPosition": "12 5",
+        "Function": "for_fishing"
       }
     }
   }

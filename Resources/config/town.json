@@ -1,6 +1,7 @@
 {
   "Name": "town",
   "TMX": "tiledmap/town.tmx",
+  "BackGroundColor":[0, 79, 152],
   "ObjectList": {
     "40 2": {
       "Type": "NPC",
