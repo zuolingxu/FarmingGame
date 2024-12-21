@@ -51,7 +51,7 @@ public:
     int getCurrentMoney() { return money; }
 
     // Get all items in the backpack
-    const std::vector<Item>* getInventory() const;
+    const std::vector<Item>const* getInventory() const;
 
     // Check if the backpack contains an item of a specific type
     bool hasItem(ItemType type) const;

@@ -64,7 +64,7 @@ MainCharacter::MainCharacter():currentItem(nullptr),money(0) {
         }
         // money
         if (doc->HasMember("key_info") && (*doc)["key_info"].HasMember("money")) {
-            money = (*doc)["key_info"]["money"].GetInt(); // ¶ÁÈ¡ÓÎÏ·½ðÇ®
+            money = (*doc)["key_info"]["money"].GetInt(); // ï¿½ï¿½È¡ï¿½ï¿½Ï·ï¿½ï¿½Ç®
         }
         else {
             CCLOG("Archive document is missing or malformed!");
@@ -73,7 +73,7 @@ MainCharacter::MainCharacter():currentItem(nullptr),money(0) {
 
     //todo shuaxinbeibao
     // show bag item in ui
-    // UILogic::getInstance()->updateBagItems(inventory);
+     UILogic::getInstance()->updateBagItems(inventory);
 
 }
 
@@ -124,7 +124,7 @@ MainCharacter* MainCharacter::getInstance() {
 }
 
 
-const std::vector<Item>* MainCharacter::getInventory() const {
+const std::vector<Item>const* MainCharacter::getInventory() const {
     return inventory;// Return the list of items in the inventory
 }
 
@@ -180,6 +180,7 @@ bool MainCharacter::modifyItemQuantity(ItemType type, int delta) {
             }
 
             //todo shuaxinwupinlan
+            UILogic::getInstance()->updateBagItems(inventory);
             return 1;  // Operation successful
         }
     }
@@ -187,6 +188,7 @@ bool MainCharacter::modifyItemQuantity(ItemType type, int delta) {
     // If the item is not found, and delta is positive, add the item to the inventory
     if (delta > 0) {
         inventory->push_back(Item(type, delta));  // Add new item with quantity
+        UILogic::getInstance()->updateBagItems(inventory);
         return 1;  // Item added successfully
     }
 
@@ -225,47 +227,47 @@ void MainCharacter::eat_food_and_gain_energy(ItemType type) {
 
 
 void MainCharacter::change_archive_in_memory() {
-    // »ñÈ¡ DocumentManager ÊµÀý
+    // ï¿½ï¿½È¡ DocumentManager Êµï¿½ï¿½
     DocumentManager* docManager = DocumentManager::getInstance();
     rapidjson::Document* doc = docManager->getArchiveDocument();
 
     if (doc) {
-        // È·±£ "key_info" ºÍ "belongings" ´æÔÚ
+        // È·ï¿½ï¿½ "key_info" ï¿½ï¿½ "belongings" ï¿½ï¿½ï¿½ï¿½
         if (!doc->HasMember("key_info")) {
             rapidjson::Value keyInfo(rapidjson::kObjectType);
             doc->AddMember("key_info", keyInfo, doc->GetAllocator());
         }
 
-        // ¸üÐÂ½ðÇ®
+        // ï¿½ï¿½ï¿½Â½ï¿½Ç®
         (*doc)["key_info"]["money"].SetInt(money);
 
-        // È·±£ "belongings" Êý×é´æÔÚ
+        // È·ï¿½ï¿½ "belongings" ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         if (!doc->HasMember("belongings")) {
             rapidjson::Value belongings(rapidjson::kArrayType);
             doc->AddMember("belongings", belongings, doc->GetAllocator());
         }
 
-        // »ñÈ¡´æµµÖÐµÄÎïÆ·Êý×é
+        // ï¿½ï¿½È¡ï¿½æµµï¿½Ðµï¿½ï¿½ï¿½Æ·ï¿½ï¿½ï¿½ï¿½
         rapidjson::Value& belongingsArray = (*doc)["belongings"];
 
-        // ±éÀú±³°üÖÐµÄÎïÆ·£¬²¢¸üÐÂ´æµµÖÐµÄÏàÓ¦ÎïÆ·ÊýÁ¿
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½Æ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â´æµµï¿½Ðµï¿½ï¿½ï¿½Ó¦ï¿½ï¿½Æ·ï¿½ï¿½ï¿½ï¿½
         for (auto& item : *inventory) {
             bool itemFound = false;
 
-            // ±éÀú´æµµÖÐµÄÎïÆ·£¬¼ì²éÊÇ·ñÒÑ¾­ÓÐ¸ÃÎïÆ·
+            // ï¿½ï¿½ï¿½ï¿½ï¿½æµµï¿½Ðµï¿½ï¿½ï¿½Æ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½Ñ¾ï¿½ï¿½Ð¸ï¿½ï¿½ï¿½Æ·
             for (auto& archivedItem : belongingsArray.GetArray()) {
                 std::string storedItemType = archivedItem["type"].GetString();
                 std::string currentItemType = Item::itemTypeToString(item.type);
 
                 if (storedItemType == currentItemType) {
-                    // Èç¹ûÕÒµ½ÏàÍ¬ÀàÐÍµÄÎïÆ·£¬¸üÐÂÊýÁ¿
+                    // ï¿½ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½Í¬ï¿½ï¿½ï¿½Íµï¿½ï¿½ï¿½Æ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                     archivedItem["quantity"].SetInt(item.quantity);
                     itemFound = true;
                     break;
                 }
             }
 
-            // Èç¹ûÃ»ÓÐÕÒµ½¸ÃÎïÆ·£¬ËµÃ÷ÊÇÐÂÎïÆ·£¬Ìí¼Óµ½´æµµÖÐ
+            // ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½Æ·ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ·ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½æµµï¿½ï¿½
             if (!itemFound) {
                 rapidjson::Value newItem(rapidjson::kObjectType);
                 newItem.AddMember("type", rapidjson::Value(Item::itemTypeToString(item.type).c_str(), doc->GetAllocator()), doc->GetAllocator());

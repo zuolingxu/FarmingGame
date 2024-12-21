@@ -26,16 +26,20 @@ public:
 	// This will call every settle function in every MapLayer
 	void settle();
 
-	// get the name of current map
+	// get the name of current map or UI
 	std::string getCurrentMapName() { return current_map_name_; }
+	std::string getCurrentUIName() { return current_UI_name_; }
 
 	// change UI render order
 	// showUILayer will show the UI on the top of the map
-	// UI_name is the name of the Layer, TODO: decide how to give the name
-	void showUILayer(const std::string& UI_name) const;
+	// UI_name is the name of the Layer
+	// base shall be true when the UI will be shown troughout the scene
+	void showUILayer(const std::string& UI_name, bool base = false);
 
 	// hideUILayer will hide all UI and Display the map
-	// void hideUILayer() const;
+	// if UI_name is ALL, it will hide all UI
+	// if UI_name is CURRENT, it will hide the top UI
+	 void hideUILayer(const std::string& UI_name);
 
 	// pos (string)x y init position of playsprite ,default in the middle of the map
 	// in the archive pos is the key
@@ -46,6 +50,7 @@ public:
 private:
 	static SceneManager* instance_; //  the only instance
 	std::string current_map_name_; //  the name of the current map
+	std::string current_UI_name_; // the name of the top UI
 	cocos2d::Director* director_; //  the director of the game
 	std::unordered_map<std::string, MapLayer*> map_; //  the maps of the game
 	cocos2d::Node* permanent_node_ = nullptr; //  the node that will be permanent in the game, used to store UILayers

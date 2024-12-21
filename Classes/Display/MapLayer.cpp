@@ -265,30 +265,33 @@ void MapLayer::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Ev
     case cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_D:
         main_player_->move(PlayerSprite::MOVEMENT::W_RIGHT);
         break;
-    case cocos2d::EventKeyboard::KeyCode::KEY_1:
-    case cocos2d::EventKeyboard::KeyCode::KEY_2:
-    case cocos2d::EventKeyboard::KeyCode::KEY_3:
-    case cocos2d::EventKeyboard::KeyCode::KEY_4:
-    case cocos2d::EventKeyboard::KeyCode::KEY_5:
-    case cocos2d::EventKeyboard::KeyCode::KEY_6:
-    case cocos2d::EventKeyboard::KeyCode::KEY_7:
-    case cocos2d::EventKeyboard::KeyCode::KEY_8:
-    case cocos2d::EventKeyboard::KeyCode::KEY_9:
-        changeHolding(1 + static_cast<int>(keyCode) -
-            static_cast<int>(cocos2d::EventKeyboard::KeyCode::KEY_1));
-        break;
-    case cocos2d::EventKeyboard::KeyCode::KEY_0:
-        changeHolding(10);
-        break;
-    case cocos2d::EventKeyboard::KeyCode::KEY_MINUS:
-        changeHolding(11);
-        break;
-    case cocos2d::EventKeyboard::KeyCode::KEY_EQUAL:
-        changeHolding(12);
-        break;
     case cocos2d::EventKeyboard::KeyCode::KEY_SHIFT:
     case cocos2d::EventKeyboard::KeyCode::KEY_CAPS_LOCK:
         main_player_->changeSpeed();
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_ESCAPE:
+        // TODO: 
+        DocumentManager::getInstance()->freeArchiveDocument();
+        MainCharacter::cleanup();
+        SceneManager::getInstance()->NextMap("introduction");
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_E:
+    case cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_E:
+        if (SceneManager::getInstance()->getCurrentUIName() == "taskbar") {
+            SceneManager::getInstance()->hideUILayer("taskbar");
+        }
+        else {
+            SceneManager::getInstance()->showUILayer("taskbar");
+        }
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_R:
+    case cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_R:
+        if (SceneManager::getInstance()->getCurrentUIName() == "manufacture") {
+            SceneManager::getInstance()->hideUILayer("manufacture");
+        }
+        else {
+            SceneManager::getInstance()->showUILayer("manufacture");
+        }
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F1:
         loadPlist(manager->getPath("CowPls"));
@@ -398,21 +401,24 @@ void MapLayer::onMouseDown(cocos2d::Event* event)
     {
         if (e->getMouseButton() == cocos2d::EventMouse::MouseButton::BUTTON_LEFT) 
         {
-            try
-            {
+            if (inVecRange(interact_map_, focus_pos_)) {
                 MapObject* focus = interact_map_.at(focus_pos_.X()).at(focus_pos_.Y());
                 Vec<int> grid_pos = toGrid(main_player_->getPosition() + Vec2(GridSize / 2, 0));
                 for (auto& pos : valid_pos)
                 {
                     if (focus_pos_ == grid_pos + pos) {
-                        main_player_->interact(pos);
+                        if (MainCharacter::getInstance()->getCurrentItemType() == ItemType::HOE ||
+                            MainCharacter::getInstance()->getCurrentItemType() == ItemType::PICKAXE ||
+                            MainCharacter::getInstance()->getCurrentItemType() == ItemType::FISHING_ROD) {
+                            main_player_->interact(pos);
+                        }
                         if (focus != nullptr)
                         {
                             focus->interact();
                         }
                         else if (MainCharacter::getInstance()->getCurrentItemType() == ItemType::HOE && create_abled)
                         {
-                            if(MainCharacter::getInstance()->modifyEnergy(MainCharacter::getInstance()->Tilling_the_soil_consumes_energy)){
+                            if (MainCharacter::getInstance()->modifyEnergy(MainCharacter::getInstance()->Tilling_the_soil_consumes_energy)) {
                                 interact_map_[focus_pos_.X()][focus_pos_.Y()] = Land::createByPlayer(focus_pos_, this);
                                 collision_map_[focus_pos_.X()][focus_pos_.Y()] = interact_map_[focus_pos_.X()][focus_pos_.Y()]->hasCollision();
                             }
@@ -420,11 +426,6 @@ void MapLayer::onMouseDown(cocos2d::Event* event)
                     }
                 }
             }
-            catch (std::exception& exception)
-            {
-	            // nothing to do
-            }
-
         }
         else if (e->getMouseButton() == cocos2d::EventMouse::MouseButton::BUTTON_RIGHT) 
         {
@@ -465,11 +466,6 @@ void MapLayer::onMouseUp(cocos2d::Event* event)
 {
     // nothing to do
     event->stopPropagation();
-}
-
-void MapLayer::changeHolding(const int num)
-{
-	// TODO: UILogic::changeHoldings(num);
 }
 
 void MapLayer::refocus()
@@ -643,10 +639,12 @@ void MapLayer::clearObjects()
 {
     for (auto& row : interact_map_)
     {
-	    for (::MapObject* object : row)
+	    for (MapObject* object : row)
 	    {
-            object->clear();
-            object->release();
+            if (object != nullptr) {
+                object->clear();
+                object->release();
+            }
 	    }
     }
 }
