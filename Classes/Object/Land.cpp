@@ -250,7 +250,7 @@ void Land::interact()
             change_archive_in_memory(info_.position);  // Update the archive data
 
             //change show
-            std::string plistFilePath = DocumentManager::getInstance()->getPath("LandPlsw");  // The plist file path for the land's sprite
+            std::string plistFilePath = DocumentManager::getInstance()->getPath("LandPls");  // The plist file path for the land's sprite
             std::string spriteframe = "Land-1.png";  // Construct the sprite frame filename next day water is false
             DocumentManager* manager = DocumentManager::getInstance();
 

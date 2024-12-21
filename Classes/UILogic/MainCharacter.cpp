@@ -73,7 +73,7 @@ MainCharacter::MainCharacter():currentItem(nullptr),money(0) {
 
     //todo shuaxinbeibao
     // show bag item in ui
-    // UILogic::getInstance()->updateBagItems(*inventory);
+    // UILogic::getInstance()->updateBagItems(inventory);
 
 }
 
