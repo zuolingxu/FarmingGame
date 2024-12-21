@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="50" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="36">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="50" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="42">
  <tileset firstgid="1" source="Standard_Farm.tsx"/>
  <tileset firstgid="2941" source="spring_outdoorsTileSheet..tsx"/>
  <tileset firstgid="4916" source="spring_town..tsx"/>
@@ -28,7 +28,6 @@
   <object id="7" x="669" y="81" width="65.5" height="13"/>
   <object id="8" x="724.333" y="98" width="72.3333" height="15"/>
   <object id="9" x="788.333" y="119.333" width="9.33333" height="51.6667"/>
-  <object id="10" x="561" y="131.667" width="105.333" height="73.6667"/>
   <object id="11" x="671.667" y="181.333" width="11.3333" height="23.6667"/>
   <object id="12" x="777.75" y="227.25" width="17.75" height="248.5"/>
   <object id="13" x="707.75" y="373.5" width="68" height="102.25"/>
@@ -53,5 +52,9 @@
   <object id="32" x="98" y="379.333" width="10.6667" height="34"/>
   <object id="33" x="26" y="340.667" width="15.3333" height="95.3333"/>
   <object id="34" x="50" y="320.667" width="11.3333" height="46.6667"/>
+  <object id="37" x="562.667" y="132.667" width="99" height="40"/>
+  <object id="39" x="563.667" y="197" width="38.6667" height="7"/>
+  <object id="40" x="645" y="196.333" width="20.6667" height="7"/>
+  <object id="41" x="657" y="181.333" width="7" height="8.66667"/>
  </objectgroup>
 </map>

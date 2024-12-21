@@ -42,6 +42,11 @@ TimeManager* TimeManager::getInstance() {
     return instance_;
 }
 
+void TimeManager::cleanup() {
+    delete instance_;
+    instance_ = nullptr;
+}
+
 void TimeManager::startNewGame() {
     // 启动游戏时的初始化逻辑
     current_day_ = 1;
@@ -52,6 +57,7 @@ void TimeManager::startNewGame() {
 void TimeManager::endOfDay() {
     // 一天结束时的逻辑
     current_day_++; // 增加游戏天数
+    UILogic::getInstance()->refreshTimeUI(current_day_, current_time_);
 
     settleAllObjects(); // 调用所有物品的 settle 函数
     
@@ -97,6 +103,7 @@ void TimeManager::saveGameData() {
     // 获取 DocumentManager 实例
     DocumentManager* docManager = DocumentManager::getInstance();
     docManager->saveArchiveDocument();
+    UILogic::getInstance()->refreshArchiveUI();
 }
 
 void TimeManager::settleAllObjects() {

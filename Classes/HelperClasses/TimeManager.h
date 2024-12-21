@@ -35,6 +35,7 @@ public:
 
 
     static TimeManager* getInstance(); // 获取单例实例 在void SceneManager::createMaps()被调用，开始计时
+    static void cleanup();
 
     float getCurrentTime() const { return current_time_; }
     int getCurrentDay() const { return current_day_; }

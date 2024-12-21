@@ -90,31 +90,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     // }
 
     register_all_packages();
-
-    try
-    {
-        // load ALL_UI UI_ need fast reaction
-        //auto manager = DocumentManager::getInstance();
-        //rapidjson::Document* global_document = manager->getDocument(manager->getPath("global"));
-        //CCLOG(manager->getPath("global").c_str());
-        //manager->loadArchiveDocument(19);
-        //SceneManager::getInstance()->NextMap("introduction");
-        // DocumentManager::getInstance()->createArchiveDocument(19);
-        DocumentManager::getInstance()->loadArchiveDocument(19);
-        SceneManager::getInstance()->NextMap("mine", "7 10");
-    }
-    catch (const std::exception& e)
-    {
-        MessageBoxA(
-            NULL,
-            (LPCSTR)e.what(),
-            (LPCSTR)L"Error Details",
-            MB_ICONWARNING | MB_DEFBUTTON2
-        );
-    }
-
-
-
+    SceneManager::getInstance()->NextMap("introduction");
     return true;
 }
 

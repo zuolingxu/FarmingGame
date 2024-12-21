@@ -17,12 +17,12 @@
    H4sIAAAAAAAACuWVu04CQRSG91F8FDvvrXex8y5YeRf+SjvwCcDG3kegkRI7lQJDp43v4EeGSTbjLMwuoCae5EvI4cw5/z9nNxtF/zumYAZmYQ7mYQFyTt10FIlauXk3fL2y6lqEJViBVViDddiAPBRi9ctoo1Y2f5TQ19drkCc8CC/Ck/Amq2sLtmEX9mAfDuAQilCK9djhHLWyeSXM8vXKJ2jcNPsQHoQX4Ul4k9V1DCdwBudwAZdwBWWoxHqdco5a2fxtgj5fr6JHY1dXwexDeBBehCfhTVbXNdwkzKlCzclRK5u/Szjni7KjMdfTVTL7EB6EF+FJeFM/XaHxkKK26mjM93RVzD40pBRv1FPWxzUWe7pqZh8atbZupLk/G1ZjeYy6bNQznqsaNDol/shyfz8Z9d8W0Cea8NTn/wbyG4G93uFjyNmN2HW14S2gz7M5FzQL1Ax4JkNmfwZos3GfYha/1fZojN/XoNmtKJpopfh0JOlrGjpu3n0uQneVNR6j7zseNLP7XLzAa5RuV1kjPq/D3YfcB+/MJO/M5Dh1/ZX4AvK9FQOADAAA
   </data>
  </layer>
- <layer id="3" name="object" width="40" height="20" visible="0">
+ <layer id="3" name="object" width="40" height="20">
   <data encoding="base64" compression="gzip">
    H4sIAAAAAAAACmNgGAVDBbjgkXMCYmcC+pHVBFLFRaggBI9cEBAHE9CPrCaRRLuJ8X8KiWbiA4UkqifG/yVkumUUjIJRMApGwSgYBaNgKAEAFXaB1oAMAAA=
   </data>
  </layer>
- <objectgroup id="5" name="collision" visible="0">
+ <objectgroup id="5" name="collision">
   <object id="1" x="62.5" y="83" width="90.5" height="11"/>
   <object id="2" x="32" y="97.5" width="28.5" height="11"/>
   <object id="3" x="21.3333" y="113.333" width="7.33333" height="63.3333"/>
