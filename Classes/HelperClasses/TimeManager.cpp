@@ -92,9 +92,6 @@ void TimeManager::endOfDay() {
         }
     }
 
-    // show ui day
-    UILogic::getInstance()->refreshTimeUI(current_day_, current_time_);
-
     settleAllObjects(); // 调用所有物品的 settle 函数
 }
 
@@ -128,6 +125,9 @@ void TimeManager::sleep() {
         endOfDay();
         current_time_ = 6.0f;//夜晚睡觉，第二天六点起床
     }
+
+    // show ui day
+    UILogic::getInstance()->refreshTimeUI(current_day_, current_time_);
 
     // 恢复主角体力值
     MainCharacter::getInstance()->modifyEnergy(MainCharacter::getInstance()->MAX_ENERGY);

@@ -70,6 +70,13 @@
           "MineralType": "iron",
           "IsMined": false
         }
+      },
+      "8 14": {
+        "Type": "Mineral",
+        "Info": {
+          "MineralType": "stone",
+          "IsMined": false
+        }
       }
     }
   }

@@ -235,6 +235,9 @@ struct Item {
 		else if (normalizedStr == "ROCK") {
 			return ItemType::ROCK;
 		}
+		else if (normalizedStr == "STONE") {
+			return ItemType::ROCK; // can from string to itemtype ,cant from itemtype to string
+		}
 		else if (normalizedStr == "IRON") {
 			return ItemType::IRON;
 		}
