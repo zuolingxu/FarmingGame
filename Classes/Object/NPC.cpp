@@ -57,14 +57,7 @@ void NPC::init()
 {
 	if (name == "Abigail")
 	{
-		// 创建 MusicManager 实例
-		MusicManager musicManager;
-
-		// 播放背景音乐
-		musicManager.playBackgroundMusic("dafault.mp3");
-
-		// 播放音效
-		musicManager.playSoundEffect("level_up.wav");
+		
 	}
 	DocumentManager* manager = DocumentManager::getInstance();
 	rapidjson::Document* doc = manager->getDocument(manager->getPath(name));

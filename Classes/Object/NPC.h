@@ -5,7 +5,7 @@
 #include "json/document.h"
 #include "MapLayer.h"
 #include "MainCharacter.h"
-#include "Audio"
+#include "Audio.h"
 
 class NPC final: protected MapObject {
 	private:

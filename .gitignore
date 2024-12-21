@@ -123,3 +123,4 @@ tests/*/publish/
 
 # Android
 project.properties
+Classes/Object/NPC.h
