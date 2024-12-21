@@ -2,7 +2,7 @@
 NPC::NPC(MapLayer* parent, const Vec<int>& pos, std::string npcName, int emo, int length,bool pause)
 	: MapObject(pos), parent_(parent), name(npcName), emotion(emo),isPaused(pause)
 {
-	info_.size = Vec<int>(length, length);
+	info_.size = Vec<int>(2, 2);
 }
 
 NPC::~NPC()
@@ -11,7 +11,6 @@ NPC::~NPC()
 	npcSprite->unschedule("right_move_key");
 	npcSprite->unschedule("left_move_key");
 	npcSprite->unschedule("stay_key");
-	//关闭音乐
 }
 
 MapObject* NPC::create(rapidjson::Value& val, MapLayer* parent, const Vec<int>& pos)
@@ -34,13 +33,18 @@ void NPC::interact()
 	PlayerSprite* npcSprite = dynamic_cast<PlayerSprite*>(info_.sprite);
 	ItemType favorite;
 	auto it = Favorite.find(name);  // 查找对应的场景
+	UILogic::getInstance()->refreshNpcUI(name);
+	SceneManager::getInstance()->showUILayer("npc");
+	// SceneManager::getInstance()->hideUILayer("npc");
 	if (!currentItem)
 	{
+
 		pause();
 		npcSprite->schedule([=](float deltaTime) {
-			npcSprite->move(PlayerSprite::MOVEMENT::STAY, 6);
+			npcSprite->move(PlayerSprite::MOVEMENT::STAY, 3);
 			resume(); 
-			}, 6.0f, "stay_key");
+			}, 3.0f, "stay_key");
+
 	}
 	else if (it != Favorite.end()) {
 		favorite = it->second;
@@ -55,10 +59,6 @@ void NPC::interact()
 
 void NPC::init()
 {
-	if (name == "Abigail")
-	{
-		
-	}
 	DocumentManager* manager = DocumentManager::getInstance();
 	rapidjson::Document* doc = manager->getDocument(manager->getPath(name));
 	std::string plistFilePath = name+"Pls";
@@ -96,10 +96,10 @@ void NPC::defaultAction()
 			}, 11.0f, "left_move_key");
 	}
 	else if (name == "Abigail") {
-		;//此处播放音乐
+		;
 	}
 	else if (name == "Caroline") {
-		;//其他设计
+		;
 	}
 	
 }
@@ -164,9 +164,6 @@ bool NPC::hasCollision()
 {
 	return false;
 }
-
-
-
 
 
 

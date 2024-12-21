@@ -2,18 +2,6 @@
     "Name": "chicken_house",
     "TMX": "tiledmap/chicken_house.tmx",
     "ObjectList": {
-        "12 7":{
-            "Type":"Animal",
-            "Info":{
-                "Name":"chicken"
-            }
-        },
-        "12 4":{
-            "Type":"Animal",
-            "Info":{
-                "Name":"cow"
-            }
-        },
         "9 0":{
             "Type":"Gate",
             "Info":{

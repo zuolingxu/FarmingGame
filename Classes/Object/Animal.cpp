@@ -2,7 +2,7 @@
 
 Animal::Animal(MapLayer* parent, const Vec<int>& pos, std::string Type, int AnimalValue, int satiety, int length,float breedPro)
 	:
-	type(Type),
+ 	type(Type),
 	parent_(parent),
 	MapObject(pos),
 	value(AnimalValue),
@@ -73,7 +73,10 @@ void Animal::interact()
 	const Item* currentItem = maincharacter->getCurrentItem();
 	if (!currentItem)
 	{
-		//ÉùÒô
+		isSold = 1;
+		MainCharacter::getInstance()->modifyMoney(value);
+		//parent_->removeSpriteFromLayer(info_.sprite);
+		parent_->removeObject(info_);
 	}
 	else if (currentItem->type==ItemType::PUMPKIN) {
 		satiety += 30;
@@ -82,7 +85,6 @@ void Animal::interact()
 		satiety += 20;
 		breedProbility += 0.1f;
 	}
-
 	else
 		CCLOG("NPCinteract:name->favorite:error");
 }

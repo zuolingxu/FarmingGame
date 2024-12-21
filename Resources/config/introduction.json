@@ -1,5 +1,6 @@
 {
-    "Name": "introduction",
-    "TMX": "tiledmap/introduction.tmx",
-    "BackGroundColor":[51,102,153]
+  "Name": "introduction",
+  "TMX": "tiledmap/introduction.tmx",
+  "Audio": "Audio/Default.mp3",
+  "BackGroundColor": [ 51, 102, 153 ]
 }

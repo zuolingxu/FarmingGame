@@ -6,6 +6,8 @@
 #include "MapLayer.h"
 #include "MainCharacter.h"
 #include "Audio.h"
+#include "UIlogic.h"
+#include "SceneManager.h"
 
 class NPC final: protected MapObject {
 	private:

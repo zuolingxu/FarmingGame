@@ -615,12 +615,12 @@ void UILogic::refreshMoneyUI(int money_) {
 void UILogic::refreshNpcUI(std::string name) {
     if (!npcNode_) return;
 
-    if (!(name == "abigail" || name == "caroline" || name == "haley")) {
+    if (!(name == "Abigail" || name == "Caroline" || name == "Haley")) {
         return;
     }
     npcNode_->removeChild(npcNode_->getChildByName("potrait"));
 
-    if (name == "abigail") {
+    if (name == "Abigail") {
         auto potrait = ui::Button::create("image/abi.png", "image/abi.png");
         potrait->setPosition(Vec2(30, 120));
         potrait->setScale9Enabled(true);
@@ -628,7 +628,7 @@ void UILogic::refreshNpcUI(std::string name) {
         potrait->setName("portrait");
         npcNode_->addChild(potrait);
     }
-    else if (name == "caroline") {
+    else if (name == "Caroline") {
         auto potrait = ui::Button::create("image/caro.png", "image/caro.png");
         potrait->setPosition(Vec2(30, 120));
         potrait->setScale9Enabled(true);
