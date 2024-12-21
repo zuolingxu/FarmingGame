@@ -84,10 +84,9 @@ void UILogic::initManufactureNode(cocos2d::Node* manufactureNode)
     bindManufactureEvents();
 }
 
-void UILogic::initPopupNode(cocos2d::Node* popupNode)
+void UILogic::initFishNode(cocos2d::Node* fishNode)
 {
-    popupNode_ = popupNode;
-    bindPopupEvents();
+    fishNode_ = fishNode;
 }
 
 void UILogic::bindStartScreenEvents()
@@ -213,22 +212,6 @@ void UILogic::bindManufactureEvents()
     }
 }
 
-void UILogic::bindPopupEvents()
-{
-    if (!popupNode_) return;
-
-    auto sell = dynamic_cast<ui::Button*>(manufactureNode_->getChildByName("choosebox1"));
-    if (sell)
-    {
-        sell->addTouchEventListener(CC_CALLBACK_2(UILogic::onSellButtonClicked, this));
-    }
-
-    auto feed = dynamic_cast<ui::Button*>(manufactureNode_->getChildByName("choosebox2"));
-    if (feed)
-    {
-        feed->addTouchEventListener(CC_CALLBACK_2(UILogic::onFeedButtonClicked, this));
-    }
-}
 
 void UILogic::onNewButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
 {
@@ -393,19 +376,6 @@ void UILogic::onSoupClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType typ
     }
 }
 
-void UILogic::onSellButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type) {
-    if (type != ui::Widget::TouchEventType::ENDED) return;
-
-    auto button = dynamic_cast<ui::Button*>(sender);
-    if (!button) return;
-
-    MainCharacter::getInstance()->modifyMoney(100);
-
-}
-
-void UILogic::onFeedButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type) {
-
-}
 
 void UILogic::useItemFromBag(int slotIndex)
 {
@@ -633,34 +603,57 @@ void UILogic::refreshMoneyUI(int money_) {
 void UILogic::refreshNpcUI(std::string name) {
     if (!npcNode_) return;
 
-    if (!(name == "abigail" || name == "caroline" || name == "haley")) {
+    if (!(name == "Abigail" || name == "Caroline" || name == "Haley")) {
         return;
     }
-    npcNode_->removeChild(npcNode_->getChildByName("potrait"));
+    npcNode_->removeChild(npcNode_->getChildByName("portrait"));
 
-    if (name == "abigail") {
+    if (name == "Abigail") {
         auto potrait = ui::Button::create("image/abi.png", "image/abi.png");
-        potrait->setPosition(Vec2(30, 120));
-        potrait->setScale9Enabled(true);
-        potrait->setContentSize(Size(40, 40));
+        potrait->setPosition(Vec2(90, 142));
         potrait->setName("portrait");
         npcNode_->addChild(potrait);
     }
-    else if (name == "caroline") {
+    else if (name == "Caroline") {
         auto potrait = ui::Button::create("image/caro.png", "image/caro.png");
-        potrait->setPosition(Vec2(30, 120));
-        potrait->setScale9Enabled(true);
-        potrait->setContentSize(Size(40, 40));
+        potrait->setPosition(Vec2(90, 142));
         potrait->setName("portrait");
         npcNode_->addChild(potrait);
     }
     else {
         auto potrait = ui::Button::create("image/hal.png", "image/hal.png");
-        potrait->setPosition(Vec2(30, 120));
-        potrait->setScale9Enabled(true);
-        potrait->setContentSize(Size(40, 40));
+        potrait->setPosition(Vec2(90, 142));
         potrait->setName("portrait");
         npcNode_->addChild(potrait);
+    }
+}
+
+void UILogic::refreshFishUI() {
+    static int count = 0;
+    int i = count % 3;
+    count++;
+    if (i == 0) {
+        auto fishbox = fishNode_->getChildByName("fishbox");
+        fishbox->removeAllChildren();
+        auto fish= ui::Button::create("image/bagobjects-0.png", "image/bagobjects-0.png");
+        fish->setPosition(Vec(20, 20));
+        fishbox->addChild(fish);
+        MainCharacter::getInstance()->modifyItemQuantity(ItemType::FISH, 1);
+    }
+    else if (i == 1) {
+        auto fishbox = fishNode_->getChildByName("fishbox");
+        fishbox->removeAllChildren();
+        auto fish = ui::Button::create("image/bagobjects-7.png", "image/bagobjects-7.png");
+        fish->setPosition(Vec(20, 20));
+        fishbox->addChild(fish);
+        MainCharacter::getInstance()->modifyItemQuantity(ItemType::ROCK, 1);
+    }
+    else {
+        auto fishbox = fishNode_->getChildByName("fishbox");
+        fishbox->removeAllChildren();
+        auto fish = ui::Text::create("Nothing!", "fonts/Marker Felt.ttf", 12);
+        fish->setPosition(Vec(50, 20));
+        fishbox->addChild(fish);
     }
 }
 

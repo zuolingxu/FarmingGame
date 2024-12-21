@@ -59,7 +59,7 @@ void Gate::interact()
 			}*/
 
 		}
-
+	
 
 
 
