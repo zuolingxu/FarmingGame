@@ -25,13 +25,10 @@ UILogic::UILogic()
     : startScreenNode_(nullptr)
     , bagNode_(nullptr)
     , taskBarNode_(nullptr)
-    , mainCharacter_(nullptr)
 {
     // 获取其他管理器实例
     initTasks();
     bagItems_ = new std::vector<Item>();
-    saveManager_ = DocumentManager::getInstance();
-    mainCharacter_ = MainCharacter::getInstance();
 }
 
 UILogic::~UILogic()
@@ -47,8 +44,8 @@ void UILogic::initStartScreenNode(cocos2d::Node* startScreenNode)
 void UILogic::initBagNode(cocos2d::Node* bagNode)
 {
     bagNode_ = bagNode;
+    refreshBagUI();
     bindBagEvents(); 
-    refreshBagUI();  
 }
 
 void UILogic::initTaskBarNode(cocos2d::Node* taskBarNode)
@@ -76,10 +73,21 @@ void UILogic::initShopNode(cocos2d::Node* shopNode)
     bindShopEvents();
 }
 
+void UILogic::initTimeNode(cocos2d::Node* timeNode)
+{
+    timeNode_ = timeNode;
+}
+
 void UILogic::initManufactureNode(cocos2d::Node* manufactureNode)
 {
     manufactureNode_ = manufactureNode;
     bindManufactureEvents();
+}
+
+void UILogic::initPopupNode(cocos2d::Node* popupNode)
+{
+    popupNode_ = popupNode;
+    bindPopupEvents();
 }
 
 void UILogic::bindStartScreenEvents()
@@ -142,12 +150,9 @@ void UILogic::bindLoadArchiveEvents()
 {
     if (!loadArchiveNode_) return;
 
-    rapidjson::Value& val = (*DocumentManager::getInstance()->getConfigDocument())["Archive"];
-    std::string save = val.GetString();
-    int savenum = std::stoi(save.substr(5));
-    for (int i = 0; i < savenum; ++i)
+    for (int i = 0; i < UI_num; ++i)
     {
-        auto archive = dynamic_cast<ui::Button*>(bagNode_->getChildByName("Save_" + std::to_string(i)));
+        auto archive = dynamic_cast<ui::Button*>(loadArchiveNode_->getChildByName("Save_" + std::to_string(i+1)));
         if (archive) {
             archive->addTouchEventListener(CC_CALLBACK_2(UILogic::onArchiveClicked, this));
         }
@@ -173,6 +178,21 @@ void UILogic::bindShopEvents()
     {
         pumpkin->addTouchEventListener(CC_CALLBACK_2(UILogic::onPumpkinClicked, this));
     }
+    auto sell_cauliflower = dynamic_cast<ui::Button*>(shopNode_->getChildByName("sell_cauliflower"));
+    if (sell_cauliflower)
+    {
+        sell_cauliflower->addTouchEventListener(CC_CALLBACK_2(UILogic::onSellCauliflowerClicked, this));
+    }
+    auto sell_potato = dynamic_cast<ui::Button*>(shopNode_->getChildByName("sell_potato"));
+    if (sell_potato)
+    {
+        sell_potato->addTouchEventListener(CC_CALLBACK_2(UILogic::onSellPotatoClicked, this));
+    }
+    auto sell_pumpkin = dynamic_cast<ui::Button*>(shopNode_->getChildByName("sell_pumpkin"));
+    if (sell_pumpkin)
+    {
+        sell_pumpkin->addTouchEventListener(CC_CALLBACK_2(UILogic::onSellPumpkinClicked, this));
+    }
 }
 
 void UILogic::bindManufactureEvents()
@@ -192,43 +212,35 @@ void UILogic::bindManufactureEvents()
     }
 }
 
+void UILogic::bindPopupEvents()
+{
+    if (!popupNode_) return;
+
+    auto sell = dynamic_cast<ui::Button*>(manufactureNode_->getChildByName("choosebox1"));
+    if (sell)
+    {
+        sell->addTouchEventListener(CC_CALLBACK_2(UILogic::onSellButtonClicked, this));
+    }
+
+    auto feed = dynamic_cast<ui::Button*>(manufactureNode_->getChildByName("choosebox2"));
+    if (feed)
+    {
+        feed->addTouchEventListener(CC_CALLBACK_2(UILogic::onFeedButtonClicked, this));
+    }
+}
+
 void UILogic::onNewButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
 {
     int i = 1;
     while (!DocumentManager::getInstance()->createArchiveDocument(i)) { i++; }
-    SceneManager::getInstance()->NextMap("town","5 5");
+    SceneManager::getInstance()->NextMap("player_house", "14 2");
+    refreshArchiveUI();
 }
 
 void UILogic::onLoadButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
 {
-//    if (type != ui::Widget::TouchEventType::ENDED) return;
-//
-//    CCLOG("Load Button Clicked");
-//    if (saveManager_->hasSave())
-//    {
-//        bool loaded = saveManager_->loadSave();
-//        if (loaded)
-//        {
-//            CCLOG("Save loaded.");
-//            std::string mapName = saveManager_->getSavedMapName();
-//            std::string playerPos = saveManager_->getSavedPlayerPosition();
-//            sceneManager_->switchToMap(mapName, playerPos);
-//            startScreenNode_->setVisible(false);
-//
-//            // 重新加载数据并刷新UI
-//            loadDataFromSave();
-//            refreshBagUI();
-//            updateTaskUI();
-//        }
-//        else
-//        {
-//            CCLOG("Failed to load save.");
-//        }
-//    }
-//    else
-//    {
-//        CCLOG("No save found.");
-//    }
+    SceneManager::getInstance()->showUILayer("loadarchive");
+
 }
 
 void UILogic::onExitButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
@@ -284,7 +296,7 @@ void UILogic::onCauliflowerClicked(cocos2d::Ref* sender, ui::Widget::TouchEventT
     auto button = dynamic_cast<ui::Button*>(sender);
     if (!button) return;
 
-    mainCharacter_->modifyItemQuantity(ItemType::CAULIFLOWER_SEED, 1);
+    MainCharacter::getInstance()->modifyItemQuantity(ItemType::CAULIFLOWER_SEED, 1);
 }
 
 void UILogic::onPotatoClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type) {
@@ -293,7 +305,7 @@ void UILogic::onPotatoClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType t
     auto button = dynamic_cast<ui::Button*>(sender);
     if (!button) return;
 
-    mainCharacter_->modifyItemQuantity(ItemType::POTATO_SEED, 1);
+    MainCharacter::getInstance()->modifyItemQuantity(ItemType::POTATO_SEED, 1);
 }
 
 void UILogic::onPumpkinClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type) {
@@ -302,7 +314,49 @@ void UILogic::onPumpkinClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType 
     auto button = dynamic_cast<ui::Button*>(sender);
     if (!button) return;
 
-    mainCharacter_->modifyItemQuantity(ItemType::PUMPKIN_SEED, 1);
+    MainCharacter::getInstance()->modifyItemQuantity(ItemType::PUMPKIN_SEED, 1);
+}
+
+void UILogic::onSellCauliflowerClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type) {
+    if (type != ui::Widget::TouchEventType::ENDED) return;
+
+    auto button = dynamic_cast<ui::Button*>(sender);
+    if (!button) return;
+
+    if (MainCharacter::getInstance()->modifyItemQuantity(ItemType::CAULIFLOWER, -1)) {
+        MainCharacter::getInstance()->modifyMoney(100);
+    }
+    else {
+        return;
+    }
+}
+
+void UILogic::onSellPotatoClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type) {
+    if (type != ui::Widget::TouchEventType::ENDED) return;
+
+    auto button = dynamic_cast<ui::Button*>(sender);
+    if (!button) return;
+
+    if (MainCharacter::getInstance()->modifyItemQuantity(ItemType::POTATO, -1)) {
+        MainCharacter::getInstance()->modifyMoney(60);
+    }
+    else {
+        return;
+    }
+}
+
+void UILogic::onSellPumpkinClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type) {
+    if (type != ui::Widget::TouchEventType::ENDED) return;
+
+    auto button = dynamic_cast<ui::Button*>(sender);
+    if (!button) return;
+
+    if (MainCharacter::getInstance()->modifyItemQuantity(ItemType::PUMPKIN, -1)) {
+        MainCharacter::getInstance()->modifyMoney(160);
+    }
+    else {
+        return;
+    }
 }
 
 void UILogic::onFertilizerClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type) {
@@ -310,8 +364,8 @@ void UILogic::onFertilizerClicked(cocos2d::Ref* sender, ui::Widget::TouchEventTy
 
     auto button = dynamic_cast<ui::Button*>(sender);
     if (!button) return;
-    if (mainCharacter_->modifyItemQuantity(ItemType::ROCK, -2)) {
-        mainCharacter_->modifyItemQuantity(ItemType::FERTILIZER, 1);
+    if (MainCharacter::getInstance()->modifyItemQuantity(ItemType::ROCK, -2)) {
+        MainCharacter::getInstance()->modifyItemQuantity(ItemType::FERTILIZER, 1);
     }
     else {
         return;
@@ -324,12 +378,20 @@ void UILogic::onSoupClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType typ
     auto button = dynamic_cast<ui::Button*>(sender);
     if (!button) return;
 
-    if (mainCharacter_->modifyItemQuantity(ItemType::CAULIFLOWER, -2)) {
-        mainCharacter_->modifyItemQuantity(ItemType::SOUP, 1);
+    if (MainCharacter::getInstance()->modifyItemQuantity(ItemType::CAULIFLOWER, -2)) {
+        MainCharacter::getInstance()->modifyItemQuantity(ItemType::SOUP, 1);
     }
     else {
         return;
     }
+}
+
+void UILogic::onSellButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type) {
+
+}
+
+void UILogic::onFeedButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type) {
+
 }
 
 void UILogic::useItemFromBag(int slotIndex)
@@ -338,13 +400,30 @@ void UILogic::useItemFromBag(int slotIndex)
     auto& item = (*bagItems_)[slotIndex];
 
     // TODO:将该物品返回给MainCharacter
-    mainCharacter_->setCurrentItem(item.type);
+    MainCharacter::getInstance()->setCurrentItem(item.type);
+    for (int i = 0; i < 24; ++i) {
+        auto slot = dynamic_cast<ui::Button*>(bagNode_->getChildByName("Slot_" + std::to_string(i)));
+        auto selected = slot->getChildByName("selected");
+        if (selected) {
+            slot->removeChildByName("selected");
+        }
+    }
+
+    auto slot = bagNode_->getChildByName("Slot_" + std::to_string(slotIndex));
+    auto selected = ui::Button::create("image/selected_tile.png", "image/selected_tile.png");
+    selected->setScale9Enabled(true);
+    selected->setContentSize(Size(20, 20));
+    selected->setPosition(Vec2(10, 10));
+    selected->setName("selected");
+    slot->addChild(selected);
 }
 
 void UILogic::LoadArchive(int saveIndex) {
-
-    //TODO:Load archive,change map.
+    DocumentManager::getInstance()->loadArchiveDocument(saveIndex);
+    MainCharacter::getInstance();
+    SceneManager::getInstance() -> NextMap("player_house", "14 2");
     refreshArchiveUI();
+    bindLoadArchiveEvents();
 }
 
 void UILogic::onTaskItemClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
@@ -367,6 +446,11 @@ void UILogic::onTaskItemClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType
 
 void UILogic::updateBagItems(std::vector<Item>* bagitem) {
     bagItems_ = bagitem;
+    for (size_t i = (*bagItems_).size(); i < 24; i++) {
+        auto slot = dynamic_cast<ui::Button*>(bagNode_->getChildByName("Slot_" + std::to_string(i)));
+        slot->setEnabled(false);
+        slot->setBright(true);
+    }
     refreshBagUI();
 }
 
@@ -399,17 +483,16 @@ void UILogic::refreshBagUI()
                 auto itemSprite = Sprite::create(item.iconPath);
                 if (itemSprite)
                 {
-                    itemSprite->setContentSize(Size(slotSize-2, slotSize-2));
                     itemSprite->setPosition(Vec2( slotSize / 2 ,  slotSize / 2 ));
                     slot->addChild(itemSprite);
                 }
 
                 if (item.quantity > 1)
                 {
-                    auto quantityLabel = ui::Text::create(std::to_string(item.quantity), "Arial", 10);
+                    auto quantityLabel = ui::Text::create(std::to_string(item.quantity), "fonts/arial.ttf", 8);
                     quantityLabel->setTextColor(Color4B::WHITE);
                     quantityLabel->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
-                    quantityLabel->setPosition(Vec2(col * slotSize + slotSize / 2 + 125, row * slotSize + slotSize / 2 -5));
+                    quantityLabel->setPosition(Vec2( slotSize / 2 +7,  slotSize / 2 -7));
                     slot->addChild(quantityLabel);
                 }
             }
@@ -459,9 +542,11 @@ void UILogic::refreshArchiveUI() {
 
     rapidjson::Value& val = (*DocumentManager::getInstance()->getConfigDocument())["Archive"];
 
-    int i = 0;
-    for (auto& save : val.GetObject())
+
+    UI_num = val.GetObject().MemberCount();
+    for (int i = 1 ; i <= UI_num; i++)
     {
+        auto& save = val[("Save_" + std::to_string(i)).c_str()];
         auto archiveButton = ui::Button::create("image/textBox..png", "image/textBox..png");
         archiveButton->setScale9Enabled(true);
         archiveButton->setContentSize(Size(360, 50));
@@ -469,29 +554,33 @@ void UILogic::refreshArchiveUI() {
         archiveButton->setPosition(Vec2(240, y));
         archiveButton->setName("Save_" + std::to_string(i));
 
-        auto archiveLabel = ui::Text::create("Day:"+std::to_string(save.value["day"].GetInt())+"  Money:"+std::to_string(save.value["money"].GetInt()), "fonts/Marker Felt.ttf", 10);
-        archiveLabel->setPosition(Vec2(180, 25));
+        auto archiveLabel = ui::Text::create("Save_" + std::to_string(i) + "\n" + "Day:"+std::to_string(save["day"].GetInt())+
+            "  Money:"+std::to_string(save["money"].GetInt()), "fonts/Marker Felt.ttf", 10);
+        archiveLabel->setPosition(Vec2(190, 25));
         archiveButton->addChild(archiveLabel);
 
         loadArchiveNode_->addChild(archiveButton);
-        i++;
     }
+    bindLoadArchiveEvents();
 }
 
 void UILogic::refreshTimeUI(int day_,float hour_) {
     if (!timeNode_) return;
 
     auto displayer= dynamic_cast<ui::Button*>(timeNode_->getChildByName("displayer"));
-    displayer->removeChild(timeNode_->getChildByName("day"));
-    displayer->removeChild(timeNode_->getChildByName("hour"));
+    displayer->removeChild(displayer->getChildByName("day"));
+    displayer->removeChild(displayer->getChildByName("hour"));
 
     auto day = ui::Text::create("Day: "+std::to_string(day_), "fonts/Marker Felt.ttf", 10);
-    day->setPosition(Vec2(20, 35));
+    day->setPosition(Vec2(48, 35));
+    day->setColor(Color3B(93, 59, 23));
     day->setName("day");
     displayer->addChild(day);
 
-    auto hour = ui::Text::create(std::to_string(hour_)+":00", "fonts/Marker Felt.ttf", 10);
-    hour->setPosition(Vec2(20, 15));
+    int Hour = static_cast<int>(hour_);
+    auto hour = ui::Text::create(std::to_string(Hour)+":00", "fonts/Marker Felt.ttf", 10);
+    hour->setPosition(Vec2(48, 25));
+    hour->setColor(Color3B(93, 59, 23));
     hour->setName("hour");
     displayer->addChild(hour);
 }
@@ -500,13 +589,28 @@ void UILogic::refreshPowerUI(int power_) {
     if (!timeNode_) return;
 
     auto displayer = dynamic_cast<ui::Button*>(timeNode_->getChildByName("displayer"));
-    displayer->removeChild(timeNode_->getChildByName("power"));
+    displayer->removeChild(displayer->getChildByName("power"));
 
-    auto power = ui::Text::create("Power: "+std::to_string(power_), "fonts/Marker Felt.ttf", 10);
-    power->setPosition(Vec2(20, 5));
+    auto power = ui::Text::create("Power:"+std::to_string(power_), "fonts/Marker Felt.ttf", 10);
+    power->setPosition(Vec2(53, 65));
+    power->setColor(Color3B(93, 59, 23));
     power->setName("power");
     displayer->addChild(power);
 }
+
+void UILogic::refreshMoneyUI(int money_) {
+    if (!timeNode_) return;
+
+    auto displayer = dynamic_cast<ui::Button*>(timeNode_->getChildByName("displayer"));
+    displayer->removeChild(displayer->getChildByName("money"));
+
+    auto money = ui::Text::create("Money:" + std::to_string(money_), "fonts/Marker Felt.ttf", 10);
+    money->setPosition(Vec2(45, 7));
+    money->setColor(Color3B(93, 59, 23));
+    money->setName("money");
+    displayer->addChild(money);
+}
+
 
 void UILogic::refreshNpcUI(std::string name) {
     if (!npcNode_) return;

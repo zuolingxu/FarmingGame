@@ -70,7 +70,7 @@ MainCharacter::MainCharacter():currentItem(nullptr),money(0) {
 
     //todo shuaxinbeibao
     // show bag item in ui
-    // UILogic::getInstance()->updateBagItems(*inventory);
+     UILogic::getInstance()->updateBagItems(inventory);
 
 }
 
@@ -121,7 +121,7 @@ MainCharacter* MainCharacter::getInstance() {
 }
 
 
-const std::vector<Item>* MainCharacter::getInventory() const {
+const std::vector<Item>const* MainCharacter::getInventory() const {
     return inventory;// Return the list of items in the inventory
 }
 
@@ -177,6 +177,7 @@ bool MainCharacter::modifyItemQuantity(ItemType type, int delta) {
             }
 
             //todo shuaxinwupinlan
+            UILogic::getInstance()->updateBagItems(inventory);
             return 1;  // Operation successful
         }
     }
@@ -184,6 +185,7 @@ bool MainCharacter::modifyItemQuantity(ItemType type, int delta) {
     // If the item is not found, and delta is positive, add the item to the inventory
     if (delta > 0) {
         inventory->push_back(Item(type, delta));  // Add new item with quantity
+        UILogic::getInstance()->updateBagItems(inventory);
         return 1;  // Item added successfully
     }
 

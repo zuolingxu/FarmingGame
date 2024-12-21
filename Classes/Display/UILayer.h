@@ -13,7 +13,8 @@ enum class UILayerType {
     LOAD_ARCHIVE,
     TIME,
     SHOP,
-    MANUFACTURE
+    MANUFACTURE,
+    POPUP
 };
 
 class UILayer : public cocos2d::Ref
@@ -42,6 +43,7 @@ public:
     cocos2d::ui::Layout* getTimeLayout() const { return timeLayout_; }
     cocos2d::ui::Layout* getShopLayout() const { return shopLayout_; }
     cocos2d::ui::Layout* getManufactureLayout() const { return manufactureLayout_; }
+    cocos2d::ui::Layout* getPopupLayout() const { return popupLayout_; }
 
 private:
     // UI 组件
@@ -53,6 +55,7 @@ private:
     cocos2d::ui::Layout* timeLayout_;
     cocos2d::ui::Layout* shopLayout_;
     cocos2d::ui::Layout* manufactureLayout_;
+    cocos2d::ui::Layout* popupLayout_;
     std::vector<std::string> Sentence;
 
     // 创建各个 UI 组件的方法
@@ -64,6 +67,7 @@ private:
     void createTimeLayout();
     void createShopLayout();
     void createManufactureLayout();
+    void createPopupLayout();
 
     void initSentence();
 
