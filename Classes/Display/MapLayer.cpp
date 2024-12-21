@@ -293,6 +293,15 @@ void MapLayer::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Ev
             SceneManager::getInstance()->showUILayer("manufacture");
         }
         break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_F:
+    case cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_F:
+        if (SceneManager::getInstance()->getCurrentUIName() == "shop") {
+            SceneManager::getInstance()->hideUILayer("shop");
+        }
+        else {
+            SceneManager::getInstance()->showUILayer("shop");
+        }
+        break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F1:
         loadPlist(manager->getPath("CowPls"));
         addSpriteWithFrame(obj, "cow-0.png");
