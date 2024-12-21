@@ -27,24 +27,24 @@
       "quantity": 5
     }
   ],
-    
-    "relationship": {
-        "Caroline": 0,
-        "Abigail": 0,
-        "Haley":0
-    },
 
-    "friendship":{
-        "Caroline": false,
-        "Abigail": false,
-        "Haley":false
-    },
+  "relationship": {
+    "Caroline": 0,
+    "Abigail": 0,
+    "Haley": 0
+  },
 
-    "marriage":{
-        "Caroline": false,
-        "Abigail": false,
-        "Haley":false
-    },
+  "friendship": {
+    "Caroline": false,
+    "Abigail": false,
+    "Haley": false
+  },
+
+  "marriage": {
+    "Caroline": false,
+    "Abigail": false,
+    "Haley": false
+  },
 
 
   "Map": {
@@ -176,6 +176,17 @@
           "MineralType": "stone",
           "IsMined": false
         }
+      }
+    },
+    "chicken_house": {
+      "5 8": {
+        "Type": "Animal",
+        "Info": {
+          "AnimalType": "Chicken",
+          "Value": 50,
+          "Length": 1
+        }
+
       }
     }
   }
