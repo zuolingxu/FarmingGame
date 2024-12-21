@@ -80,13 +80,19 @@ private:
 
     void bindManufactureEvents();
 
+    void bindFishEvents();
+
     void onNewButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 
     void onLoadButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 
     void onExitButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 
-    void onCloseButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+    void onCloseTaskBarClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+
+    void onCloseNpcClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+
+    void onCloseFishClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 
     void onBagSlotClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 

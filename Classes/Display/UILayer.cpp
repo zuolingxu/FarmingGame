@@ -97,7 +97,7 @@ bool UILayer::initWithType(UILayerType type)
             break;
         case UILayerType::FISHING:
             createFishLayout();
-            uilogic->initPopupNode(fishLayout_);
+            uilogic->initFishNode(fishLayout_);
             break;
         default:
             break;
@@ -428,11 +428,16 @@ void UILayer::createFishLayout()
     fishLayout_->setName("fish");
 
     auto fishbox = ui::Button::create("image/fish.png", "image/fish.png");
-    fishbox->setScale(2.5);
-    fishbox->setPosition(Vec2(240, 200));
+    fishbox->setPosition(Vec2(260, 240));
     fishbox->setName("fishbox");
 
+    auto closeButton = ui::Button::create("image/exit.png", "image/exit.png");
+    closeButton->setScale(0.7);
+    closeButton->setPosition(Vec2(296, 265));
+    closeButton->setName("CloseButton");
+
     fishLayout_->addChild(fishbox);
+    fishLayout_->addChild(closeButton);
 }
 
 void UILayer::initSentence() {

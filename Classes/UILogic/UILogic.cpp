@@ -87,6 +87,7 @@ void UILogic::initManufactureNode(cocos2d::Node* manufactureNode)
 void UILogic::initFishNode(cocos2d::Node* fishNode)
 {
     fishNode_ = fishNode;
+    bindFishEvents();
 }
 
 void UILogic::bindStartScreenEvents()
@@ -130,7 +131,7 @@ void UILogic::bindTaskBarEvents()
 
     auto closeButton = dynamic_cast<ui::Button*>(taskBarNode_->getChildByName("CloseButton"));
     if (closeButton) {
-        closeButton->addTouchEventListener(CC_CALLBACK_2(UILogic::onCloseButtonClicked, this));
+        closeButton->addTouchEventListener(CC_CALLBACK_2(UILogic::onCloseTaskBarClicked, this));
     }
 }
 
@@ -141,7 +142,7 @@ void UILogic::bindNpcEvents()
     auto closeButton = dynamic_cast<ui::Button*>(npcNode_->getChildByName("CloseButton"));
     if (closeButton)
     {
-        closeButton->addTouchEventListener(CC_CALLBACK_2(UILogic::onCloseButtonClicked, this));
+        closeButton->addTouchEventListener(CC_CALLBACK_2(UILogic::onCloseNpcClicked, this));
     }
 }
 
@@ -212,6 +213,15 @@ void UILogic::bindManufactureEvents()
     }
 }
 
+void UILogic::bindFishEvents()
+{
+    if (!fishNode_) return;
+
+    auto closeButton = dynamic_cast<ui::Button*>(fishNode_->getChildByName("CloseButton"));
+    if (closeButton) {
+        closeButton->addTouchEventListener(CC_CALLBACK_2(UILogic::onCloseFishClicked, this));
+    }
+}
 
 void UILogic::onNewButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
 {
@@ -232,22 +242,33 @@ void UILogic::onExitButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventTy
 {
 
     Director::getInstance()->end();
-
 }
 
-void UILogic::onCloseButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
+void UILogic::onCloseTaskBarClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
 {
     if (type != ui::Widget::TouchEventType::ENDED) return;
 
-    if (bagNode_)
-    {
-        bagNode_->setVisible(false);
+    if (taskBarNode_) {
+        taskBarNode_->setVisible(false);
     }
+}
+
+void UILogic::onCloseNpcClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
+{
+    if (type != ui::Widget::TouchEventType::ENDED) return;
 
     if (npcNode_) {
         npcNode_->setVisible(false);
     }
+}
 
+void UILogic::onCloseFishClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
+{
+    if (type != ui::Widget::TouchEventType::ENDED) return;
+
+    if (fishNode_) {
+        fishNode_->setVisible(false);
+    }
 }
 
 void UILogic::onBagSlotClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
@@ -636,7 +657,7 @@ void UILogic::refreshFishUI() {
         auto fishbox = fishNode_->getChildByName("fishbox");
         fishbox->removeAllChildren();
         auto fish= ui::Button::create("image/bagobjects-0.png", "image/bagobjects-0.png");
-        fish->setPosition(Vec(20, 20));
+        fish->setPosition(Vec(19, 21));
         fishbox->addChild(fish);
         MainCharacter::getInstance()->modifyItemQuantity(ItemType::FISH, 1);
     }
@@ -644,7 +665,7 @@ void UILogic::refreshFishUI() {
         auto fishbox = fishNode_->getChildByName("fishbox");
         fishbox->removeAllChildren();
         auto fish = ui::Button::create("image/bagobjects-7.png", "image/bagobjects-7.png");
-        fish->setPosition(Vec(20, 20));
+        fish->setPosition(Vec(19, 21));
         fishbox->addChild(fish);
         MainCharacter::getInstance()->modifyItemQuantity(ItemType::ROCK, 1);
     }
@@ -652,6 +673,7 @@ void UILogic::refreshFishUI() {
         auto fishbox = fishNode_->getChildByName("fishbox");
         fishbox->removeAllChildren();
         auto fish = ui::Text::create("Nothing!", "fonts/Marker Felt.ttf", 12);
+        fish->setColor(Color3B(0, 0, 0));
         fish->setPosition(Vec(50, 20));
         fishbox->addChild(fish);
     }

@@ -320,7 +320,7 @@ void MapLayer::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Ev
         player->move(PlayerSprite::MOVEMENT::W_RIGHT, 12);
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F6:
-        MainCharacter::getInstance()->setCurrentItem(ItemType::WATERING_CAN);
+        SceneManager::getInstance()->NextMap("beach","12 5");
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F7:
         MainCharacter::getInstance()->setCurrentItem(ItemType::CAULIFLOWER_SEED);
