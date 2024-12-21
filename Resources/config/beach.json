@@ -1,7 +1,7 @@
 {
     "Name": "beach",
     "TMX": "TiledMap/beach.tmx",
-    "BackGroundColor":[51,102,153],
+    "BackGroundColor":[0, 79, 152],
     "ObjectList":{
         "0 17":{
             "Type": "Gate",
