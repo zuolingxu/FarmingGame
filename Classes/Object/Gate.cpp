@@ -59,7 +59,15 @@ void Gate::interact()
 			}*/
 
 		}
+		else if (Function == "for_fishing")
+		{
 
+			// todo
+			// function fish 
+			// CCLOG("i");
+
+
+		}
 		//todo
 		//  if(is_fishing)
 	}
