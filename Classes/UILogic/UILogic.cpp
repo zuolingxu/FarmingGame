@@ -306,7 +306,7 @@ void UILogic::onCauliflowerClicked(cocos2d::Ref* sender, ui::Widget::TouchEventT
     if (MainCharacter::getInstance()->modifyMoney(-50)) {
         MainCharacter::getInstance()->modifyItemQuantity(ItemType::CAULIFLOWER_SEED, 1);
     }
-    completeTask(1);
+
 }
 
 void UILogic::onPotatoClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type) {
@@ -338,6 +338,7 @@ void UILogic::onSellCauliflowerClicked(cocos2d::Ref* sender, ui::Widget::TouchEv
 
     if (MainCharacter::getInstance()->modifyItemQuantity(ItemType::CAULIFLOWER, -1)) {
         MainCharacter::getInstance()->modifyMoney(100);
+        completeTask(1);
     }
     else {
         return;
@@ -446,7 +447,9 @@ void UILogic::onTaskItemClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType
         return;
     }
 
-    tasks_.erase(tasks_.begin() + taskIndex);
+    auto task = taskBarNode_->getChildByName(taskName);
+    task->setVisible(false);
+    tasks_[taskIndex].clicked = true;
     updateTaskUI();
 }
 
@@ -526,7 +529,9 @@ void UILogic::updateTaskUI()
         taskButton->setContentSize(Size(360, 50));
         taskButton->setPosition(Vec2(240, 250 - i * 50));
         taskButton->setName("Task_" + std::to_string(i));
-
+        if (tasks_[i].clicked == true) {
+            taskButton->setVisible(false);
+        }
         auto taskLabel = ui::Text::create(task.description, "fonts/arial.ttf", 12);
         taskLabel->setColor(Color3B(0, 0, 0));
         taskLabel->setPosition(Vec2(180,25));
@@ -633,12 +638,12 @@ void UILogic::refreshLevelUI(int level_) {
     auto displayer = dynamic_cast<ui::Button*>(timeNode_->getChildByName("displayer"));
     displayer->removeChild(displayer->getChildByName("level"));
 
-    auto level = ui::Text::create("Level:" + std::to_string(level_), "fonts/arial.ttf", 8);
+    auto level = ui::Text::create("LEVEL:" + std::to_string(level_), "fonts/arial.ttf", 8);
     level->setPosition(Vec2(45, 52));
     level->setColor(Color3B(93, 59, 23));
     level->setName("level");
     displayer->addChild(level);
-    if (level_ == 5) {
+    if (level_ >= 5) {
         completeTask(0);
     }
 }

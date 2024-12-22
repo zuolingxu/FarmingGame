@@ -11,8 +11,9 @@
 struct Task {
     std::string description;
     bool completed;
+    bool clicked;
     Task(const std::string& desc = "", bool done = false)
-        : description(desc), completed(done) {}
+        : description(desc), completed(done),clicked(done) {}
 };
 
 

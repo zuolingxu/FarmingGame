@@ -253,7 +253,7 @@ void UILayer::createTimeLayout()
     money->setName("money");
     displayer->addChild(money);
 
-    auto level= ui::Text::create("Level:1", "fonts/arial.ttf", 8);
+    auto level= ui::Text::create("LEVEL:1", "fonts/arial.ttf", 8);
     level->setColor(Color3B(93, 59, 23));
     level->setPosition(Vec2(45, 52));
     level->setName("level");
