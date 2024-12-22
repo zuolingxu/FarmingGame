@@ -1,6 +1,7 @@
 #include "NPC.h"
-NPC::NPC(MapLayer* parent, const Vec<int>& pos, std::string npcName, int emo, int length,bool pause)
-	: MapObject(pos), parent_(parent), name(npcName), emotion(emo),isPaused(pause)
+
+NPC::NPC(MapLayer* parent, const Vec<int>& pos, std::string npcName, int emo, int length, bool pause)
+	: MapObject(pos), parent_(parent), name(npcName), emotion(emo), isPaused(pause)
 {
 	info_.size = Vec<int>(2, 2);
 }
@@ -20,27 +21,28 @@ MapObject* NPC::create(rapidjson::Value& val, MapLayer* parent, const Vec<int>& 
 	if (val.HasMember("Emotion") && val["Emotion"].IsInt()) {
 		length = val["Emotion"].GetInt();
 	}
-	return new NPC(parent, pos, npcName, emo, length,false);
+	return new NPC(parent, pos, npcName, emo, length, false);
 }
 
+// Interact with the player, including receiving gifts and chatting with the player
 void NPC::interact()
 {
 	MainCharacter* maincharacter = MainCharacter::getInstance();
 	const Item* currentItem = maincharacter->getCurrentItem();
 	PlayerSprite* npcSprite = dynamic_cast<PlayerSprite*>(info_.sprite);
 	ItemType favorite;
-	auto it = Favorite.find(name);  // 查找对应的场景
+	auto it = Favorite.find(name);  // Find the corresponding scene
 
-	UILogic::getInstance()->refreshNpcUI(name,emotion);
+	UILogic::getInstance()->refreshNpcUI(name, emotion);
 	SceneManager::getInstance()->showUILayer("npc");
 
 	// SceneManager::getInstance()->hideUILayer("npc");
-	if (!currentItem)
+	if (!currentItem)                                   // If the player doesn't have a gift, only chat
 	{
 		pause();
 		npcSprite->schedule([=](float deltaTime) {
 			npcSprite->move(PlayerSprite::MOVEMENT::STAY, 3);
-			resume(); 
+			resume();
 			}, 3.0f, "stay_key");
 
 	}
@@ -48,28 +50,36 @@ void NPC::interact()
 		MainCharacter* mc = MainCharacter::getInstance();
 		ItemType cit = mc->getCurrentItemType();
 		if (cit == ItemType::CAULIFLOWER_SEED || cit == ItemType::PUMPKIN_SEED || cit == ItemType::FISH) {
-			//give
+			// give
 			mc->modifyItemQuantity(mc->getCurrentItemType(), -1);
 			// emotion
 			favorite = it->second;
-			if (currentItem->type == favorite) {
+			if (currentItem->type == favorite) {        // If the gift is the NPC's favorite, increase the intimacy
 				emotion += 20;
 			}
 			else
 				emotion += 10;
 		}
-		
+
 	}
-	else
-		CCLOG("NPCinteract:name->favorite:error");
-	
+	else                                                  // Other cases, just chat
+	{
+		pause();
+		npcSprite->schedule([=](float deltaTime) {
+			npcSprite->move(PlayerSprite::MOVEMENT::STAY, 3);
+			resume();
+			}, 3.0f, "stay_key");
+
+	}
+
 }
 
+// Initialize NPC animations
 void NPC::init()
 {
 	DocumentManager* manager = DocumentManager::getInstance();
 	rapidjson::Document* doc = manager->getDocument(manager->getPath(name));
-	std::string plistFilePath = name+"Pls";
+	std::string plistFilePath = name + "Pls";
 	MapLayer::loadPlist(plistFilePath);
 	std::string frame_n_format = (*doc)["frame_format"].GetString();
 	std::string spriteFrame = getFrameName(frame_n_format, 1);
@@ -78,17 +88,18 @@ void NPC::init()
 	defaultAction();
 }
 
+// Set default behavior for NPC
 void NPC::defaultAction()
 {
 	if (parent_ == nullptr) {
-		CCLOG("dafaulAction->parent_ nullptr");
+		CCLOG("defaultAction->parent_ nullptr");
 		return;
 	}
 	PlayerSprite* npcSprite = dynamic_cast<PlayerSprite*>(info_.sprite);
 	if (name == "Haley")
 	{
 		npcSprite->schedule([=](float deltaTime) {
-			if (isPaused) {
+			if (isPaused) {                             // If isPaused is true, stop moving
 				return;
 			}
 
@@ -117,7 +128,6 @@ void NPC::defaultAction()
 	}
 }
 
-              
 void NPC::change_archive_in_memory() {
 	// Get the DocumentManager instance and the current archive document
 	auto* docManager = DocumentManager::getInstance();
@@ -125,8 +135,8 @@ void NPC::change_archive_in_memory() {
 	const Vec<int>& position = info_.position;
 	// Convert position to a string to use as the map key
 	std::string positionKey = std::to_string(position.X()) + " " + std::to_string(position.Y());
-	std::string sceneKey ;
-	auto it = Scene.find(name);  // 查找对应的场景
+	std::string sceneKey;
+	auto it = Scene.find(name);  // Find the corresponding scene
 	if (it != Scene.end())
 		sceneKey = it->second;
 	else
@@ -134,22 +144,21 @@ void NPC::change_archive_in_memory() {
 	if (archiveDoc->HasMember("Map") && (*archiveDoc)["Map"].HasMember(sceneKey.c_str())) {
 		rapidjson::Value& town = (*archiveDoc)["Map"]["Town"];
 
-		// 确保 Town 中有对应的 positionKey
+		// Ensure the corresponding positionKey exists in Town
 		if (town.HasMember(positionKey.c_str())) {
 			rapidjson::Value& NPCInfo = town[positionKey.c_str()];
 
-			// 确保 NPCInfo 中包含 "Info" 并且是对象
+			// Ensure NPCInfo contains "Info" and it is an object
 			if (NPCInfo.HasMember("Info") && NPCInfo["Info"].IsObject()) {
 				rapidjson::Value& info = NPCInfo["Info"];
 
-				// 如果有 "emotion" 整型，则更新它
+				// If "emotion" is an integer, update it
 				if (info.HasMember("emotion") && info["emotion"].IsInt()) {
 					info["emotion"] = emotion;
 				}
 			}
 		}
 	}
-
 }
 
 void NPC::clear()
@@ -174,7 +183,6 @@ void NPC::resume()
 	isPaused = false;
 }
 
-
 void NPC::settle()
 {
 	change_archive_in_memory();
@@ -184,9 +192,3 @@ bool NPC::hasCollision()
 {
 	return false;
 }
-
-
-
-
-
-
