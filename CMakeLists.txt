@@ -49,6 +49,7 @@ endif()
 # add cross-platforms source files and header files 
 list(APPEND GAME_SOURCE
      Classes/AppDelegate.cpp
+     Classes/Display/Audio.cpp
      Classes/Display/MapLayer.cpp
      Classes/Display/SceneManager.cpp
      Classes/Display/UILayer.cpp
@@ -67,6 +68,7 @@ list(APPEND GAME_SOURCE
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
+     Classes/Display/Audio.h
      Classes/Display/MapLayer.h
      Classes/Display/SceneManager.h
      Classes/Display/UILayer.h

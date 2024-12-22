@@ -1,6 +1,7 @@
 {
     "Name": "town_festival",
     "TMX": "tiledmap/town-festival.tmx",
+    "Audio": "Audio/Town.mp3",
     "BackGroundColor":[0, 79, 152],
     "ObjectList": {
         "40 2":{

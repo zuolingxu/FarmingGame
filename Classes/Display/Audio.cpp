@@ -4,7 +4,7 @@ USING_NS_CC;
 using namespace cocos2d::experimental;
 
 // 初始化静态成员
-MusicManager* MusicManager::instance = nullptr;
+MusicManager* MusicManager::instance = new MusicManager();
 
 MusicManager::MusicManager()
     : backgroundMusicId(-1) {
@@ -20,17 +20,19 @@ MusicManager::~MusicManager() {
 
 // 获取单例实例
 MusicManager* MusicManager::getInstance() {
-    if (!instance) {
-        instance = new MusicManager();
-    }
     return instance;
 }
 
 void MusicManager::playBackgroundMusic(const std::string& filename, bool loop) {
+    if (filename == cur_music_)
+    {
+        return;
+    }
     if (backgroundMusicId != -1) {
         stopBackgroundMusic();  // 如果已经在播放背景音乐，先停止它
     }
     backgroundMusicId = AudioEngine::play2d(filename, loop);
+    cur_music_ = filename;
 }
 
 void MusicManager::stopBackgroundMusic() {
