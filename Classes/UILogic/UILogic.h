@@ -11,8 +11,9 @@
 struct Task {
     std::string description;
     bool completed;
+    bool clicked;
     Task(const std::string& desc = "", bool done = false)
-        : description(desc), completed(done) {}
+        : description(desc), completed(done),clicked(done) {}
 };
 
 
@@ -37,7 +38,7 @@ public:
 
     void initManufactureNode(cocos2d::Node* manufactureNode);
 
-    void initPopupNode(cocos2d::Node* popupNode);
+    void initFishNode(cocos2d::Node* fishNode);
 
     void refreshBagUI();
 
@@ -59,7 +60,11 @@ public:
 
     void refreshMoneyUI(int money);
 
-    void refreshNpcUI(std::string name);
+    void refreshLevelUI(int level);
+
+    void refreshNpcUI(std::string name,int favor);
+
+    void refreshFishUI();
 private:
     UILogic();
     ~UILogic();
@@ -78,7 +83,7 @@ private:
 
     void bindManufactureEvents();
 
-    void bindPopupEvents();
+    void bindFishEvents();
 
     void onNewButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 
@@ -86,7 +91,11 @@ private:
 
     void onExitButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 
-    void onCloseButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+    void onCloseTaskBarClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+
+    void onCloseNpcClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
+
+    void onCloseFishClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 
     void onBagSlotClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 
@@ -110,12 +119,10 @@ private:
 
     void onSoupClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
 
-    void onSellButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
-
-    void onFeedButtonClicked(cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type);
-
     //the logic of tasks
     void initTasks();
+
+    void initSentence();
 
     static UILogic* instance_;
 
@@ -128,10 +135,11 @@ private:
     cocos2d::Node* timeNode_;
     cocos2d::Node* shopNode_;
     cocos2d::Node* manufactureNode_;
-    cocos2d::Node* popupNode_;
+    cocos2d::Node* fishNode_;
 
     std::vector<Item>* bagItems_;
     std::vector<Task> tasks_;
+    std::vector<std::string> Sentence;
 };
 
 

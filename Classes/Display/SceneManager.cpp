@@ -1,4 +1,3 @@
-
 #include "SceneManager.h"
 #include "HelperClasses.h"
 #include "audio/include/AudioEngine.h"
@@ -25,37 +24,7 @@ SceneManager::~SceneManager()
 void SceneManager::createMapWithDocument(rapidjson::Document* doc)
 {
 	std::string name = (*doc)["Name"].GetString();
-	DocumentManager* manager = DocumentManager::getInstance();
-	std::string tmx_path = (*doc)["TMX"].GetString();
-	if (manager->hasDocument(tmx_path))
-	{
-		tmx_path = manager->getPath(tmx_path);
-	}
-
-	// default background is black
-	Color3B backGroundColor = {0,0,0};
-	if (doc->HasMember("BackGroundColor"))
-	{
-		backGroundColor = Color3B((*doc)["BackGroundColor"][0].GetInt(),
-			(*doc)["BackGroundColor"][1].GetInt(), (*doc)["BackGroundColor"][2].GetInt());
-	}
-
-	rapidjson::Value* const_object = nullptr, *archive_object = nullptr;
-	if (doc->HasMember("ObjectList"))
-	{
-		 const_object = &(*doc)["ObjectList"];
-	}
-	rapidjson::Document* archive_doc = manager->getArchiveDocument();
-	if (archive_doc != nullptr && (*archive_doc)["Map"].HasMember(name.c_str()))
-	{
-		archive_object = &(*archive_doc)["Map"][name.c_str()];
-	}
-
-	bool create_able = false; 
-	if (name == "farm") {
-		create_able = true;
-	}
-	MapLayer* map = MapLayer::createWithDocument(tmx_path, backGroundColor, const_object, archive_object, create_able);
+	MapLayer* map = MapLayer::createWithDocument(doc);
 	map->retain();
 	map_.emplace(name, map);
 }
@@ -74,6 +43,7 @@ SceneManager* SceneManager::getInstance()
 		Node* time = UILayer::createUILayer(UILayerType::TIME);
 		Node* shop = UILayer::createUILayer(UILayerType::SHOP);
 		Node* manufacture = UILayer::createUILayer(UILayerType::MANUFACTURE);
+		Node* fish = UILayer::createUILayer(UILayerType::FISHING);
 		instance_->permanent_node_->addChild(start_screen, BACK_UI_ZORDER);
 		instance_->permanent_node_->addChild(bag, BACK_UI_ZORDER);
 		instance_->permanent_node_->addChild(task_bar, BACK_UI_ZORDER);
@@ -82,6 +52,7 @@ SceneManager* SceneManager::getInstance()
 		instance_->permanent_node_->addChild(time, BACK_UI_ZORDER);
 		instance_->permanent_node_->addChild(shop, BACK_UI_ZORDER);
 		instance_->permanent_node_->addChild(manufacture, BACK_UI_ZORDER);
+		instance_->permanent_node_->addChild(fish, BACK_UI_ZORDER);
 		UILogic* uilogic = UILogic::getInstance();
 		uilogic->initStartScreenNode(start_screen);
 		uilogic->initStartScreenNode(bag);
@@ -90,14 +61,16 @@ SceneManager* SceneManager::getInstance()
 		uilogic->initLoadArchiveNode(load_archive);
 		uilogic->initShopNode(shop);
 		uilogic->initManufactureNode(manufacture);
+		uilogic->initFishNode(fish);
 	}
 	return instance_;
 }
 
 void SceneManager::createMaps()
 {
-	if (DocumentManager::getInstance()->getArchiveDocument() != nullptr){
+	if (DocumentManager::getInstance()->getArchiveDocument() != nullptr && map_.size() <= 1){
 		TimeManager::getInstance();
+		MainCharacter::getInstance();
 		DocumentManager* manager = DocumentManager::getInstance();
 		const rapidjson::Document* doc = manager->getDocument(manager->getPath("global"));
 		for (const rapidjson::Value& layer : (*doc)["Map"].GetArray())
@@ -109,16 +82,16 @@ void SceneManager::createMaps()
 
 void SceneManager::clearMaps()
 {
-	if (DocumentManager::getInstance()->getArchiveDocument() == nullptr){
-		TimeManager::cleanup();
+	if (DocumentManager::getInstance()->getArchiveDocument() == nullptr && map_.size() > 1){
 		for (auto& map : map_)
 		{
 			map.second->clearObjects();
 			map.second->release();
 		}
+		MainCharacter::cleanup();
+		TimeManager::cleanup();
 		map_.clear();
 	}
-	// TODO: clearMainCharacter
 }
 
 
@@ -179,7 +152,7 @@ void SceneManager::showUILayer(const std::string& UI_name, bool base)
 }
 
 
-void SceneManager::NextMap(const std::string& map_name, const std::string& pos) const
+void SceneManager::NextMap(const std::string& map_name, const std::string& pos , const float interval) const
 {
 	auto loader = Director::getInstance()->getScheduler();
 	auto call_back = std::make_shared<NextMapCallBack>(map_name, pos);
@@ -187,7 +160,7 @@ void SceneManager::NextMap(const std::string& map_name, const std::string& pos) 
 	auto functionCallback = std::function<void(float)>([call_back](float dt) {
 		(*call_back)();  
 		});
-	loader->schedule(functionCallback, instance_, 0.02f, 3, 0.0f, false, "loading");
+	loader->schedule(functionCallback, instance_, interval, 3, 0.0f, false, "loading");
 }
 
 
@@ -234,8 +207,8 @@ void SceneManager::NextMapCallBack::start()
 	}
 	else
 	{
-		Director::getInstance()->replaceScene(loading_scene);
 		getInstance()->map_.at(getInstance()->current_map_name_)->toBack();
+		Director::getInstance()->replaceScene(loading_scene);
 	}
 	loading_per = 5.0f;
 }

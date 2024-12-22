@@ -5,13 +5,7 @@ NPC::NPC(MapLayer* parent, const Vec<int>& pos, std::string npcName, int emo, in
 	info_.size = Vec<int>(2, 2);
 }
 
-NPC::~NPC()
-{
-    PlayerSprite* npcSprite = dynamic_cast<PlayerSprite*>(info_.sprite);
-	npcSprite->unschedule("right_move_key");
-	npcSprite->unschedule("left_move_key");
-	npcSprite->unschedule("stay_key");
-}
+NPC::~NPC() = default;
 
 MapObject* NPC::create(rapidjson::Value& val, MapLayer* parent, const Vec<int>& pos)
 {
@@ -36,8 +30,10 @@ void NPC::interact()
 	PlayerSprite* npcSprite = dynamic_cast<PlayerSprite*>(info_.sprite);
 	ItemType favorite;
 	auto it = Favorite.find(name);  // 查找对应的场景
-	UILogic::getInstance()->refreshNpcUI(name);
-	SceneManager::getInstance()->showUILayer("npc",emotion);
+
+	UILogic::getInstance()->refreshNpcUI(name,emotion);
+	SceneManager::getInstance()->showUILayer("npc");
+
 	// SceneManager::getInstance()->hideUILayer("npc");
 	if (!currentItem)
 	{
@@ -158,6 +154,13 @@ void NPC::change_archive_in_memory() {
 
 void NPC::clear()
 {
+	PlayerSprite* npcSprite = dynamic_cast<PlayerSprite*>(info_.sprite);
+	if (npcSprite != nullptr)
+	{
+		npcSprite->unschedule("right_move_key");
+		npcSprite->unschedule("left_move_key");
+		npcSprite->unschedule("stay_key");
+	}
 	info_.sprite = nullptr;
 }
 

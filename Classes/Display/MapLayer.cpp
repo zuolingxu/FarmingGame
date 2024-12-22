@@ -5,7 +5,6 @@
 #include <functional>
 #include "Land.h"
 #include "MainCharacter.h"
-#include "Mineral.h" //todo delete
 
 USING_NS_CC;
 #ifdef _MSC_VER
@@ -24,18 +23,31 @@ static bool inVecRange(const std::vector<T>& vec, const Vec<int>& index)
     return index.X() >= 0 && index.X() < vec.size() && index.Y() >= 0 && index.Y() < vec[index.X()].size();
 }
 
-MapLayer::MapLayer(const std::string& tmx_path, const cocos2d::Color3B& background_color,
-    rapidjson::Value* const_object, rapidjson::Value* archive_object, bool create_able) 
-    :  background_color_(background_color), create_abled(create_able)
+MapLayer::MapLayer(rapidjson::Document* doc) 
 {
+    map_name_ = (*doc)["Name"].GetString();
     DocumentManager* manager = DocumentManager::getInstance();
-    if (manager->hasDocument(tmx_path))
+    tmx_name_ = (*doc)["TMX"].GetString();
+    if (manager->hasDocument(tmx_name_))
     {
-	    tmx_name_ = manager->getPath(tmx_path);
+        tmx_name_ = manager->getPath(tmx_name_);
     }
-    else
+
+    if (doc->HasMember("Audio"))
     {
-	    tmx_name_ = tmx_path;
+        music_name_ = (*doc)["Audio"].GetString();
+    }
+
+    // default background is black
+    background_color_ = { 0,0,0 };
+    if (doc->HasMember("BackGroundColor"))
+    {
+        background_color_ = Color3B((*doc)["BackGroundColor"][0].GetInt(),
+            (*doc)["BackGroundColor"][1].GetInt(), (*doc)["BackGroundColor"][2].GetInt());
+    }
+
+    if (map_name_ == "farm") {
+        create = true;
     }
 
     if (!tmx_name_.empty())
@@ -43,32 +55,32 @@ MapLayer::MapLayer(const std::string& tmx_path, const cocos2d::Color3B& backgrou
         tiled_map_ = TMXTiledMap::create(tmx_name_);
         tiled_map_->retain();
         Vec<int> size = tiled_map_->getMapSize();
-        interact_map_ = std::vector(size.X(), std::vector<::MapObject*>(size.Y(), nullptr));
+        interact_map_ = std::vector(size.X(), std::vector<MapObject*>(size.Y(), nullptr));
         collision_map_ = std::vector(size.X(), std::vector<bool>(size.Y(), false));
-        addCollisions(); 
+        addCollisions();
         tiled_map_->release();
     }
 
-    if (const_object != nullptr)
+    if (doc->HasMember("ObjectList"))
     {
-        for (auto& object : const_object->GetObject())
+        for (auto& object : (&(*doc)["ObjectList"])->GetObject())
         {
             addObject(toVec2(object.name.GetString()), object.value);
         }
     }
-
-    if (archive_object != nullptr)
+    rapidjson::Document* archive_doc = manager->getArchiveDocument();
+    if (archive_doc != nullptr && (*archive_doc)["Map"].HasMember(map_name_.c_str()))
     {
-        for (auto& object : archive_object->GetObject())
+        for (auto& object : (&(*archive_doc)["Map"][map_name_.c_str()])->GetObject())
         {
             addObject(toVec2(object.name.GetString()), object.value);
         }
     }
 }
 
-MapLayer* MapLayer::createWithDocument(const std::string& tmx_path, const Color3B& background_color, rapidjson::Value* const_object, rapidjson::Value* archive_object, bool create_able)
+MapLayer* MapLayer::createWithDocument(rapidjson::Document* doc)
 {
-    MapLayer* map = new(std::nothrow) MapLayer(tmx_path, background_color, const_object, archive_object, create_able);
+    MapLayer* map = new(std::nothrow) MapLayer(doc);
     if (map)
     {
         map->autorelease();
@@ -92,59 +104,26 @@ void MapLayer::addTiledMap()
 
 void MapLayer::addObject(const Vec<int>& pos, rapidjson::Value& val)
 {
-    MapObject* obj = ::MapObject::create(val, this, pos);
-    obj->retain();
-    Vec<int> size = obj->getInfo().size;
-    Vec<int> pos2 = pos + size;
-    bool collision = obj->hasCollision();
-    for (int x = pos.X(); x < pos2.X(); x++)
+    MapObject* obj = MapObject::create(val, this, pos);
+    if (obj != nullptr)
     {
-	    for (int y = pos.Y(); y < pos2.Y(); y++)
-	    {
-		    if (inVecRange(interact_map_, {x,y}))
-		    {
-			    interact_map_[x][y] = obj;
-                collision_map_[x][y] = collision_map_[x][y] == true || collision;
-		    }
-	    }
-    }
-}
-
-void MapLayer::removeObject(MapObject::ObjectInfo& obj)
-{
-	Vec<int> pos = obj.position;
-    Vec<int> pos2 = pos + obj.size;
-    removeSpriteFromLayer(obj.sprite);
-    obj.sprite = nullptr;
-    if (inVecRange(interact_map_, pos) && interact_map_[pos.X()][pos.Y()] != nullptr)
-    {
-        MapObject* ptr =  interact_map_[pos.X()][pos.Y()];
-    	Director::getInstance()->getScheduler()->schedule(
-            [ptr](float deltaTime){
-                ptr->release();
-    	},this, 0, 0, 0.02f, false, "delete_object");
-
+        obj->retain();
+        Vec<int> size = obj->getInfo().size;
+        Vec<int> pos2 = pos + size;
+        bool collision = obj->hasCollision();
         for (int x = pos.X(); x < pos2.X(); x++)
         {
             for (int y = pos.Y(); y < pos2.Y(); y++)
             {
                 if (inVecRange(interact_map_, { x,y }))
                 {
-                    interact_map_[x][y] = nullptr;
-                    collision_map_[x][y] = false;
+                    interact_map_[x][y] = obj;
+                    collision_map_[x][y] = collision_map_[x][y] == true || collision;
                 }
             }
         }
-
-    }
-
-    if (obj.sprite != nullptr)
-    {
-	    obj.sprite->removeFromParent();
-        obj.sprite = nullptr;
     }
 }
-
 
 void MapLayer::addCollisions()
 {
@@ -217,34 +196,6 @@ void MapLayer::onTouchesEnded(const std::vector<cocos2d::Touch*>& touches, cocos
 
 void MapLayer::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event)
 {
-    // TODO: delete test example
-    static MapObject::ObjectInfo obj{ nullptr, { 2,2 }, { 1,1 } };
-    static MapObject::ObjectInfo obj2{ nullptr, { 2,2 }, { 3,3 } };
-    DocumentManager* manager = DocumentManager::getInstance();
-    PlayerSprite* player;
-    
-    // TODO: delete test example
-    MapLayer* parent = nullptr;
-    Vec<int> position(5, 10);
-    MapObject* land = nullptr;
-
-    // TODO: delete test example
-    const char* json = R"({
-        "8 13": {
-            "Type": "Mineral",
-            "Info": {
-                "MineralType": "IRON",
-                "IsMined": false
-            }
-        }
-    })";
-
-    // Parse the JSON into a document
-    rapidjson::Document document;
-    document.Parse(json);
-    rapidjson::Value& V = document["8 13"];
-    rapidjson::Value& val = V["Info"];
-
     switch (keyCode)
     {
     case cocos2d::EventKeyboard::KeyCode::KEY_UP_ARROW:
@@ -272,9 +223,8 @@ void MapLayer::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Ev
         main_player_->changeSpeed();
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_ESCAPE:
-        // TODO: 
+        // TODO: DIALOGUE
         DocumentManager::getInstance()->freeArchiveDocument();
-        MainCharacter::cleanup();
         SceneManager::getInstance()->NextMap("introduction");
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_E:
@@ -295,60 +245,17 @@ void MapLayer::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Ev
             SceneManager::getInstance()->showUILayer("manufacture");
         }
         break;
-    case cocos2d::EventKeyboard::KeyCode::KEY_F1:
-        loadPlist(manager->getPath("CowPls"));
-        addSpriteWithFrame(obj, "cow-0.png");
-        break;
-    case cocos2d::EventKeyboard::KeyCode::KEY_F2:
-        changeWithSingleFrame(obj.sprite, "cow-1.png");
-        break;
-    case cocos2d::EventKeyboard::KeyCode::KEY_F3:
-        TimeManager::getInstance()->sleep();
-        break;
-    case cocos2d::EventKeyboard::KeyCode::KEY_F4:
-        addPlayerSpriteWithDocument(obj2, manager->getDocument(manager->getPath("Cow")));
-        break;
-    case cocos2d::EventKeyboard::KeyCode::KEY_F5:
-    	player = dynamic_cast<PlayerSprite*>(obj2.sprite);
-        player->move(PlayerSprite::MOVEMENT::W_RIGHT, 12);
-        break;
-    case cocos2d::EventKeyboard::KeyCode::KEY_F6:
-        MainCharacter::getInstance()->setCurrentItem(ItemType::WATERING_CAN);
-        break;
-    case cocos2d::EventKeyboard::KeyCode::KEY_F7:
-        MainCharacter::getInstance()->setCurrentItem(ItemType::CAULIFLOWER_SEED);
-        break;
-    case cocos2d::EventKeyboard::KeyCode::KEY_F8:
-        MainCharacter::getInstance()->setCurrentItem(ItemType::HOE);
-        break;
-    case cocos2d::EventKeyboard::KeyCode::KEY_F9:
-        MainCharacter::getInstance()->setCurrentItem(ItemType::PICKAXE);
+    case cocos2d::EventKeyboard::KeyCode::KEY_F:
+    case cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_F:
+        if (SceneManager::getInstance()->getCurrentUIName() == "shop") {
+            SceneManager::getInstance()->hideUILayer("shop");
+        }
+        else {
+            SceneManager::getInstance()->showUILayer("shop");
+        }
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F10:
-      
-  
-        if (val.HasMember("IsMined") && val.HasMember("MineralType")) {
-            bool im = val["IsMined"].GetBool();  // Corrected field name from "IsMind" to "IsMined"
-            std::string mineralType = val["MineralType"].GetString();  // Corrected the key from "type" to "MineralType"
-
-            // Retrieve the MapLayer creation data (you may need to adjust this based on your actual structure)
-            std::string tmxPath = "tiledmap/mine.tmx"; // Example, replace with actual path
-            cocos2d::Color3B backgroundColor = cocos2d::Color3B::WHITE; // Example, replace with actual color
-
-            // Assuming `parent` is passed or created elsewhere
-            MapLayer* mapLayer = MapLayer::createWithDocument(
-                tmxPath,
-                backgroundColor,
-                &val,  // Assuming val contains const_object for map layer
-                nullptr,  // You can pass the archive_object if necessary
-                true // create_able can be set based on your logic
-            );
-
-            // Create a new Mineral object using the position, parent map layer, and other relevant information
-            MapObject* mineral =  Mineral::create(val, mapLayer, Vec<int>(8,13));
-
-          
-        }
+		// TODO: Test Code 
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_F11:
         // TODO: Test Code
@@ -418,7 +325,7 @@ void MapLayer::onMouseDown(cocos2d::Event* event)
                         {
                             focus->interact();
                         }
-                        else if (MainCharacter::getInstance()->getCurrentItemType() == ItemType::HOE && create_abled)
+                        else if (MainCharacter::getInstance()->getCurrentItemType() == ItemType::HOE && create)
                         {
                             if (MainCharacter::getInstance()->modifyEnergy(MainCharacter::getInstance()->Tilling_the_soil_consumes_energy)) {
                                 interact_map_[focus_pos_.X()][focus_pos_.Y()] = Land::createByPlayer(focus_pos_, this);
@@ -431,7 +338,6 @@ void MapLayer::onMouseDown(cocos2d::Event* event)
         }
         else if (e->getMouseButton() == cocos2d::EventMouse::MouseButton::BUTTON_RIGHT) 
         {
-            // TODO: interact with holdings
             const Item* item = MainCharacter::getInstance()->getCurrentItem();
             if (item) {
                 if (item->type == ItemType::CAULIFLOWER ||
@@ -441,7 +347,7 @@ void MapLayer::onMouseDown(cocos2d::Event* event)
                     item->type==ItemType::SOUP) 
                 {
                     MainCharacter::getInstance()->eat_food_and_gain_energy(item->type);
-
+                    // TODO: interact with holdings animation
                 }
             }
         }
@@ -530,6 +436,9 @@ Node* MapLayer::toFront(PlayerSprite* main_player)
     focus_->setAnchorPoint(Vec(0, 0));
     layer_->addChild(focus_, OBJECT_BASE_ZORDER + 128);
     layer_->setCameraMask(static_cast<unsigned short>(CameraFlag::USER1));
+
+
+    // TODO: PLAY MUSIC
     return layer_;
 }
 
@@ -588,6 +497,7 @@ void MapLayer::toBack()
         mouse_listener_ = nullptr;
         SpriteFrameCache::getInstance()->removeSpriteFrames();
 	}
+    // TODO: STOP MUSIC
 }
 
 void MapLayer::settle() const
@@ -644,6 +554,15 @@ void MapLayer::clearObjects()
 	    for (MapObject* object : row)
 	    {
             if (object != nullptr) {
+                Vec<int> pos1 = object->getInfo().position;
+                Vec<int> pos2 = object->getInfo().size + pos1;
+                for (int i = pos1.X(); i < pos2.X(); i++)
+                {
+                    for (int j = pos1.Y(); j < pos2.Y(); j++)
+                    {
+	                    interact_map_[i][j] = nullptr;
+                    }
+                }
                 object->clear();
                 object->release();
             }
@@ -735,8 +654,40 @@ void MapLayer::updateMaps(const Vec<int>& old_pos, const Vec<int>& new_pos, cons
                 }
             }
         }
-       
 	}
+}
+
+void MapLayer::removeObject(MapObject::ObjectInfo& obj)
+{
+    Vec<int> pos = obj.position;
+    Vec<int> pos2 = pos + obj.size;
+    if (inVecRange(interact_map_, pos) && interact_map_[pos.X()][pos.Y()] != nullptr)
+    {
+        MapObject* obj_ptr = interact_map_[pos.X()][pos.Y()];
+        Director::getInstance()->getScheduler()->schedule(
+            [obj_ptr](float deltaTime) {
+                obj_ptr->release();
+            }, this, 0, 0, 0.02f, false, "delete_object");
+
+        interact_map_[pos.X()][pos.Y()];
+        for (int x = pos.X(); x < pos2.X(); x++)
+        {
+            for (int y = pos.Y(); y < pos2.Y(); y++)
+            {
+                if (inVecRange(interact_map_, { x,y }))
+                {
+                    interact_map_[x][y] = nullptr;
+                    collision_map_[x][y] = false;
+                }
+            }
+        }
+    }
+
+    if (obj.sprite != nullptr)
+    {
+        removeSpriteFromLayer(obj.sprite);
+        obj.sprite = nullptr;
+    }
 }
 
 void MapLayer::removeSpriteFromLayer(cocos2d::Sprite* sprite)
