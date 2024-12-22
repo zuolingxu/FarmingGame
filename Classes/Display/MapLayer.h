@@ -28,7 +28,7 @@ public:
 	// to know if a place has a collision, the pos should be a pixel position
 	bool hasCollision(const cocos2d::Vec2& pos);
 
-	// This is for NetWork, TODO: MultiPlayer
+	// This is for NetWork
 	void addPlayer(PlayerSprite* player);
 
 	// frame_name is name of frame in .plist file.

@@ -406,7 +406,6 @@ void UILogic::useItemFromBag(int slotIndex)
 
     auto& item = (*bagItems_)[slotIndex];
 
-    // TODO:将该物品返回给MainCharacter
     MainCharacter::getInstance()->setCurrentItem(item.type);
     for (int i = 0; i < 24; ++i) {
         auto slot = dynamic_cast<ui::Button*>(bagNode_->getChildByName("Slot_" + std::to_string(i)));

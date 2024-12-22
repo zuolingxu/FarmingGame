@@ -6,7 +6,6 @@
 // Initialize static member
 MainCharacter* MainCharacter::instance = nullptr;
 
-//todo xianshitili
 bool MainCharacter::modifyEnergy(int delta) {
     // If delta is 0, return immediately (no change)
     if (delta == 0) return 1;  // 1 indicates success, quantity is unchanged
@@ -18,14 +17,12 @@ bool MainCharacter::modifyEnergy(int delta) {
     else {
         energy = energy + delta;
     }
-    //todo xianshitili
     UILogic::getInstance()->refreshPowerUI(energy);
 
     return 1;
            
 }
 
-//todo xianshijinqian
 bool MainCharacter::modifyMoney(int delta) {
     // If delta is 0, return immediately (no change)
     if (delta == 0) return 1;  // 1 indicates success, quantity is unchanged
@@ -37,7 +34,6 @@ bool MainCharacter::modifyMoney(int delta) {
     else {
         money = money + delta;
     }
-    //todo xianshijinqian
     UILogic::getInstance()->refreshMoneyUI(money);
     return 1;
 
@@ -93,8 +89,6 @@ void MainCharacter::level_gift() {
 }
 
 
-//todo shuaxinbeibao
-//todo xianshitili
 // init from archive
 MainCharacter::MainCharacter():currentItem(nullptr),money(0) {
     inventory = new std::vector<Item>();
@@ -219,7 +213,6 @@ ItemType MainCharacter::getCurrentItemType() const {
     return currentItem ? currentItem->type : ItemType::NONE;
 }
 
-//todo shuaxinwupinlan
 bool MainCharacter::modifyItemQuantity(ItemType type, int delta) {
     // If delta is 0, return immediately (no change)
     if (delta == 0) return 1;  // 1 indicates success, quantity is unchanged
@@ -243,7 +236,6 @@ bool MainCharacter::modifyItemQuantity(ItemType type, int delta) {
                 inventory->erase(it);
             }
 
-            //todo shuaxinwupinlan
             UILogic::getInstance()->updateBagItems(inventory);
             return 1;  // Operation successful
         }

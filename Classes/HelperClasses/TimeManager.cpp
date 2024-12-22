@@ -7,7 +7,6 @@
 
 TimeManager* TimeManager::instance_ = nullptr;
 
-//todo xianshishijian
 TimeManager::TimeManager() : current_day_(1), current_time_(6.0f), is_paused_(false) {
     // 从文档中读取游戏天数
     DocumentManager* docManager = DocumentManager::getInstance();
@@ -117,8 +116,6 @@ void TimeManager::settleAllObjects() {
     SceneManager::getInstance()->settle();
 }
 
-// todo interact with bed callback this function
-// todo donghua
 void TimeManager::sleep() {
     if(current_time_>=0.0f&& current_time_<6.0f)
         current_time_ = 6.0f;//凌晨睡觉，当天六点起床
@@ -144,7 +141,6 @@ void TimeManager::sleep() {
 }
 
 //更改
- //Todo shuaxinshijian
 void TimeManager::updateTime(float dt) {
     int pre_current_time_ = (int)current_time_;
 
@@ -152,14 +148,12 @@ void TimeManager::updateTime(float dt) {
     current_time_ += dt * 24.0f / (float)(60 * MinutesOfOneDay);
 
     if (pre_current_time_ != (int)current_time_) {
-        //Todo shuaxinshijian
         UILogic::getInstance()->refreshTimeUI(current_day_, current_time_);
     }
 
     // 判断是否达到2点
     if (current_time_ >= 2.0f && current_time_ < 3.0f) {
         // 不检查主角是否已经睡觉
-        // todo
         // 加入瞬移动画
         // 加入入睡动画
         SceneManager::getInstance()->NextMap("player_house", "14 2");

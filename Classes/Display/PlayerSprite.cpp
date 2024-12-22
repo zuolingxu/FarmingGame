@@ -224,8 +224,6 @@ void PlayerSprite::interact(const Vec<int>& pos)
 	    stand_direction_ = MOVEMENT::UP;
     }
 
-    // TODO: holdings animation
-
     Animation* animation = Animation::create();
     animation->setDelayPerUnit(FRAME_LENGTH_INTERACT);
     MOVEMENT move_e = static_cast<MOVEMENT>(static_cast<int>(stand_direction_) + 8);

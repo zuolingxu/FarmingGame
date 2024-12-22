@@ -3,7 +3,6 @@
   "TMX": "tiledmap/town.tmx",
   "Audio": "Audio/Town.mp3",
   "BackGroundColor":[0, 79, 152],
-  "Audio": "Audio/Town.mp3",
   "ObjectList": {
     "40 2": {
       "Type": "NPC",

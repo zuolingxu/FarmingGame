@@ -9,7 +9,6 @@ USING_NS_CC;
 
 class Land;
 
-//todo kuwei
 class Crop {
 	private:
 	MapObject::ObjectInfo info;

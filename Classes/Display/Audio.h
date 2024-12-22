@@ -40,8 +40,6 @@ public:
 
     void setEffectVolume(float volume);
 
-    void playMusicOfScene(const std::string& scene);
-
 private:
     // µ¥ÀýÊµÀý
     static MusicManager* instance;

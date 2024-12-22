@@ -278,7 +278,6 @@ void Land::interact()
     init();  //generate picture
 }
 
-// todo Clear the sprite information
 void Land::clear() {
     if (crop)
     {

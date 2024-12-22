@@ -224,7 +224,6 @@ void MapLayer::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Ev
         main_player_->changeSpeed();
         break;
     case cocos2d::EventKeyboard::KeyCode::KEY_ESCAPE:
-        // TODO: DIALOGUE
         DocumentManager::getInstance()->freeArchiveDocument();
         SceneManager::getInstance()->NextMap("introduction");
         break;
@@ -254,15 +253,6 @@ void MapLayer::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Ev
         else {
             SceneManager::getInstance()->showUILayer("shop");
         }
-        break;
-    case cocos2d::EventKeyboard::KeyCode::KEY_F10:
-		// TODO: Test Code 
-        break;
-    case cocos2d::EventKeyboard::KeyCode::KEY_F11:
-        // TODO: Test Code
-        break;
-    case cocos2d::EventKeyboard::KeyCode::KEY_F12:
-        // TODO: Test Code
         break;
     default: break;
     }
@@ -498,7 +488,6 @@ void MapLayer::toBack()
         mouse_listener_ = nullptr;
         SpriteFrameCache::getInstance()->removeSpriteFrames();
 	}
-    // TODO: STOP MUSIC
 }
 
 void MapLayer::settle() const
