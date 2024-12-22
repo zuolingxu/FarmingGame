@@ -67,20 +67,26 @@ void MainCharacter::level_gift() {
     switch (level%4) {
   
         case 1:
-            modifyItemQuantity(ItemType::POTATO, 4);
+            modifyItemQuantity(ItemType::POTATO, 5);
+            modifyMoney(50);
             break;
-        case 2:
-            modifyItemQuantity(ItemType::POTATO_SEED,30);
+		case 2:
+            modifyItemQuantity(ItemType::FERTILIZER, 5);
+            modifyItemQuantity(ItemType::POTATO_SEED,5);
             break;
         case 3:
-            modifyItemQuantity(ItemType::PUMPKIN_SEED,30);
+            modifyItemQuantity(ItemType::PUMPKIN_SEED,10);
+            modifyMoney(100);
             break;
         case 0:
-            modifyItemQuantity(ItemType::CAULIFLOWER_SEED, 30);
+            modifyItemQuantity(ItemType::CAULIFLOWER_SEED, 10);
             break;
     }
-    if(level==3)
+    if (level == 2)
+        modifyItemQuantity(ItemType::PICKAXE, 1);
+    else if(level==3)
         modifyItemQuantity(ItemType::FISHING_ROD, 1);
+
 
     return;
 }

@@ -12,16 +12,8 @@
       "quantity": 1
     },
     {
-      "type": "PICKAXE",
-      "quantity": 1
-    },
-    {
       "type": "WATERING_CAN",
       "quantity": 1
-    },
-    {
-      "type": "FERTILIZER",
-      "quantity": 10
     },
     {
       "type": "CAULIFLOWER_SEED",
