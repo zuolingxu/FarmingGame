@@ -6,8 +6,7 @@
 #include "MapLayer.h"
 #include"PlayerSprite.h"
 #include "MainCharacter.h"
-#include<vector>
-#include<unordered_map>
+#include<set>
 
 class Animal final: protected MapObject {
 private:
@@ -15,7 +14,7 @@ private:
 	std::string type;
 	bool isSold;
 	int value;
-	cocos2d::Vec2 position;
+	Vec<int> defaultPos;
 	int satiety;
 	float breedProbility;
 	bool change_archive_in_memory();
@@ -23,8 +22,8 @@ private:
 	bool new_archive_in_memory(int x, int y);
 	bool isPause;
 	void patrolPath();
-	const std::vector<Vec2> ChickenSpot = { {2,5},{4,5},{6,5} ,{8,5} };
-	const std::vector<Vec2> CowSpot = { {11,6},{14,6} };
+	const int lifePoints[6] = {4,5,6,7,11,14};
+	static std::set<int>tag;
 public:
 	explicit Animal(MapLayer* parent, const Vec<int>& pos, std::string Type, int AnimalValue,int satiety,int length,float breedPro=0.2);
 	~Animal() override {};

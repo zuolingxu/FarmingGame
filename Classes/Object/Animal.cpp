@@ -1,15 +1,17 @@
 #include"Animal.h"
 
-Animal::Animal(MapLayer* parent, const Vec<int>& pos, std::string Type, int AnimalValue, int satiety, int length,float breedPro)
+std::set<int> Animal::tag = {};
+Animal::Animal(MapLayer* parent, const Vec<int>& pos, std::string Type, int AnimalValue, int satiety, int length, float breedPro)
 	:
- 	type(Type),
+	type(Type),
 	parent_(parent),
 	MapObject(pos),
 	value(AnimalValue),
 	satiety(satiety),
 	isSold(false),
 	breedProbility(breedPro),
-	isPause(false)
+	isPause(false),
+	defaultPos(pos)
 {
 	info_.size = Vec<int>(length, length);
 }
@@ -17,6 +19,7 @@ Animal::Animal(MapLayer* parent, const Vec<int>& pos, std::string Type, int Anim
 MapObject* Animal::create(rapidjson::Value& val, MapLayer* parent, const Vec<int>& pos) {
 	std::string AnimalType;
 	int Value=50,Satiety=0,length=1;
+	tag.insert(pos.X());
 	if (val.HasMember("AnimalType") && val["AnimalType"].IsString()) {
 		AnimalType = val["AnimalType"].GetString();
 	}
@@ -52,7 +55,7 @@ void Animal::defaultAction() {
 		return;
 	}
 	else
-		patrolPath();
+		patrolPath();       //开始移动
 	
 }
 
@@ -76,9 +79,8 @@ void Animal::interact()
 {
 	MainCharacter* maincharacter = MainCharacter::getInstance();
 	const Item* currentItem = maincharacter->getCurrentItem();
-	if (!currentItem)	{
+	if (!currentItem)
 		sold();
-	}
 	else if (currentItem->type==ItemType::PUMPKIN) {
 		satiety += 30;
 	}
@@ -94,17 +96,17 @@ void Animal::interact()
 		satiety -= 20;
 		breedProbility -= 0.1f;                          
 	}
-
-	else
-		CCLOG("NPCinteract:name->favorite:error");
+	else {
+		sold();
+		//此处应该加一点提示
+	}
 }
 
 bool Animal::change_archive_in_memory() {
 	auto* docManager = DocumentManager::getInstance();
 	auto* archiveDoc = docManager->getArchiveDocument();
-	const Vec<int>& position = info_.position;
 	// Convert position to a string to use as the map key
-	std::string positionKey = std::to_string(position.X()) + " " + std::to_string(position.Y());
+	std::string positionKey = std::to_string(defaultPos.X()) + " " + std::to_string(defaultPos.Y());
 	if (archiveDoc->HasMember("Map") && (*archiveDoc)["Map"].HasMember("chicken_house")) {
 		rapidjson::Value& chickenHouse = (*archiveDoc)["Map"]["chicken_house"];
 
@@ -133,9 +135,9 @@ bool Animal::delete_archive_in_memory() {
 	// Get the DocumentManager instance and the current archive document
 	auto* docManager = DocumentManager::getInstance();
 	auto* archiveDoc = docManager->getArchiveDocument();
-	const Vec<int>& position = info_.position;
+	
 	// Convert position to a string to use as the map key
-	std::string positionKey = std::to_string(position.X()) + " " + std::to_string(position.Y());
+	std::string positionKey = std::to_string(defaultPos.X()) + " " + std::to_string(defaultPos.Y());
 	if (archiveDoc->HasMember("Map") && (*archiveDoc)["Map"].HasMember("chicken_house")) {
 		rapidjson::Value& chickenHouse = (*archiveDoc)["Map"]["chicken_house"];
 		// 确保有对应的 positionKey
@@ -143,6 +145,14 @@ bool Animal::delete_archive_in_memory() {
 			// 删除该位置的成员
 			chickenHouse.RemoveMember(positionKey.c_str());
 			CCLOG("Deleted position: %s", positionKey.c_str());
+			// 再次检查是否已删除
+			if (!chickenHouse.HasMember(positionKey.c_str())) {
+				CCLOG("Successfully deleted position: %s", positionKey.c_str());
+				return true;
+			}
+			else {
+				CCLOG("Failed to delete position: %s", positionKey.c_str());
+			}
 			return true;
 		}
 	}
@@ -200,11 +210,16 @@ void Animal::breed() {
 	std::default_random_engine engine(rd());
 	std::uniform_real_distribution<float> distribution(0.0f, 1.0f);
 	float isBreed = 0.0f;//distribution(engine);
-	if (isBreed < breedProbility)
-	{
-		std::uniform_int_distribution<int> distribution(2, 6);
-		int newX = distribution(engine), newY = distribution(engine);
-		new_archive_in_memory(newX, newY);
+	if (isBreed > 1)
+		return;    
+	if (tag.size()<=6) {
+		for (int i : lifePoints)
+			if (!tag.count(i)) {
+				tag.insert(i);
+				Animal* newAnimal = new Animal(parent_, {i,8},type,50,20,1,0.1f);
+				new_archive_in_memory(i, 8);
+				return;
+			}
 	}
 }
 
@@ -212,8 +227,13 @@ void Animal::sold()
 {
 	if (!isSold) {
 		isSold = 1;
+		auto it = tag.find(info_.position.X());
+		if (it != tag.end())
+			tag.erase(info_.position.X());
+		else
+			CCLOG("%s,sell function error", type);
 		MainCharacter::getInstance()->modifyMoney(value);  
-		parent_->removeObject(info_);
+		parent_->removeSpriteFromLayer(info_.sprite);
 	}
 	else
 		CCLOG("Animal Sale Error,repeat sale: %s", type);
@@ -241,8 +261,10 @@ void Animal::settle()
 		delete_archive_in_memory();                 //长期不喂养，动物死亡
 	else
 		change_archive_in_memory();                 //更新动物状态
-	if(isSold)
-		delete_archive_in_memory();                 //删除被卖掉的动物
+	if (isSold) {
+		parent_->removeObject(info_);
+		delete_archive_in_memory();
+	}                 //删除被卖掉的动物
 	breed();                                        //进行繁殖操作
 }
 

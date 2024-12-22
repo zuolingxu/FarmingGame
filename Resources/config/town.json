@@ -8,9 +8,7 @@
       "Info": {
         "Name": "Haley",
         "favorability": 0,
-        "marriage": false,
-        "friendship": false,
-        "festival": false
+        "Emotion": 10
       }
     },
     "0 17": {
