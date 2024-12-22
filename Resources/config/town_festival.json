@@ -6,7 +6,7 @@
             "Type":"NPC",
             "Info":{
                 "Name":"Haley",
-                "favorability":0,
+                "emotion":0,
                 "marriage":false,
                 "friendship":false,
                 "festival":true

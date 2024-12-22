@@ -37,7 +37,7 @@ void NPC::interact()
 	ItemType favorite;
 	auto it = Favorite.find(name);  // 查找对应的场景
 	UILogic::getInstance()->refreshNpcUI(name);
-	SceneManager::getInstance()->showUILayer("npc");
+	SceneManager::getInstance()->showUILayer("npc",emotion);
 	// SceneManager::getInstance()->hideUILayer("npc");
 	if (!currentItem)
 	{
@@ -49,10 +49,20 @@ void NPC::interact()
 
 	}
 	else if (it != Favorite.end()) {
-		favorite = it->second;
-		if (currentItem->type == favorite) {
-			emotion += 10;
+		MainCharacter* mc = MainCharacter::getInstance();
+		ItemType cit = mc->getCurrentItemType();
+		if (cit == ItemType::CAULIFLOWER_SEED || cit == ItemType::PUMPKIN_SEED || cit == ItemType::FISH) {
+			//give
+			mc->modifyItemQuantity(mc->getCurrentItemType(), -1);
+			// emotion
+			favorite = it->second;
+			if (currentItem->type == favorite) {
+				emotion += 20;
+			}
+			else
+				emotion += 10;
 		}
+		
 	}
 	else
 		CCLOG("NPCinteract:name->favorite:error");
@@ -80,7 +90,8 @@ void NPC::defaultAction()
 	}
 	PlayerSprite* npcSprite = dynamic_cast<PlayerSprite*>(info_.sprite);
 	if (name == "Haley")
-	{		npcSprite->schedule([=](float deltaTime) {
+	{
+		npcSprite->schedule([=](float deltaTime) {
 			if (isPaused) {
 				return;
 			}
@@ -97,13 +108,17 @@ void NPC::defaultAction()
 
 			}, 11.0f, "left_move_key");
 	}
-	else if (name == "Abigail") {
-		;
-	}
 	else if (name == "Caroline") {
-		;
+		npcSprite->move(PlayerSprite::MOVEMENT::W_DOWN, 3);
+		npcSprite->schedule([=](float deltaTime) {
+			npcSprite->move(PlayerSprite::MOVEMENT::W_UP, 2);
+
+			npcSprite->scheduleOnce([=](float deltaTime) {
+				npcSprite->move(PlayerSprite::MOVEMENT::W_DOWN, 2);
+				}, 4.0f, "down_move_key");
+
+			}, 8.0f, "up_move_key");
 	}
-	
 }
 
               
