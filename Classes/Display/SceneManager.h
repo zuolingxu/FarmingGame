@@ -1,12 +1,10 @@
 #pragma once
 #include <string>
 #include <unordered_map>
-#include "DocumentManager.h"
 #include "MapLayer.h"
-#include "UILayer.h"
 #include "ui/UILoadingBar.h"
 #include "cocos2d.h"
-#include "TimeManager.h"
+
 
 // Singleton, SceneManager manage every scene in the game
 // SceneManager will be created when the app start

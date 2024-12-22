@@ -37,6 +37,8 @@ public:
 
     void setEffectVolume(float volume);
 
+    void playMusicOfScene(const std::string& scene);
+
 private:
     // 单例实例
     static MusicManager* instance;
@@ -44,6 +46,7 @@ private:
     // 背景音乐ID和音效ID
     int backgroundMusicId;
     std::vector<int> effectIds;
+    std::string cur_music_;
 };
 
 #endif // MUSICMANAGER_H
