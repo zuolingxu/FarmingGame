@@ -9,34 +9,38 @@
 #include "UIlogic.h"
 #include "SceneManager.h"
 
-class NPC final: protected MapObject {
-	private:
-	MapLayer* parent_;
-	std::string name;
-	int emotion;
-	bool isPaused;
-	const std::unordered_map<std::string, ItemType >Favorite = {
-		{"Abigail", ItemType::CAULIFLOWER},
-		{"Caroline", ItemType::PUMPKIN},
-		{"Haley",ItemType::FISH }
-	};
-	const std::unordered_map<std::string, std::string >Scene = {
-		{"Abigail", "Town"},
-		{"Caroline","npc1house"},
-		{"Haley","npc2house"}
-	};
-	void change_archive_in_memory();
-	void defaultAction();
-    public:
-	explicit NPC(MapLayer* parent, const Vec<int>& pos, std::string name, int emo,int length,bool pause);
-	~NPC() override;
-	static MapObject* create(rapidjson::Value& val, MapLayer* parent, const Vec<int>& pos);
-	virtual void init(); 
-	virtual void interact();
-	virtual void clear();
-	virtual void pause();
-	virtual void resume();
-	virtual void settle();
-	virtual bool hasCollision();
-};
+class NPC final : protected MapObject {
+private:
+    MapLayer* parent_;
+    std::string name;
+    int emotion;
+    bool isPaused;
+    // Record each NPC's favorite item
+    const std::unordered_map<std::string, ItemType> Favorite = {
+        {"Abigail", ItemType::CAULIFLOWER},
+        {"Caroline", ItemType::PUMPKIN},
+        {"Haley", ItemType::FISH}
+    };
+    // Record the scene where each NPC should be refreshed
+    const std::unordered_map<std::string, std::string> Scene = {
+        {"Abigail", "Town"},
+        {"Caroline", "npc1house"},
+        {"Haley", "npc2house"}
+    };
 
+    void change_archive_in_memory();  // Update the NPC's archive in memory
+    // Set the default behavior for the NPC
+    void defaultAction();
+
+public:
+    explicit NPC(MapLayer* parent, const Vec<int>& pos, std::string name, int emo, int length, bool pause);
+    ~NPC() override;
+    static MapObject* create(rapidjson::Value& val, MapLayer* parent, const Vec<int>& pos);
+    virtual void init();  // Initialize the NPC
+    virtual void interact();  // Handle interactions with the player
+    virtual void clear();  // Clear NPC's resources
+    virtual void pause();  // Pause the NPC's activities
+    virtual void resume();  // Resume the NPC's activities
+    virtual void settle();  // Save the NPC's state
+    virtual bool hasCollision();  // Check if the NPC has a collision
+};
