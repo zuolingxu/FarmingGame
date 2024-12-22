@@ -17,6 +17,9 @@ public:
     // ≤•∑≈±≥æ∞“Ù¿÷
     void playBackgroundMusic(const std::string& filename, bool loop = true);
 
+    //∏˘æ›≥°æ∞≤•∑≈“Ù¿÷
+    void playMusicOfScene(const std::string& scene);
+
     // Õ£÷π±≥æ∞“Ù¿÷
     void stopBackgroundMusic();
 

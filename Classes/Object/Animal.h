@@ -6,6 +6,7 @@
 #include "MapLayer.h"
 #include"PlayerSprite.h"
 #include "MainCharacter.h"
+#include<set>
 
 class Animal final: protected MapObject {
 private:
@@ -13,12 +14,16 @@ private:
 	std::string type;
 	bool isSold;
 	int value;
-	cocos2d::Vec2 position;
+	Vec<int> defaultPos;
 	int satiety;
 	float breedProbility;
 	bool change_archive_in_memory();
 	bool delete_archive_in_memory();
 	bool new_archive_in_memory(int x, int y);
+	bool isPause;
+	void patrolPath();
+	const int lifePoints[6] = {4,5,6,7,11,14};
+	static std::set<int>tag;
 public:
 	explicit Animal(MapLayer* parent, const Vec<int>& pos, std::string Type, int AnimalValue,int satiety,int length,float breedPro=0.2);
 	~Animal() override {};
@@ -32,7 +37,6 @@ public:
 	virtual bool hasCollision() override;
 	void defaultAction();
 	void sold();
-	void makeSound();
 	void breed();
 };
 

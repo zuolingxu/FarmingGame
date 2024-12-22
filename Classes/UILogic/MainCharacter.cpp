@@ -55,9 +55,10 @@ bool MainCharacter::modifylevel(int delta) {
         level += delta;
 
         level_gift();
+        UILogic::getInstance()->refreshLevelUI(level);
     }
     //todo xianshilevel
-    // UILogic::getInstance()->refreshLevel(level);
+   
 
     return 1;
 
@@ -134,7 +135,8 @@ MainCharacter::MainCharacter():currentItem(nullptr),money(0) {
     UILogic::getInstance()->refreshMoneyUI(money);
     // show bag item in ui
      UILogic::getInstance()->updateBagItems(inventory);
-
+     // show level ui
+     UILogic::getInstance()->refreshLevelUI(level);
      //time in timemanager
 
 }

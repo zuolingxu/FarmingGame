@@ -11,8 +11,9 @@
 struct Task {
     std::string description;
     bool completed;
+    bool clicked;
     Task(const std::string& desc = "", bool done = false)
-        : description(desc), completed(done) {}
+        : description(desc), completed(done),clicked(done) {}
 };
 
 
@@ -59,7 +60,9 @@ public:
 
     void refreshMoneyUI(int money);
 
-    void refreshNpcUI(std::string name);
+    void refreshLevelUI(int level);
+
+    void refreshNpcUI(std::string name,int favor);
 
     void refreshFishUI();
 private:
@@ -119,6 +122,8 @@ private:
     //the logic of tasks
     void initTasks();
 
+    void initSentence();
+
     static UILogic* instance_;
 
     int UI_num = 0;
@@ -134,6 +139,7 @@ private:
 
     std::vector<Item>* bagItems_;
     std::vector<Task> tasks_;
+    std::vector<std::string> Sentence;
 };
 
 

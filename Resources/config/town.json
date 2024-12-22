@@ -1,6 +1,7 @@
 {
   "Name": "town",
   "TMX": "tiledmap/town.tmx",
+  "Audio": "Audio/Town.mp3",
   "BackGroundColor":[0, 79, 152],
   "Audio": "Audio/Town.mp3",
   "ObjectList": {
@@ -9,9 +10,7 @@
       "Info": {
         "Name": "Haley",
         "favorability": 0,
-        "marriage": false,
-        "friendship": false,
-        "festival": false
+        "Emotion": 10
       }
     },
     "0 17": {
@@ -20,28 +19,28 @@
         "NextMap": "farm",
         "NextPosition": "49 16"
       }
-      },
+    },
     "49 16": {
       "Type": "Gate",
       "Info": {
         "NextMap": "beach",
         "NextPosition": "0 17"
       }
-      },
+    },
     "25 19": {
       "Type": "Gate",
       "Info": {
         "NextMap": "npc1house",
         "NextPosition": "7 0"
       }
-      },
+    },
     "12 5": {
       "Type": "Gate",
       "Info": {
         "NextMap": "npc2house",
         "NextPosition": "7 0"
       }
-      }
+    }
   }
 }
 

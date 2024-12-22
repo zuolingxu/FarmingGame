@@ -5,9 +5,10 @@
     "ObjectList": {
         "11 8":{
             "Type":"NPC",
-            "Info":{
-                "Name":"Abigail"
-            }
+          "Info": {
+            "Name": "Abigail",
+            "Emotion": 10
+          }
         },
         "7 0":{
             "Type": "Gate",

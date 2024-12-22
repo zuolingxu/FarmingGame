@@ -28,6 +28,7 @@ UILogic::UILogic()
 {
     // 获取其他管理器实例
     initTasks();
+    initSentence();
     bagItems_ = new std::vector<Item>();
 }
 
@@ -305,6 +306,7 @@ void UILogic::onCauliflowerClicked(cocos2d::Ref* sender, ui::Widget::TouchEventT
     if (MainCharacter::getInstance()->modifyMoney(-50)) {
         MainCharacter::getInstance()->modifyItemQuantity(ItemType::CAULIFLOWER_SEED, 1);
     }
+
 }
 
 void UILogic::onPotatoClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type) {
@@ -336,6 +338,7 @@ void UILogic::onSellCauliflowerClicked(cocos2d::Ref* sender, ui::Widget::TouchEv
 
     if (MainCharacter::getInstance()->modifyItemQuantity(ItemType::CAULIFLOWER, -1)) {
         MainCharacter::getInstance()->modifyMoney(100);
+        completeTask(1);
     }
     else {
         return;
@@ -444,7 +447,9 @@ void UILogic::onTaskItemClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType
         return;
     }
 
-    tasks_.erase(tasks_.begin() + taskIndex);
+    auto task = taskBarNode_->getChildByName(taskName);
+    task->setVisible(false);
+    tasks_[taskIndex].clicked = true;
     updateTaskUI();
 }
 
@@ -524,8 +529,11 @@ void UILogic::updateTaskUI()
         taskButton->setContentSize(Size(360, 50));
         taskButton->setPosition(Vec2(240, 250 - i * 50));
         taskButton->setName("Task_" + std::to_string(i));
-
-        auto taskLabel = ui::Text::create(task.description, "fonts/Marker Felt.ttf", 10);
+        if (tasks_[i].clicked == true) {
+            taskButton->setVisible(false);
+        }
+        auto taskLabel = ui::Text::create(task.description, "fonts/arial.ttf", 12);
+        taskLabel->setColor(Color3B(0, 0, 0));
         taskLabel->setPosition(Vec2(180,25));
         taskButton->addChild(taskLabel);
 
@@ -564,8 +572,9 @@ void UILogic::refreshArchiveUI() {
         archiveButton->setName("Save_" + std::to_string(i));
 
         auto archiveLabel = ui::Text::create("Save_" + std::to_string(i) + "\n" + "Day:"+std::to_string(save["day"].GetInt())+
-            "  Money:"+std::to_string(save["money"].GetInt()), "fonts/Marker Felt.ttf", 10);
+            "  Money:"+std::to_string(save["money"].GetInt()), "fonts/arial.ttf", 10);
         archiveLabel->setPosition(Vec2(190, 25));
+        archiveLabel->setColor(Color3B(0, 0, 0));
         archiveButton->addChild(archiveLabel);
 
         loadArchiveNode_->addChild(archiveButton);
@@ -580,18 +589,21 @@ void UILogic::refreshTimeUI(int day_,float hour_) {
     displayer->removeChild(displayer->getChildByName("day"));
     displayer->removeChild(displayer->getChildByName("hour"));
 
-    auto day = ui::Text::create("Day: "+std::to_string(day_), "fonts/Marker Felt.ttf", 10);
+    auto day = ui::Text::create("Day: "+std::to_string(day_), "fonts/arial.ttf", 10);
     day->setPosition(Vec2(48, 35));
     day->setColor(Color3B(93, 59, 23));
     day->setName("day");
     displayer->addChild(day);
 
     int Hour = static_cast<int>(hour_);
-    auto hour = ui::Text::create(std::to_string(Hour)+":00", "fonts/Marker Felt.ttf", 10);
+    auto hour = ui::Text::create(std::to_string(Hour)+":00", "fonts/arial.ttf", 10);
     hour->setPosition(Vec2(48, 25));
     hour->setColor(Color3B(93, 59, 23));
     hour->setName("hour");
     displayer->addChild(hour);
+    if (day_ == 3) {
+        completeTask(2);
+    }
 }
 
 void UILogic::refreshPowerUI(int power_) {
@@ -600,7 +612,7 @@ void UILogic::refreshPowerUI(int power_) {
     auto displayer = dynamic_cast<ui::Button*>(timeNode_->getChildByName("displayer"));
     displayer->removeChild(displayer->getChildByName("power"));
 
-    auto power = ui::Text::create("Power:"+std::to_string(power_), "fonts/Marker Felt.ttf", 10);
+    auto power = ui::Text::create("Power:"+std::to_string(power_), "fonts/arial.ttf", 10);
     power->setPosition(Vec2(53, 65));
     power->setColor(Color3B(93, 59, 23));
     power->setName("power");
@@ -613,15 +625,30 @@ void UILogic::refreshMoneyUI(int money_) {
     auto displayer = dynamic_cast<ui::Button*>(timeNode_->getChildByName("displayer"));
     displayer->removeChild(displayer->getChildByName("money"));
 
-    auto money = ui::Text::create("Money:" + std::to_string(money_), "fonts/Marker Felt.ttf", 10);
+    auto money = ui::Text::create("Money:" + std::to_string(money_), "fonts/arial.ttf", 10);
     money->setPosition(Vec2(45, 7));
     money->setColor(Color3B(93, 59, 23));
     money->setName("money");
     displayer->addChild(money);
 }
 
+void UILogic::refreshLevelUI(int level_) {
+    if (!timeNode_) return;
 
-void UILogic::refreshNpcUI(std::string name) {
+    auto displayer = dynamic_cast<ui::Button*>(timeNode_->getChildByName("displayer"));
+    displayer->removeChild(displayer->getChildByName("level"));
+
+    auto level = ui::Text::create("LEVEL:" + std::to_string(level_), "fonts/arial.ttf", 8);
+    level->setPosition(Vec2(45, 52));
+    level->setColor(Color3B(93, 59, 23));
+    level->setName("level");
+    displayer->addChild(level);
+    if (level_ >= 5) {
+        completeTask(0);
+    }
+}
+
+void UILogic::refreshNpcUI(std::string name, int favorability) {
     if (!npcNode_) return;
 
     if (!(name == "Abigail" || name == "Caroline" || name == "Haley")) {
@@ -647,6 +674,19 @@ void UILogic::refreshNpcUI(std::string name) {
         potrait->setName("portrait");
         npcNode_->addChild(potrait);
     }
+
+    auto textbox = npcNode_->getChildByName("textbox");
+    textbox->removeAllChildren();
+    static int count = 0;
+    int i = count % 5;
+    auto sentence = ui::Text::create(Sentence[i], "fonts/Marker Felt.ttf", 18);
+    count++;
+    sentence->setPosition(Vec2(200, 65));
+    textbox->addChild(sentence);
+    auto favor= ui::Text::create("Favoribility:"+std::to_string(favorability), "fonts/Marker Felt.ttf", 16);
+    favor->setPosition(Vec2(70, 24));
+    favor->setColor(Color3B(255,0,0));
+    textbox->addChild(favor);
 }
 
 void UILogic::refreshFishUI() {
@@ -690,8 +730,16 @@ void UILogic::completeTask(int taskIndex)
 }
 
 void UILogic::initTasks() {
-    tasks_.push_back(Task("TASK:Plant a seed by yourself!", false));
-    tasks_.push_back(Task("TASK:Say hello to Haley in the town!", false));
+    tasks_.push_back(Task("TASK:Upgrade to level 5!", false));
+    tasks_.push_back(Task("TASK:Sell a cauliflower to the shop!", false));
     tasks_.push_back(Task("TASK:Join a festival with the residents in the town!", false));
-    tasks_.push_back(Task("TASK:Catch a fish by the beach!", false));
+    tasks_.push_back(Task("TASK:Go fishing by the beach!", false));
+}
+
+void UILogic::initSentence() {
+    Sentence.push_back("Hello, nice to see you!");
+    Sentence.push_back("Have you heard that Zhu Hongming\n is the best teacher in Tongji University?");
+    Sentence.push_back("How's your day? I feel great today");
+    Sentence.push_back("It is said that Zuo lingxu\n is the god of coding.");
+    Sentence.push_back("Thank you,I like it very much!");
 }
