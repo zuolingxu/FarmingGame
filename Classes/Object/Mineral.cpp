@@ -83,6 +83,7 @@ void Mineral::interact() {
         // ¿óÊ¯±»ÍÚ¾ò
         info_.sprite->removeFromParentAndCleanup(true);
         info_.sprite = nullptr;
+        parent->removeColiision(info_);
     }
 
 

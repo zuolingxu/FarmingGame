@@ -25,6 +25,11 @@ public:
 	// It will delete the Object after 0.02s
 	void removeObject(MapObject::ObjectInfo& obj);
 
+	void removeColiision(MapObject::ObjectInfo& obj);
+
+	// remove sprite from layer
+	void removeSpriteFromLayer(cocos2d::Sprite* sprite);
+
 	// to know if a place has a collision, the pos should be a pixel position
 	bool hasCollision(const cocos2d::Vec2& pos);
 
@@ -44,9 +49,6 @@ public:
 	// change frame of a sprite, frame_name is name of frame in .plist file.
 	// This function is only for normal Sprite
 	void changeWithSingleFrame(cocos2d::Sprite* stationary_sprite, const std::string& new_frame_name) const;
-
-	// remove sprite from layer
-	void removeSpriteFromLayer(cocos2d::Sprite* sprite);
 
 	// This function is for PlayerSprite, for update interact map and collision map
 	void updateMaps(const Vec<int>& old_pos, const Vec<int>& new_pos, const Vec<int>& size);

@@ -348,7 +348,7 @@ void MapLayer::onMouseDown(cocos2d::Event* event)
                     item->type==ItemType::SOUP) 
                 {
                     MainCharacter::getInstance()->eat_food_and_gain_energy(item->type);
-                    // TODO: interact with holdings animation
+                    main_player_->move(PlayerSprite::MOVEMENT::STAY, 1);
                 }
             }
         }
@@ -670,7 +670,6 @@ void MapLayer::removeObject(MapObject::ObjectInfo& obj)
                 obj_ptr->release();
             }, this, 0, 0, 0.02f, false, "delete_object");
 
-        interact_map_[pos.X()][pos.Y()];
         for (int x = pos.X(); x < pos2.X(); x++)
         {
             for (int y = pos.Y(); y < pos2.Y(); y++)
@@ -688,6 +687,24 @@ void MapLayer::removeObject(MapObject::ObjectInfo& obj)
     {
         removeSpriteFromLayer(obj.sprite);
         obj.sprite = nullptr;
+    }
+}
+
+void MapLayer::removeColiision(MapObject::ObjectInfo& obj) {
+    Vec<int> pos = obj.position;
+    Vec<int> pos2 = pos + obj.size;
+    if (inVecRange(interact_map_, pos))
+    {
+        for (int x = pos.X(); x < pos2.X(); x++)
+        {
+            for (int y = pos.Y(); y < pos2.Y(); y++)
+            {
+                if (inVecRange(interact_map_, { x,y }))
+                {
+                    collision_map_[x][y] = false;
+                }
+            }
+        }
     }
 }
 
