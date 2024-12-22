@@ -4,7 +4,7 @@
 #include<vector>
 #include<string>
 
-// 定义 UI 类型枚举
+// define the enum of different UI layers
 enum class UILayerType {
     START_SCREEN,
     BAG,
@@ -21,20 +21,20 @@ class UILayer : public cocos2d::Ref
 {
 public:
     struct Item {
-        std::string name;      // 物品名称
-        int quantity;          // 物品数量
-        std::string iconPath;  // 物品图标路径
+        std::string name;      // the name of the item
+        int quantity;          // the quantity of the item
+        std::string iconPath;  // the path of the icon picture of the item
 
         Item(const std::string& itemName = "", int num = 0, const std::string& icon = "")
             : name(itemName), quantity(num), iconPath(icon) {}
     };
-    // 创建 UILayer 实例
+    // create the instance of UILayer 
     static cocos2d::Node* createUILayer(UILayerType type);
 
-    // 初始化 UILayer
+    // initialize the UIlayer with the type
     bool initWithType(UILayerType type);
 
-    // 获取 UI 元素，如背包栏、任务栏等
+    // get UI elements
     cocos2d::ui::Layout* getBagLayout() const { return bagLayout_; }
     cocos2d::ui::Layout* getTaskBarLayout() const { return taskBarLayout_; }
     cocos2d::ui::Layout* getStartScreenLayout() const { return startScreenLayout_; }
@@ -46,7 +46,7 @@ public:
     cocos2d::ui::Layout* getFishLayout() const { return fishLayout_; }
 
 private:
-    // UI 组件
+    // UI elements
     cocos2d::ui::Layout* taskBarLayout_;
     cocos2d::ui::Layout* bagLayout_;
     cocos2d::ui::Layout* startScreenLayout_;
@@ -58,7 +58,7 @@ private:
     cocos2d::ui::Layout* fishLayout_;
 
 
-    // 创建各个 UI 组件的方法
+    // the methods of initializing the UI elements
     void createTaskBarLayout();
     void createBagLayout();
     void createStartScreenLayout();

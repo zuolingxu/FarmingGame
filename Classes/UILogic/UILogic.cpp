@@ -9,7 +9,7 @@ USING_NS_CC;
 #undef GetObject
 #endif
 
-// 静态实例初始化
+//static instance initialization
 UILogic* UILogic::instance_ = nullptr;
 
 UILogic* UILogic::getInstance()
@@ -26,7 +26,7 @@ UILogic::UILogic()
     , bagNode_(nullptr)
     , taskBarNode_(nullptr)
 {
-    // 获取其他管理器实例
+    // init tasks and sentence
     initTasks();
     initSentence();
     bagItems_ = new std::vector<Item>();
@@ -226,6 +226,7 @@ void UILogic::bindFishEvents()
 
 void UILogic::onNewButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
 {
+    //create a new archive and load the player house map
     int i = 1;
     while (!DocumentManager::getInstance()->createArchiveDocument(i)) { i++; }
     SceneManager::getInstance()->NextMap("player_house", "14 2");
@@ -235,13 +236,14 @@ void UILogic::onNewButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventTyp
 
 void UILogic::onLoadButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
 {
+    //show loadarchive layer
     SceneManager::getInstance()->showUILayer("loadarchive");
 
 }
 
 void UILogic::onExitButtonClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType type)
 {
-
+    //end the game
     Director::getInstance()->end();
 }
 
@@ -249,6 +251,7 @@ void UILogic::onCloseTaskBarClicked(cocos2d::Ref* sender, ui::Widget::TouchEvent
 {
     if (type != ui::Widget::TouchEventType::ENDED) return;
 
+    //set taskbarnode invisible
     if (taskBarNode_) {
         taskBarNode_->setVisible(false);
     }
@@ -258,6 +261,7 @@ void UILogic::onCloseNpcClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType
 {
     if (type != ui::Widget::TouchEventType::ENDED) return;
 
+    //set npcnode invisible
     if (npcNode_) {
         npcNode_->setVisible(false);
     }
@@ -267,6 +271,7 @@ void UILogic::onCloseFishClicked(cocos2d::Ref* sender, ui::Widget::TouchEventTyp
 {
     if (type != ui::Widget::TouchEventType::ENDED) return;
 
+    //set fishnode invisible
     if (fishNode_) {
         fishNode_->setVisible(false);
     }
@@ -279,6 +284,7 @@ void UILogic::onBagSlotClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType 
     auto button = dynamic_cast<ui::Button*>(sender);
     if (!button) return;
 
+    //get the clicked slot index
     std::string name = button->getName(); // "Slot_x"
     int slotIndex = std::stoi(name.substr(5));
 
@@ -291,6 +297,7 @@ void UILogic::onArchiveClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType 
     auto button = dynamic_cast<ui::Button*>(sender);
     if (!button) return;
 
+    //get the clicked archive index
     std::string name = button->getName(); // "Save_x"
     int saveIndex = std::stoi(name.substr(5));
 
@@ -303,6 +310,7 @@ void UILogic::onCauliflowerClicked(cocos2d::Ref* sender, ui::Widget::TouchEventT
     auto button = dynamic_cast<ui::Button*>(sender);
     if (!button) return;
 
+    //if player has enough money, add cauliflower seed to inventory
     if (MainCharacter::getInstance()->modifyMoney(-50)) {
         MainCharacter::getInstance()->modifyItemQuantity(ItemType::CAULIFLOWER_SEED, 1);
     }
@@ -314,6 +322,8 @@ void UILogic::onPotatoClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType t
 
     auto button = dynamic_cast<ui::Button*>(sender);
     if (!button) return;
+
+    //if player has enough money, add potato seed to inventory
     if (MainCharacter::getInstance()->modifyMoney(-30)) {
         MainCharacter::getInstance()->modifyItemQuantity(ItemType::POTATO_SEED, 1);
     }
@@ -325,6 +335,7 @@ void UILogic::onPumpkinClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType 
     auto button = dynamic_cast<ui::Button*>(sender);
     if (!button) return;
 
+    //if player has enough money, add pumpkin seed to inventory
     if (MainCharacter::getInstance()->modifyMoney(-80)) {
         MainCharacter::getInstance()->modifyItemQuantity(ItemType::PUMPKIN_SEED, 1);
     }
@@ -336,6 +347,7 @@ void UILogic::onSellCauliflowerClicked(cocos2d::Ref* sender, ui::Widget::TouchEv
     auto button = dynamic_cast<ui::Button*>(sender);
     if (!button) return;
 
+    //if player has cauliflower, sell it for 100 money
     if (MainCharacter::getInstance()->modifyItemQuantity(ItemType::CAULIFLOWER, -1)) {
         MainCharacter::getInstance()->modifyMoney(100);
         completeTask(1);
@@ -351,6 +363,7 @@ void UILogic::onSellPotatoClicked(cocos2d::Ref* sender, ui::Widget::TouchEventTy
     auto button = dynamic_cast<ui::Button*>(sender);
     if (!button) return;
 
+    //if player has potato, sell it for 60 money
     if (MainCharacter::getInstance()->modifyItemQuantity(ItemType::POTATO, -1)) {
         MainCharacter::getInstance()->modifyMoney(60);
     }
@@ -365,6 +378,7 @@ void UILogic::onSellPumpkinClicked(cocos2d::Ref* sender, ui::Widget::TouchEventT
     auto button = dynamic_cast<ui::Button*>(sender);
     if (!button) return;
 
+    //if player has pumpkin, sell it for 160 money
     if (MainCharacter::getInstance()->modifyItemQuantity(ItemType::PUMPKIN, -1)) {
         MainCharacter::getInstance()->modifyMoney(160);
     }
@@ -378,6 +392,8 @@ void UILogic::onFertilizerClicked(cocos2d::Ref* sender, ui::Widget::TouchEventTy
 
     auto button = dynamic_cast<ui::Button*>(sender);
     if (!button) return;
+
+    //if player has enough money, add fertilizer to inventory
     if (MainCharacter::getInstance()->modifyItemQuantity(ItemType::ROCK, -2)) {
         MainCharacter::getInstance()->modifyItemQuantity(ItemType::FERTILIZER, 1);
     }
@@ -392,6 +408,7 @@ void UILogic::onSoupClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType typ
     auto button = dynamic_cast<ui::Button*>(sender);
     if (!button) return;
 
+    //if player has enough ingredients, add soup to inventory
     if (MainCharacter::getInstance()->modifyItemQuantity(ItemType::CAULIFLOWER, -2)) {
         MainCharacter::getInstance()->modifyItemQuantity(ItemType::SOUP, 1);
     }
@@ -407,6 +424,7 @@ void UILogic::useItemFromBag(int slotIndex)
     auto& item = (*bagItems_)[slotIndex];
 
     MainCharacter::getInstance()->setCurrentItem(item.type);
+    //remove the selected tile from the slot
     for (int i = 0; i < 24; ++i) {
         auto slot = dynamic_cast<ui::Button*>(bagNode_->getChildByName("Slot_" + std::to_string(i)));
         auto selected = slot->getChildByName("selected");
@@ -415,6 +433,7 @@ void UILogic::useItemFromBag(int slotIndex)
         }
     }
 
+    //add the selected tile to the clicked slot
     auto slot = bagNode_->getChildByName("Slot_" + std::to_string(slotIndex));
     auto selected = ui::Button::create("image/selected_tile.png", "image/selected_tile.png");
     selected->setScale9Enabled(true);
@@ -425,6 +444,7 @@ void UILogic::useItemFromBag(int slotIndex)
 }
 
 void UILogic::LoadArchive(int saveIndex) {
+    //load the save file and load the player_house map
     DocumentManager::getInstance()->loadArchiveDocument(saveIndex);
     MainCharacter::getInstance();
     SceneManager::getInstance() -> NextMap("player_house", "14 2");
@@ -446,6 +466,7 @@ void UILogic::onTaskItemClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType
         return;
     }
 
+    //if task is completed, set is invisible
     auto task = taskBarNode_->getChildByName(taskName);
     task->setVisible(false);
     tasks_[taskIndex].clicked = true;
@@ -455,14 +476,16 @@ void UILogic::onTaskItemClicked(cocos2d::Ref* sender, ui::Widget::TouchEventType
 void UILogic::updateBagItems(std::vector<Item>* bagitem) {
     bagItems_ = bagitem;
 
+    
     for (int i = 0; i < 24; i++) {
         auto slot = dynamic_cast<ui::Button*>(bagNode_->getChildByName("Slot_" + std::to_string(i)));
         slot->setEnabled(true);
     }
-
+    //if a slot is empty, it cannot be clicked
     for (size_t i = (*bagItems_).size(); i < 24; i++) {
         auto slot = dynamic_cast<ui::Button*>(bagNode_->getChildByName("Slot_" + std::to_string(i)));
         slot->setEnabled(false);
+        slot->setBright(true);
     }
     refreshBagUI();
 }
@@ -473,10 +496,10 @@ void UILogic::refreshBagUI()
 
     if (!bagNode_) return;
 
-    const int numSlots = 24;
-    const int columns = 12; // 每行12个
-    const int rows = 2; // 2行
-    const float slotSize = 20.0f; // 每个格子的大小
+    const int numSlots = 24;// the number of slots
+    const int columns = 12; // the columns
+    const int rows = 2; // the rows
+    const float slotSize = 20.0f; // the size of each slot
 
     for (int i = 0; i < numSlots; ++i)
     {
@@ -487,7 +510,7 @@ void UILogic::refreshBagUI()
         if (!slot) continue;
 
         slot->removeAllChildren(); 
-
+        
         if (i < (int)(*bagItems_).size())
         {
             const auto& item = (*bagItems_)[i];
@@ -520,6 +543,7 @@ void UILogic::updateTaskUI()
 
     taskBarNode_->removeAllChildren();
 
+    //update the task bar
     for (int i = 0; i < (int)tasks_.size(); ++i)
     {
         const Task& task = tasks_[i];
@@ -558,8 +582,9 @@ void UILogic::refreshArchiveUI() {
 
     rapidjson::Value& val = (*DocumentManager::getInstance()->getConfigDocument())["Archive"];
 
-
     UI_num = val.GetObject().MemberCount();
+
+    //load the loadarchive layout from the Save_x.json file
     for (int i = 1 ; i <= UI_num; i++)
     {
         auto& save = val[("Save_" + std::to_string(i)).c_str()];
@@ -588,12 +613,14 @@ void UILogic::refreshTimeUI(int day_,float hour_) {
     displayer->removeChild(displayer->getChildByName("day"));
     displayer->removeChild(displayer->getChildByName("hour"));
 
+    //update the day
     auto day = ui::Text::create("Day: "+std::to_string(day_), "fonts/arial.ttf", 10);
     day->setPosition(Vec2(48, 35));
     day->setColor(Color3B(93, 59, 23));
     day->setName("day");
     displayer->addChild(day);
 
+    //update the hour
     int Hour = static_cast<int>(hour_);
     auto hour = ui::Text::create(std::to_string(Hour)+":00", "fonts/arial.ttf", 10);
     hour->setPosition(Vec2(48, 25));
@@ -611,6 +638,7 @@ void UILogic::refreshPowerUI(int power_) {
     auto displayer = dynamic_cast<ui::Button*>(timeNode_->getChildByName("displayer"));
     displayer->removeChild(displayer->getChildByName("power"));
 
+    //update the power
     auto power = ui::Text::create("Power:"+std::to_string(power_), "fonts/arial.ttf", 10);
     power->setPosition(Vec2(53, 65));
     power->setColor(Color3B(93, 59, 23));
@@ -624,6 +652,7 @@ void UILogic::refreshMoneyUI(int money_) {
     auto displayer = dynamic_cast<ui::Button*>(timeNode_->getChildByName("displayer"));
     displayer->removeChild(displayer->getChildByName("money"));
 
+    //update the money
     auto money = ui::Text::create("Money:" + std::to_string(money_), "fonts/arial.ttf", 10);
     money->setPosition(Vec2(45, 7));
     money->setColor(Color3B(93, 59, 23));
@@ -637,6 +666,7 @@ void UILogic::refreshLevelUI(int level_) {
     auto displayer = dynamic_cast<ui::Button*>(timeNode_->getChildByName("displayer"));
     displayer->removeChild(displayer->getChildByName("level"));
 
+    //update the level
     auto level = ui::Text::create("LEVEL:" + std::to_string(level_), "fonts/arial.ttf", 8);
     level->setPosition(Vec2(45, 52));
     level->setColor(Color3B(93, 59, 23));
@@ -655,6 +685,7 @@ void UILogic::refreshNpcUI(std::string name, int favorability) {
     }
     npcNode_->removeChild(npcNode_->getChildByName("portrait"));
 
+    //update the portrait of different npc
     if (name == "Abigail") {
         auto potrait = ui::Button::create("image/abi.png", "image/abi.png");
         potrait->setPosition(Vec2(90, 142));
@@ -674,6 +705,7 @@ void UILogic::refreshNpcUI(std::string name, int favorability) {
         npcNode_->addChild(potrait);
     }
 
+    //update the sentence and favoribilty of different npc
     auto textbox = npcNode_->getChildByName("textbox");
     textbox->removeAllChildren();
     static int count = 0;
@@ -692,6 +724,8 @@ void UILogic::refreshFishUI() {
     static int count = 0;
     int i = count % 3;
     count++;
+
+    //update the fish
     if (i == 0) {
         auto fishbox = fishNode_->getChildByName("fishbox");
         fishbox->removeAllChildren();
@@ -720,6 +754,7 @@ void UILogic::refreshFishUI() {
 
 void UILogic::completeTask(int taskIndex)
 {
+    //mark the task as completed
     if (taskIndex < 0 || taskIndex >= (int)tasks_.size()) {
         return;
     }
