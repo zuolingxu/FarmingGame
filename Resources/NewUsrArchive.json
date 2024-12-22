@@ -73,6 +73,14 @@
       }
     },
     "chicken_house": {
+      "4 8": {
+        "Type": "Animal",
+        "Info": {
+          "AnimalType": "Chicken",
+          "Value": 50,
+          "Length": 1
+        }
+      },
       "5 8": {
         "Type": "Animal",
         "Info": {
@@ -80,7 +88,38 @@
           "Value": 50,
           "Length": 1
         }
-
+      },
+      "6 8": {
+        "Type": "Animal",
+        "Info": {
+          "AnimalType": "Chicken",
+          "Value": 50,
+          "Length": 1
+        }
+      },
+      "7 8": {
+        "Type": "Animal",
+        "Info": {
+          "AnimalType": "Chicken",
+          "Value": 50,
+          "Length": 1
+        }
+      },
+      "11 8": {
+        "Type": "Animal",
+        "Info": {
+          "AnimalType": "Cow",
+          "Value": 200,
+          "Length": 2
+        }
+      },
+      "14 8": {
+        "Type": "Animal",
+        "Info": {
+          "AnimalType": "Cow",
+          "Value": 200,
+          "Length": 2
+        }
       }
     }
   }

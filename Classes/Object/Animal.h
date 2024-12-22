@@ -6,6 +6,8 @@
 #include "MapLayer.h"
 #include"PlayerSprite.h"
 #include "MainCharacter.h"
+#include<vector>
+#include<unordered_map>
 
 class Animal final: protected MapObject {
 private:
@@ -19,6 +21,10 @@ private:
 	bool change_archive_in_memory();
 	bool delete_archive_in_memory();
 	bool new_archive_in_memory(int x, int y);
+	bool isPause;
+	void patrolPath();
+	const std::vector<Vec2> ChickenSpot = { {2,5},{4,5},{6,5} ,{8,5} };
+	const std::vector<Vec2> CowSpot = { {11,6},{14,6} };
 public:
 	explicit Animal(MapLayer* parent, const Vec<int>& pos, std::string Type, int AnimalValue,int satiety,int length,float breedPro=0.2);
 	~Animal() override {};
@@ -32,7 +38,6 @@ public:
 	virtual bool hasCollision() override;
 	void defaultAction();
 	void sold();
-	void makeSound();
 	void breed();
 };
 

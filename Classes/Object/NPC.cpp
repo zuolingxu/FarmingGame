@@ -23,6 +23,9 @@ MapObject* NPC::create(rapidjson::Value& val, MapLayer* parent, const Vec<int>& 
 	if (val.HasMember("Length") && val["Length"].IsInt()) {
 		length = val["Length"].GetInt();
 	}
+	if (val.HasMember("Emotion") && val["Emotion"].IsInt()) {
+		length = val["Emotion"].GetInt();
+	}
 	return new NPC(parent, pos, npcName, emo, length,false);
 }
 
@@ -38,7 +41,6 @@ void NPC::interact()
 	// SceneManager::getInstance()->hideUILayer("npc");
 	if (!currentItem)
 	{
-
 		pause();
 		npcSprite->schedule([=](float deltaTime) {
 			npcSprite->move(PlayerSprite::MOVEMENT::STAY, 3);
@@ -170,44 +172,3 @@ bool NPC::hasCollision()
 
 
 
-
-
-
-
-
-/*
-	if (name == "Haley")
-		// 加载帧数据
-	{
-		cocos2d::SpriteFrameCache::getInstance()->addSpriteFramesWithFile(name + ".plist", name + ".png");
-
-		// 创建一个 Vector 存储 SpriteFrame 对象
-		cocos2d::Vector<cocos2d::SpriteFrame*> frames;
-
-		// 假设你知道 plist 中的帧名字是 "chicken-1.png", "chicken-2.png"
-		for (int i = 1; i <= 2; i++) {
-			std::string frameName = name + "-" + std::to_string(i) + ".png"; // 动态生成帧名
-			frames.pushBack(cocos2d::SpriteFrameCache::getInstance()->getSpriteFrameByName(frameName));
-		}
-
-		// 创建一个 Animation 对象
-		auto animation = cocos2d::Animation::createWithSpriteFrames(frames, 0.1f); // 每帧的时间是 0.1f
-
-		// 创建一个 Animate 对象
-		auto animate = cocos2d::Animate::create(animation);
-
-		// 获取一个精灵并播放动画
-		auto animalSprite = cocos2d::Sprite::createWithSpriteFrameName("Haley-1.png"); // 初始化精灵
-		animalSprite->setPosition(cocos2d::Vec2(40, 2)); // 设置初始位置
-
-		// 创建移动动作
-		auto moveAction = cocos2d::MoveTo::create(10.0f, cocos2d::Vec2(10, 2));  // 2秒到达新的位置
-
-		// 使用 Spawn 来同时执行移动和动画
-		auto moveAndAnimate = cocos2d::Spawn::create(moveAction, animate, nullptr);
-
-		// 启动精灵的移动和动画
-		animalSprite->runAction(moveAndAnimate);
-		//parent->addChild();
-	}  // 将精灵添加到当前场景
-	*/

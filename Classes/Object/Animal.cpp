@@ -8,7 +8,8 @@ Animal::Animal(MapLayer* parent, const Vec<int>& pos, std::string Type, int Anim
 	value(AnimalValue),
 	satiety(satiety),
 	isSold(false),
-	breedProbility(breedPro)
+	breedProbility(breedPro),
+	isPause(false)
 {
 	info_.size = Vec<int>(length, length);
 }
@@ -50,20 +51,24 @@ void Animal::defaultAction() {
 		CCLOG("dafaulAction->parent_ nullptr");
 		return;
 	}
-	PlayerSprite* animalSprite = dynamic_cast<PlayerSprite*>(info_.sprite);
-	int midX = 9, midY = 6,x,y;
-	std::random_device rd;
-	std::default_random_engine engine(rd());
-
-	std::uniform_int_distribution<int> distribution(-2, 2);
-	x= distribution(engine)+midX;
-	y= distribution(engine) + midY;
-	animalSprite->move(PlayerSprite::MOVEMENT::W_RIGHT, x-info_.position.X());
-	// 使用 scheduleOnce 延迟执行第二次移动
-	animalSprite->scheduleOnce([=](float deltaTime) {
-		animalSprite->move(PlayerSprite::MOVEMENT::W_DOWN, y- info_.position.Y());
-		}, 2.0f, "move_up_key");  // 2秒后执行向上的移动
+	else
+		patrolPath();
 	
+}
+
+void Animal::patrolPath() {
+	PlayerSprite* animalSprite = dynamic_cast<PlayerSprite*>(info_.sprite);
+
+	animalSprite->schedule([=](float deltaTime) {
+		// 下移动 
+		animalSprite->move(PlayerSprite::MOVEMENT::W_DOWN, info_.position.Y() - 2);
+
+		// 上移动
+		animalSprite->scheduleOnce([=](float deltaTime) {
+			animalSprite->move(PlayerSprite::MOVEMENT::W_UP, 5- info_.position.Y());
+			}, 3.0f, "up_move_key");
+
+		}, 6.0f, "down_move_key"); // 每6 秒循环一次
 }
 
 
@@ -71,12 +76,8 @@ void Animal::interact()
 {
 	MainCharacter* maincharacter = MainCharacter::getInstance();
 	const Item* currentItem = maincharacter->getCurrentItem();
-	if (!currentItem)
-	{
-		isSold = 1;
-		MainCharacter::getInstance()->modifyMoney(value);
-		//parent_->removeSpriteFromLayer(info_.sprite);
-		parent_->removeObject(info_);
+	if (!currentItem)	{
+		sold();
 	}
 	else if (currentItem->type==ItemType::PUMPKIN) {
 		satiety += 30;
@@ -85,12 +86,20 @@ void Animal::interact()
 		satiety += 20;
 		breedProbility += 0.1f;
 	}
+	else if (currentItem->type == ItemType::CAULIFLOWER_SEED) {
+		satiety += 50;
+		breedProbility += 0.2f;
+	}
+	else if (currentItem->type == ItemType::CAULIFLOWER) {
+		satiety -= 20;
+		breedProbility -= 0.1f;                          
+	}
+
 	else
 		CCLOG("NPCinteract:name->favorite:error");
 }
 
 bool Animal::change_archive_in_memory() {
-	// Get the DocumentManager instance and the current archive document
 	auto* docManager = DocumentManager::getInstance();
 	auto* archiveDoc = docManager->getArchiveDocument();
 	const Vec<int>& position = info_.position;
@@ -141,17 +150,19 @@ bool Animal::delete_archive_in_memory() {
 }
 
 bool Animal::new_archive_in_memory(int x, int y) {
-	// Get the DocumentManager instance and the current archive document
+	//获取文件管理器和存档
 	auto* docManager = DocumentManager::getInstance();
 	auto* archiveDoc = docManager->getArchiveDocument();
+	
+	//坐标作为键值查找
 	const Vec<int>& position = Vec<int>(x, y);
-	// Convert position to a string to use as the map key
 	std::string positionKey = std::to_string(position.X()) + " " + std::to_string(position.Y());
 	if (archiveDoc->HasMember("Map") && (*archiveDoc)["Map"].HasMember("chicken_house")) {
 		rapidjson::Value& chickenHouse = (*archiveDoc)["Map"]["chicken_house"];
-		// 确保有对应的 positionKey
+		
+		//如果已经有存档，停止操做防止发生冲突，打印日志报告异常
 		if (chickenHouse.HasMember(positionKey.c_str())) {
-			CCLOG("has object already", positionKey.c_str());
+			CCLOG("has object already，%s", positionKey.c_str());
 			return false;
 		}
 		else {
@@ -179,6 +190,8 @@ bool Animal::new_archive_in_memory(int x, int y) {
 			return true;
 		}
 	}
+	else 
+		CCLOG("No such map for %s",type);
 	return false;
 }
 
@@ -195,6 +208,17 @@ void Animal::breed() {
 	}
 }
 
+void Animal::sold() 
+{
+	if (!isSold) {
+		isSold = 1;
+		MainCharacter::getInstance()->modifyMoney(value);  
+		parent_->removeObject(info_);
+	}
+	else
+		CCLOG("Animal Sale Error,repeat sale: %s", type);
+}
+
 void Animal::clear() 
 {
 	// 清除精灵和相关资源
@@ -203,21 +227,23 @@ void Animal::clear()
 
 void Animal::pause()
 {
-
+	isPause = true;                                 //改变状态参数，停止运动
 }
 
 void Animal::resume() 
 {
-
+	isPause = false;                                //改变状态参数，继续运动
 }
 
 void Animal::settle()
 {
 	if (satiety < -20)
-		delete_archive_in_memory();
+		delete_archive_in_memory();                 //长期不喂养，动物死亡
 	else
-		change_archive_in_memory();
-	breed();
+		change_archive_in_memory();                 //更新动物状态
+	if(isSold)
+		delete_archive_in_memory();                 //删除被卖掉的动物
+	breed();                                        //进行繁殖操作
 }
 
 bool Animal::hasCollision() {
