@@ -8,21 +8,22 @@ USING_NS_CC;
 
 class MainCharacter {
 public:
-    const int MAX_QUANTITY = 10000;  //item max quantity
-    const int MAX_ENERGY = 500;
+    const int MAX_QUANTITY = 99;  //item max quantity
+    const int MAX_ENERGY = 300;
     const int MAX_MONEY = 114514;
     const int MAX_LEVEL = 20;
 
-    const int Tilling_the_soil_consumes_energy = -5;
-    const int Getting_mineral_consumes_energy = -5;
-    const int Watering_crops_consumes_energy = -3;
-    const int Fertilizing_consumes_energy = -3;
+    const int Tilling_the_soil_consumes_energy = -8;
+    const int Getting_mineral_consumes_energy = -8;
+    const int Watering_crops_consumes_energy = -4;
+    const int Fertilizing_consumes_energy = -2;
+    const int Fishing_consumes_energy = -15;
 
-    const int Eating_cauliflower_gain_energy = 100;
-    const int Eating_potato_gain_energy = 150;
-    const int Eating_pumpkin_gain_energy = 200;
-    const int Eating_fish_gain_energy = 250;
-    const int Eating_soup_gain_energy = 300;
+    const int Eating_cauliflower_gain_energy = 50;
+    const int Eating_potato_gain_energy = 80;
+    const int Eating_pumpkin_gain_energy = 100;
+    const int Eating_fish_gain_energy = 30;
+    const int Eating_soup_gain_energy = 150;
 
 private:
     std::vector<Item>* inventory;       // Backpack items

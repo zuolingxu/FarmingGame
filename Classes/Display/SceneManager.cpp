@@ -1,9 +1,12 @@
 #include "SceneManager.h"
 #include "HelperClasses.h"
-#include "audio/include/AudioEngine.h"
-#include "ui/UILoadingBar.h"
 #include "UILogic.h"
 #include "UILayer.h"
+#include "TimeManager.h"
+#include "UILayer.h"
+#include "DocumentManager.h"
+#include "cocos2d.h"
+#include "ui/UILoadingBar.h"
 
 USING_NS_CC;
 

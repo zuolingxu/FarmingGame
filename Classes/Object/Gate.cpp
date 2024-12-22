@@ -42,7 +42,9 @@ void Gate::interact()
 		}
 		else if (Function == "for_fishing")
 		{
-			if (MainCharacter::getInstance()->getCurrentItemType() != ItemType::FISHING_ROD)
+			if (MainCharacter::getInstance()->getCurrentItemType() != ItemType::FISHING_ROD &&
+				!MainCharacter::getInstance()->modifyEnergy(
+					MainCharacter::getInstance()->Fishing_consumes_energy))
 				return;
 			UILogic::getInstance()->refreshFishUI();
 			SceneManager::getInstance()->showUILayer("fish");

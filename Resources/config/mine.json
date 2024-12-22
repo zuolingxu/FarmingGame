@@ -2,6 +2,7 @@
     "Name": "mine",
     "TMX": "TiledMap/mine.tmx",
     "BackGroundColor":[0,0,0],
+    "Audio": "Audio/Mine.mp3",
     "ObjectList":{
         "6 13":{
             "Type": "Gate",

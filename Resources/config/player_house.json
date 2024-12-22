@@ -1,6 +1,7 @@
 {
   "Name": "player_house",
   "TMX": "tiledMap/player_house.tmx",
+  "Audio": "Audio/Farm.mp3",
   "ObjectList": {
     "9 0": {
       "Type": "Gate",

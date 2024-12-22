@@ -5,6 +5,7 @@
 #include <functional>
 #include "Land.h"
 #include "MainCharacter.h"
+#include "Audio.h"
 
 USING_NS_CC;
 #ifdef _MSC_VER
@@ -437,8 +438,8 @@ Node* MapLayer::toFront(PlayerSprite* main_player)
     layer_->addChild(focus_, OBJECT_BASE_ZORDER + 128);
     layer_->setCameraMask(static_cast<unsigned short>(CameraFlag::USER1));
 
+    MusicManager::getInstance()->playBackgroundMusic(music_name_, true);
 
-    // TODO: PLAY MUSIC
     return layer_;
 }
 

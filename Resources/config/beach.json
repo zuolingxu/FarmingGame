@@ -1,7 +1,7 @@
 {
   "Name": "beach",
   "TMX": "TiledMap/beach.tmx",
-  "Audio": "Audio/Beach.mp3",
+  "Audio": "Audio/Default.mp3",
   "BackGroundColor": [ 0, 79, 152],
   "ObjectList": {
     "0 17": {

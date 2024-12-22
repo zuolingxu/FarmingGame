@@ -1,6 +1,7 @@
 {
     "Name": "npc1house",
     "TMX": "tiledmap/npc1house.tmx",
+    "Audio": "Audio/Town.mp3",
     "ObjectList": {
         "11 8":{
             "Type":"NPC",
