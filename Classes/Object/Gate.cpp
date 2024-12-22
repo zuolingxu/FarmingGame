@@ -46,7 +46,7 @@ void Gate::interact()
 				return;
 			UILogic::getInstance()->refreshFishUI();
 			SceneManager::getInstance()->showUILayer("fish");
-
+			UILogic::getInstance()->completeTask(3);
 		}
 		// no function
 		else {

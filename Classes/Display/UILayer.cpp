@@ -75,7 +75,6 @@ bool UILayer::initWithType(UILayerType type)
             uilogic->initTaskBarNode(taskBarLayout_);
             break;
         case UILayerType::NPC:
-            initSentence();
             createNpcLayout();
             uilogic->initNpcNode(npcLayout_);
             break;
@@ -194,12 +193,6 @@ void UILayer::createNpcLayout()
     textbox->setScale9Enabled(true);
     textbox->setContentSize(Size(400,100));
     textbox->setName("textbox");
-    static int count = 1;
-    int i = count % 5;
-    auto sentence = ui::Text::create(Sentence[i], "fonts/Marker Felt.ttf", 18);
-    count++;
-    sentence->setPosition(Vec2(200, 65));
-    textbox->addChild(sentence);
     npcLayout_->addChild(textbox);
 
     auto closeButton = ui::Button::create("image/exit.png", "image/exit.png");
@@ -236,29 +229,35 @@ void UILayer::createTimeLayout()
     displayer->setContentSize(Size(95, 75));
     displayer->setName("displayer");
 
-    auto day = ui::Text::create("Day: 1", "fonts/Marker Felt.ttf", 10);
+    auto day = ui::Text::create("Day: 1", "fonts/arial.ttf", 10);
     day->setColor(Color3B(93, 59, 23));
     day->setPosition(Vec2(48,35));
     day->setName("day");
     displayer->addChild(day);
 
-    auto hour = ui::Text::create("6:00", "fonts/Marker Felt.ttf", 10);
+    auto hour = ui::Text::create("6:00", "fonts/arial.ttf", 10);
     hour->setColor(Color3B(93, 59, 23));
     hour->setPosition(Vec2(48, 25));
     hour->setName("hour");
     displayer->addChild(hour);
 
-    auto power = ui::Text::create("Power:100", "fonts/Marker Felt.ttf", 10);
+    auto power = ui::Text::create("Power:100", "fonts/arial.ttf", 10);
     power->setColor(Color3B(93, 59, 23));
     power->setPosition(Vec2(53, 65));
     power->setName("power");
     displayer->addChild(power);
 
-    auto money = ui::Text::create("Money:100", "fonts/Marker Felt.ttf", 10);
+    auto money = ui::Text::create("Money:1000", "fonts/arial.ttf", 10);
     money->setColor(Color3B(93, 59, 23));
     money->setPosition(Vec2(45, 7));
     money->setName("money");
     displayer->addChild(money);
+
+    auto level= ui::Text::create("Level:1", "fonts/arial.ttf", 8);
+    level->setColor(Color3B(93, 59, 23));
+    level->setPosition(Vec2(45, 52));
+    level->setName("level");
+    displayer->addChild(level);
 
     timeLayout_->addChild(displayer);
 }
@@ -440,10 +439,3 @@ void UILayer::createFishLayout()
     fishLayout_->addChild(closeButton);
 }
 
-void UILayer::initSentence() {
-    Sentence.push_back("Hello, nice to see you!");
-    Sentence.push_back("Have you heard that Zhu Hongming\n is the best teacher in Tongji University?");
-    Sentence.push_back("How's your day? I feel great today");
-    Sentence.push_back("It is said that Zuo lingxu\n is the god of coding.");
-    Sentence.push_back("Thank you,I like it very much!");
-}

@@ -59,7 +59,9 @@ public:
 
     void refreshMoneyUI(int money);
 
-    void refreshNpcUI(std::string name);
+    void refreshLevelUI(int level);
+
+    void refreshNpcUI(std::string name,int favor);
 
     void refreshFishUI();
 private:
@@ -119,6 +121,8 @@ private:
     //the logic of tasks
     void initTasks();
 
+    void initSentence();
+
     static UILogic* instance_;
 
     int UI_num = 0;
@@ -134,6 +138,7 @@ private:
 
     std::vector<Item>* bagItems_;
     std::vector<Task> tasks_;
+    std::vector<std::string> Sentence;
 };
 
 

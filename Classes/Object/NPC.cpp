@@ -27,7 +27,7 @@ void NPC::interact()
 	PlayerSprite* npcSprite = dynamic_cast<PlayerSprite*>(info_.sprite);
 	ItemType favorite;
 	auto it = Favorite.find(name);  // 查找对应的场景
-	UILogic::getInstance()->refreshNpcUI(name);
+	UILogic::getInstance()->refreshNpcUI(name,100);
 	SceneManager::getInstance()->showUILayer("npc");
 	// SceneManager::getInstance()->hideUILayer("npc");
 	if (!currentItem)

@@ -56,7 +56,7 @@ private:
     cocos2d::ui::Layout* shopLayout_;
     cocos2d::ui::Layout* manufactureLayout_;
     cocos2d::ui::Layout* fishLayout_;
-    std::vector<std::string> Sentence;
+
 
     // 创建各个 UI 组件的方法
     void createTaskBarLayout();
@@ -68,7 +68,5 @@ private:
     void createShopLayout();
     void createManufactureLayout();
     void createFishLayout();
-
-    void initSentence();
 
 };
