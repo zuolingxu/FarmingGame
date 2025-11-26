@@ -12,6 +12,8 @@ MapObject::ObjectInfo& MapObject::getInfo()
 	return info_;
 }
 
+// TODO：工厂模式，规范化创建函数
+
 MapObject* MapObject::create(rapidjson::Value& val, MapLayer* parents, const Vec<int>& pos)
 {
 	std::string type = val["Type"].GetString();

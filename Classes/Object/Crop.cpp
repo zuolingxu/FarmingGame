@@ -4,6 +4,7 @@
 #include "TimeManager.h"
 #include "HelperClasses.h"
 
+// TODO: 装饰器模式，给作物添加不同的状态和行为
 Crop::Crop(Vec<int> position, MapLayer* parent, std::string CropName, bool Water, int LiveDay, int MaturationDay)
     :  parent(parent), CropName(std::move(CropName)), Water(Water), LiveDay(LiveDay),
     MaturationDay(MaturationDay)

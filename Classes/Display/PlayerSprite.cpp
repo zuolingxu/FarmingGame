@@ -291,3 +291,6 @@ void PlayerSprite::update(float delta)
 	}
     parent_->refocus();
 }
+
+
+// TODO: 添加策略模式
