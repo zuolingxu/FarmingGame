@@ -3,9 +3,6 @@
 #include <string>
 #include <vector>
 #include "HelperClasses.h"  
-#include "Item.h"
-#include "RealItem.h"
-#include "NullItem.h"
 
 USING_NS_CC;
 
@@ -29,8 +26,8 @@ public:
     const int Eating_soup_gain_energy = 150;
 
 private:
-    std::vector<std::unique_ptr<RealItem>> inventory;       // Backpack items
-    Item* currentItem = NullItem::getInstance();                 // The current item held by the character (only one item can be held)
+    std::vector<Item>* inventory;       // Backpack items
+    Item* currentItem;                 // The current item held by the character (only one item can be held)
     static MainCharacter* instance;    // Singleton instance
 
     int energy = MAX_ENERGY;           // every time inter game is 6:00 energy is 100, dont need to load from archive or save in archive
@@ -58,7 +55,7 @@ public:
     int getCurrentMoney() { return money; }
 
     // Get all items in the backpack
-    const std::vector<std::unique_ptr<RealItem>>& getInventory() const { return inventory; }
+    std::vector<Item>* getInventory() const;
 
     // Check if the backpack contains an item of a specific type
     bool hasItem(ItemType type) const;
@@ -67,10 +64,10 @@ public:
     void setCurrentItem(ItemType type);
 
     // Get the current held item
-    const Item* getCurrentItem() const { return currentItem; }
+    const Item* getCurrentItem() const;
 
     // Get the type of the current held item
-    ItemType getCurrentItemType() const { return currentItem->getType(); }
+    ItemType getCurrentItemType() const;
 
     // Modify the quantity of a specified item in the backpack (+n or -n)
     bool modifyItemQuantity(ItemType type, int delta);
@@ -96,12 +93,4 @@ public:
     void change_archive_in_memory();
 
     void level_gift(); //give gift when levels up
-
-    std::vector<RealItem*> getRawInventory() const {
-    std::vector<RealItem*> raw;
-    raw.reserve(inventory.size());
-    for (const auto& ptr : inventory)
-        raw.push_back(ptr.get());
-    return raw;
-}
 };
