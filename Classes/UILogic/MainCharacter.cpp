@@ -90,8 +90,7 @@ void MainCharacter::level_gift() {
 
 
 // init from archive
-MainCharacter::MainCharacter():currentItem(nullptr),money(0) {
-    inventory = new std::vector<Item>();
+MainCharacter::MainCharacter():currentItem(NullItem::getInstance()),money(0) {
     // Add a default NONE item to the inventory
 
     // Point currentItem to the NONE item in the inventory
@@ -128,7 +127,7 @@ MainCharacter::MainCharacter():currentItem(nullptr),money(0) {
     // money
     UILogic::getInstance()->refreshMoneyUI(money);
     // show bag item in ui
-     UILogic::getInstance()->updateBagItems(inventory);
+     UILogic::getInstance()->updateBagItems(getRawInventory());
      // show level ui
      UILogic::getInstance()->refreshLevelUI(level);
      //time in timemanager
@@ -136,14 +135,7 @@ MainCharacter::MainCharacter():currentItem(nullptr),money(0) {
 }
 
 
-MainCharacter::~MainCharacter() {
-    // No need to delete currentItem, as it points to an object in the inventory
-    currentItem = nullptr;
-
-    // Clear the inventory
-    delete inventory;  // Free memory allocated for inventory
-    inventory = nullptr;
-}
+MainCharacter::~MainCharacter() = default;
 
 void MainCharacter::loadInventoryFromArchive(const rapidjson::Value& json) {
     if (json.IsArray()) {
@@ -155,19 +147,14 @@ void MainCharacter::loadInventoryFromArchive(const rapidjson::Value& json) {
                 int quantity = item["quantity"].GetInt();
 
                 // Convert string to ItemType
-                ItemType type = Item::stringToItemType(typeStr);
-                if (type != ItemType::NONE) { // Ensure valid type
-                    inventory->emplace_back(type, quantity);
-                }
-                else {
-                    CCLOG("Unknown item type: %s", typeStr.c_str());
+                ItemType t = stringToItemType(typeStr);
+                if (t != ItemType::NONE && quantity > 0)
+                {
+                    inventory.emplace_back(std::make_unique<RealItem>(t, quantity));
                 }
             }
         }
-
-        // todo check
-        // Set current item to the first item in the inventory
-        // currentItem = !inventory->empty() ? &inventory->front() : nullptr;
+        currentItem = NullItem::getInstance();  // Reset currentItem to NullItem after loading
     }
     else {
         CCLOG("Invalid JSON format for inventory!");
@@ -187,22 +174,20 @@ std::vector<Item>* MainCharacter::getInventory() const {
 }
 
 bool MainCharacter::hasItem(ItemType type) const {
-    for (const auto& item : *inventory) {
-        if (item.type == type) {
-            return true;  // Return true if the item type is found
-        }
-    }
-    return false;  // Return false if the item type is not found
+    return std::any_of(inventory.begin(), inventory.end(),
+        [type](const auto& item) { return item->getType() == type; });  // Return true if the item type is found
 }
 
 void MainCharacter::setCurrentItem(ItemType type) {
-    for (auto& item : *inventory) {
-        if (item.type == type) {
-            currentItem = &item;  // Set the current held item
+    for (const auto& item : inventory)
+    {
+        if (item->getType() == type)
+        {
+            currentItem = item.get();  // Set the current held item
             return;
         }
     }
-    currentItem = nullptr;  // If no matching item type is found, set to nullptr
+    currentItem = NullItem::getInstance();  // If no matching item type is found, set to NullItem
 }
 
 const Item* MainCharacter::getCurrentItem() const {
@@ -210,42 +195,51 @@ const Item* MainCharacter::getCurrentItem() const {
 }
 
 ItemType MainCharacter::getCurrentItemType() const {
-    return currentItem ? currentItem->type : ItemType::NONE;
+    return currentItem->getType();
 }
 
 bool MainCharacter::modifyItemQuantity(ItemType type, int delta) {
     // If delta is 0, return immediately (no change)
     if (delta == 0) return 1;  // 1 indicates success, quantity is unchanged
 
+    
     // Traverse the inventory to find the specified item type
-    for (auto it = inventory->begin(); it != inventory->end(); ++it) {
-        if (it->type == type) {
-            // Modify the item quantity
-            if (it->quantity + delta < 0|| it->quantity + delta > MAX_QUANTITY) {
+    for (auto it = inventory.begin(); it != inventory.end(); ++it)
+    {
+        
+        if ((*it)->getType() == type)
+        {
+            if ((*it)->getQuantity() + delta < 0|| (*it)->getQuantity()  + delta > MAX_QUANTITY) {
                 return 0;  // If the resulting quantity is less than zero or more than max quantity, return an error
             }
+            
+            // Modify the item quantity
+            int newQty = (*it)->getQuantity() + delta;
 
-            it->quantity += delta;
+            // If the item quantity becomes zero, remove the item from inventory
+            if (newQty == 0)
+            {
+                if (currentItem == it->get())
+                    currentItem = NullItem::getInstance();
 
-            // If the item quantity becomes zero or less, remove the item from inventory
-            if (it->quantity == 0) {
-                if (currentItem == &(*it)) {
-                    currentItem = nullptr;  // Clear the current item pointer
-                }
-
-                inventory->erase(it);
+                inventory.erase(it);
+            }
+            else
+            {
+                (*it)->setQuantity(newQty);
             }
 
-            UILogic::getInstance()->updateBagItems(inventory);
-            return 1;  // Operation successful
+            UILogic::getInstance()->updateBagItems(getRawInventory());
+            return true;// Operation successful
         }
     }
-
+    
     // If the item is not found, and delta is positive, add the item to the inventory
-    if (delta > 0) {
-        inventory->push_back(Item(type, delta));  // Add new item with quantity
-        UILogic::getInstance()->updateBagItems(inventory);
-        return 1;  // Item added successfully
+    if (delta > 0)
+    {
+        inventory.emplace_back(std::make_unique<RealItem>(type, delta));  // Add new item with quantity
+        UILogic::getInstance()->updateBagItems();
+        return true;  // Item added successfully
     }
 
     return 0;  // If the item is not found and delta is negative, return an error
@@ -257,27 +251,13 @@ void MainCharacter::cleanup() {
 }
 
 void MainCharacter::eat_food_and_gain_energy(ItemType type) {
-    if (modifyItemQuantity(type, -1)) {
-        int gain_energy = 0;
-        switch (type) {
-            case ItemType::CAULIFLOWER: 
-                gain_energy=Eating_cauliflower_gain_energy;
-                break;
-            case ItemType::PUMPKIN:
-                gain_energy = Eating_pumpkin_gain_energy;
-                break;
-            case ItemType::POTATO: 
-                gain_energy = Eating_potato_gain_energy;
-                break;
-            case ItemType::SOUP:
-                gain_energy = Eating_soup_gain_energy;
-                break;
-            case ItemType::FISH: 
-                gain_energy = Eating_fish_gain_energy;
-                break;
-            
+    for (const auto& item : inventory)
+    {
+        if (item->getType() == type && item->isConsumable())
+        {
+            item->consume();
+            return;
         }
-        modifyEnergy(gain_energy);
     }
 }
 
@@ -300,39 +280,22 @@ void MainCharacter::change_archive_in_memory() {
         // level to archive
         (*doc)["key_info"]["level"].SetInt(level);
 
-        // ȷ�� "belongings" �������
-        if (!doc->HasMember("belongings")) {
-            rapidjson::Value belongings(rapidjson::kArrayType);
-            doc->AddMember("belongings", belongings, doc->GetAllocator());
+        // ȷ�� "belongings" �������?
+        if (!doc->HasMember("belongings"))
+        {
+            rapidjson::Value arr(rapidjson::kArrayType);
+            doc->AddMember("belongings", arr, doc->GetAllocator());
         }
 
-        // ��ȡ�浵�е���Ʒ����
-        rapidjson::Value& belongingsArray = (*doc)["belongings"];
+        auto& arr = (*doc)["belongings"];
+        arr.SetArray();
 
-        // ���������е���Ʒ�������´浵�е���Ӧ��Ʒ����
-        for (auto& item : *inventory) {
-            bool itemFound = false;
-
-            // �����浵�е���Ʒ������Ƿ��Ѿ��и���Ʒ
-            for (auto& archivedItem : belongingsArray.GetArray()) {
-                std::string storedItemType = archivedItem["type"].GetString();
-                std::string currentItemType = Item::itemTypeToString(item.type);
-
-                if (storedItemType == currentItemType) {
-                    // ����ҵ���ͬ���͵���Ʒ����������
-                    archivedItem["quantity"].SetInt(item.quantity);
-                    itemFound = true;
-                    break;
-                }
-            }
-
-            // ���û���ҵ�����Ʒ��˵��������Ʒ�����ӵ��浵��
-            if (!itemFound) {
-                rapidjson::Value newItem(rapidjson::kObjectType);
-                newItem.AddMember("type", rapidjson::Value(Item::itemTypeToString(item.type).c_str(), doc->GetAllocator()), doc->GetAllocator());
-                newItem.AddMember("quantity", item.quantity, doc->GetAllocator());
-                belongingsArray.PushBack(newItem, doc->GetAllocator());
-            }
+        for (const auto& item : inventory)
+        {
+            rapidjson::Value obj(rapidjson::kObjectType);
+            obj.AddMember("type", rapidjson::Value(itemTypeToString(item->getType()).c_str(), doc->GetAllocator()), doc->GetAllocator());
+            obj.AddMember("quantity", item->getQuantity(), doc->GetAllocator());
+            arr.PushBack(obj, doc->GetAllocator());
         }
 
     }

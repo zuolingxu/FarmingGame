@@ -147,107 +147,85 @@ enum class ItemType {
 };
 //need change MainCharacter::itemTypeToString if change
 
-//Item in bag or in hands
-struct Item {
-	ItemType type;
-	int quantity;
-	std::string iconPath;
-
-
-	Item(ItemType t, int q = 1) : type(t), quantity(q)
-	{
-		std::string itemName = itemTypeToString(type);  // Convert ItemType to string
-
-		DocumentManager* manager = DocumentManager::getInstance();
-
-		iconPath = manager->getPath(itemName);
-	
-
+// Convert ItemType to string
+static std::string itemTypeToString(ItemType type) {
+	switch (type) {
+		case ItemType::CAULIFLOWER_SEED: return "CAULIFLOWER_SEED";
+		case ItemType::PUMPKIN_SEED: return "PUMPKIN_SEED";
+		case ItemType::POTATO_SEED: return "POTATO_SEED";
+		case ItemType::CAULIFLOWER: return "CAULIFLOWER";
+		case ItemType::PUMPKIN: return "PUMPKIN";
+		case ItemType::POTATO: return "POTATO";
+		case ItemType::SOUP: return "SOUP";
+		case ItemType::FISH: return "FISH";
+		case ItemType::FERTILIZER: return "FERTILIZER";
+		case ItemType::FISHING_ROD: return "FISHING_ROD";
+		case ItemType::HOE: return "HOE";
+		case ItemType::PICKAXE: return "PICKAXE";
+		case ItemType::WATERING_CAN: return "WATERING_CAN";
+		case ItemType::ROCK: return "ROCK";
+		case ItemType::IRON: return "IRON";
+		case ItemType::NONE: return "NONE";
+		default: return "UNKNOWN";
 	}
-	// Convert ItemType to string
-	static std::string itemTypeToString(ItemType type) {
-		switch (type) {
-			case ItemType::CAULIFLOWER_SEED: return "CAULIFLOWER_SEED";
-			case ItemType::PUMPKIN_SEED: return "PUMPKIN_SEED";
-			case ItemType::POTATO_SEED: return "POTATO_SEED";
-			case ItemType::CAULIFLOWER: return "CAULIFLOWER";
-			case ItemType::PUMPKIN: return "PUMPKIN";
-			case ItemType::POTATO: return "POTATO";
-			case ItemType::SOUP: return "SOUP";
-			case ItemType::FISH: return "FISH";
-			case ItemType::FERTILIZER: return "FERTILIZER";
-			case ItemType::FISHING_ROD: return "FISHING_ROD";
-			case ItemType::HOE: return "HOE";
-			case ItemType::PICKAXE: return "PICKAXE";
-			case ItemType::WATERING_CAN: return "WATERING_CAN";
-			case ItemType::ROCK: return "ROCK";
-			case ItemType::IRON: return "IRON";
-			case ItemType::NONE: return "NONE";
-			default: return "UNKNOWN";
-		}
+}
+// Convert string to ItemType,both uppercase and lowersave
+static ItemType stringToItemType(const std::string& typeStr) {
+	std::string normalizedStr = typeStr;
+	std::transform(normalizedStr.begin(), normalizedStr.end(), normalizedStr.begin(), ::toupper);
+	if (normalizedStr == "CAULIFLOWER_SEED") {
+		return ItemType::CAULIFLOWER_SEED;
 	}
-
-	// Convert string to ItemType,both uppercase and lowersave
-	static ItemType stringToItemType(const std::string& typeStr) {
-		std::string normalizedStr = typeStr;
-
-		std::transform(normalizedStr.begin(), normalizedStr.end(), normalizedStr.begin(), ::toupper);
-
-		if (normalizedStr == "CAULIFLOWER_SEED") {
-			return ItemType::CAULIFLOWER_SEED;
-		}
-		else if (normalizedStr == "PUMPKIN_SEED") {
-			return ItemType::PUMPKIN_SEED;
-		}
-		else if (normalizedStr == "POTATO_SEED") {
-			return ItemType::POTATO_SEED;
-		}
-		else if (normalizedStr == "CAULIFLOWER") {
-			return ItemType::CAULIFLOWER;
-		}
-		else if (normalizedStr == "PUMPKIN") {
-			return ItemType::PUMPKIN;
-		}
-		else if (normalizedStr == "POTATO") {
-			return ItemType::POTATO;
-		}
-		else if (normalizedStr == "SOUP") {
-			return ItemType::SOUP;
-		}
-		else if (normalizedStr == "FISH") {
-			return ItemType::FISH;
-		}
-		else if (normalizedStr == "FERTILIZER") {
-			return ItemType::FERTILIZER;
-		}
-		else if (normalizedStr == "FISHING_ROD") {
-			return ItemType::FISHING_ROD;
-		}
-		else if (normalizedStr == "HOE") {
-			return ItemType::HOE;
-		}
-		else if (normalizedStr == "PICKAXE") {
-			return ItemType::PICKAXE;
-		}
-		else if (normalizedStr == "WATERING_CAN") {
-			return ItemType::WATERING_CAN;
-		}
-		else if (normalizedStr == "ROCK") {
-			return ItemType::ROCK;
-		}
-		else if (normalizedStr == "STONE") {
-			return ItemType::ROCK; // can from string to itemtype ,cant from itemtype to string
-		}
-		else if (normalizedStr == "IRON") {
-			return ItemType::IRON;
-		}
-		else if (normalizedStr == "NONE") {
-			return ItemType::NONE;
-		}
-		else {
-			return ItemType::NONE;  // Default to NONE for unknown strings
-		}
+	else if (normalizedStr == "PUMPKIN_SEED") {
+		return ItemType::PUMPKIN_SEED;
 	}
-
-};
+	else if (normalizedStr == "POTATO_SEED") {
+		return ItemType::POTATO_SEED;
+	}
+	else if (normalizedStr == "CAULIFLOWER") {
+		return ItemType::CAULIFLOWER;
+	}
+	else if (normalizedStr == "PUMPKIN") {
+		return ItemType::PUMPKIN;
+	}
+	else if (normalizedStr == "POTATO") {
+		return ItemType::POTATO;
+	}
+	else if (normalizedStr == "SOUP") {
+		return ItemType::SOUP;
+	}
+	else if (normalizedStr == "FISH") {
+		return ItemType::FISH;
+	}
+	else if (normalizedStr == "FERTILIZER") {
+		return ItemType::FERTILIZER;
+	}
+	else if (normalizedStr == "FISHING_ROD") {
+		return ItemType::FISHING_ROD;
+	}
+	else if (normalizedStr == "HOE") {
+		return ItemType::HOE;
+	}
+	else if (normalizedStr == "PICKAXE") {
+		return ItemType::PICKAXE;
+	}
+	else if (normalizedStr == "WATERING_CAN") {
+		return ItemType::WATERING_CAN;
+	}
+	else if (normalizedStr == "ROCK") {
+		return ItemType::ROCK;
+	}
+	else if (normalizedStr == "STONE") {
+		return ItemType::ROCK; // can from string to itemtype ,cant from itemtype to string
+	}
+	else if (normalizedStr == "IRON") {
+		return ItemType::IRON;
+	}
+	else if (normalizedStr == "NONE") {
+		return ItemType::NONE;
+	}
+	else {
+		return ItemType::NONE;  // Default to NONE for unknown strings
+	}
+}
 
