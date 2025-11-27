@@ -32,6 +32,8 @@ void SceneManager::createMapWithDocument(rapidjson::Document* doc)
 	map_.emplace(name, map);
 }
 
+
+// TODO：此处是构建SceneManager单例的地方，后续可以考虑用构建者模式重构（但只有这一个单例的话意义不大）
 SceneManager* SceneManager::getInstance()
 {
 	if (instance_->permanent_node_ == nullptr) {
@@ -170,6 +172,10 @@ void SceneManager::NextMap(const std::string& map_name, const std::string& pos ,
 SceneManager::NextMapCallBack::NextMapCallBack(std::string map_name, std::string pos) :
 	map_name(std::move(map_name)), pos(std::move(pos)) {}
 
+
+// TODO： 责任链
+// 原先是依赖loading_per的数值范围来划分阶段，现在可以考虑用状态机或者责任链模式来实现更清晰的函数调用
+// 这样可以避免对loading_per数值的硬编码依赖，使代码更易于维护和扩展
 void SceneManager::NextMapCallBack::operator()()
 {
 	if (loading_per < 1.0f)
@@ -280,3 +286,5 @@ void SceneManager::NextMapCallBack::assemble()
 	Director::getInstance()->replaceScene(TransitionFade::create(0.5f, next));
 	loading_per = 100.0f;
 }
+
+// TODO: 提取为外观模式

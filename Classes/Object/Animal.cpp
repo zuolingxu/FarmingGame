@@ -59,6 +59,8 @@ void Animal::defaultAction() {
 		patrolPath();       // Start moving
 }
 
+// TODO: 策略模式重构
+
 void Animal::patrolPath() {
 	PlayerSprite* animalSprite = dynamic_cast<PlayerSprite*>(info_.sprite);
 
@@ -174,7 +176,7 @@ bool Animal::new_archive_in_memory(int x, int y) {
 
 		// If there's already an entry for this position, stop to avoid conflict and log the issue
 		if (chickenHouse.HasMember(positionKey.c_str())) {
-			CCLOG("has object already��%s", positionKey.c_str());
+			CCLOG("has object already��%s", positionKey.c_str());
 			return false;
 		}
 		else {

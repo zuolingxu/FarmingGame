@@ -88,6 +88,8 @@ void NPC::init()
 	defaultAction();
 }
 
+// TODO: 用策略模式重构此处
+
 // Set default behavior for NPC
 void NPC::defaultAction()
 {

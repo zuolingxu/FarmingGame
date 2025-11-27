@@ -3,176 +3,275 @@
 #include "MainCharacter.h"
 #include "TimeManager.h"
 #include "HelperClasses.h"
+#include <random>
 
-Crop::Crop(Vec<int> position, MapLayer* parent, std::string CropName, bool Water, int LiveDay, int MaturationDay)
-    :  parent(parent), CropName(std::move(CropName)), Water(Water), LiveDay(LiveDay),
-    MaturationDay(MaturationDay)
-{
-    info.position = position;
-    info.size = Vec<int>(1, 1);    // The land occupies a space of 1x1
-    info.sprite = nullptr;
+// =======================
+// BasicCrop implementation
+// =======================
+
+BasicCrop::BasicCrop(const std::string& name,
+                     int maturationDay)
+: _name(name),
+  _liveDay(0),
+  _maturationDay(maturationDay),
+  _watered(false),
+  _withered(false),
+  _parent(nullptr),
+  _tilePos(Vec2::ZERO),
+  _sprite(nullptr) {
 }
 
-Crop::~Crop() {
-    // Destructor (empty for now)
+void BasicCrop::init(cocos2d::Node* parent, const cocos2d::Vec2& tilePos) {
+    _parent  = parent;
+    _tilePos = tilePos;
+
+    // 简单示例：实际项目中可以按 _name 加载对应的 plist / png
+    _sprite = Sprite::create();
+    if (_sprite) {
+        _sprite->setPosition(tilePos);
+        if (_parent) {
+            _parent->addChild(_sprite);
+        }
+    }
+    updateSpriteFrame();
 }
 
-//create by archive
-Crop* Crop::create(rapidjson::Value& val, MapLayer* parent, const Vec<int>& position) {
-    std::string cropName = "unknown";  // Default crop name
-    int LiveDay = 1;                   // Default growth days
-    int MaturationDay = 7;             // Default maturation days
+void BasicCrop::dailySettle() {
+    if (_withered) {
+        return;
+    }
 
-    if (val.HasMember("CropName")) {
-        cropName = val["CropName"].GetString();  // Get crop name from JSON
+    if (_watered) {
+        ++_liveDay;
+        _watered = false; // 浇水只作用一天
+    } else {
+        // 不浇水：这里简单地让作物不增长
     }
-    if (val.HasMember("LiveDay")) {
-        LiveDay = val["LiveDay"].GetInt();  // Get growth days from JSON
-    }
-    if (val.HasMember("MaturationDay")) {
-        MaturationDay = val["MaturationDay"].GetInt();  // Get maturation days from JSON
-    }
-    Crop* crop = new Crop(position, parent, cropName, false, LiveDay, MaturationDay);
 
-    return crop;
+    if (_liveDay < 0) {
+        _liveDay = 0;
+    }
+
+    // 简化规则：如果一直是“种下但没长”的状态，可以认为枯萎
+    if (_liveDay == 0 && !_watered) {
+        _withered = true;
+    }
+
+    updateSpriteFrame();
 }
 
-Crop* Crop::createByPlayer(const Vec<int>& position, MapLayer* parent, const std::string& CropName, bool Fertilizer) {
-    int LiveDay = 1;
-    if (Fertilizer) LiveDay++;  // If fertilizer is used, increase the growth days by 1
-    // Create the Crop object using the provided CropName
-    
-    DocumentManager* manager = DocumentManager::getInstance();
-    rapidjson::Document* doc = manager->getDocument(manager->getPath(CropName));
-    int MaturationDay = (*doc)["MaturationDay"].GetInt();
-
-    Crop* crop = new Crop(position, parent, CropName, false, LiveDay, MaturationDay);
-
-    // create picture
-    crop->init();
-
-    return crop;
-}
-
-//harvest
-bool Crop::harvest_successful() {
-    if (LiveDay == MaturationDay) {
-        // Remove the sprite from the scene
-        info.sprite->removeFromParentAndCleanup(true);
-        info.sprite = nullptr;
-
-        // Create the corresponding ItemType based on the uppercase CropName
-        ItemType harvestedItemType = Item::stringToItemType(CropName);
-
-        // Add the harvested crop to the character's inventory
-        MainCharacter* character = MainCharacter::getInstance();
-        character->modifyItemQuantity(harvestedItemType, 1);
-
-        return true;
-    }
-    else if (LiveDay == 0) {
-        // Remove the sprite from the scene
-        info.sprite->removeFromParentAndCleanup(true);
-        info.sprite = nullptr;
+bool BasicCrop::harvest() {
+    // 只有未枯萎且已经成熟才允许收获
+    if (!_withered && _liveDay >= _maturationDay) {
+        // 这里本来应该生成物品、加到背包中，这里只做示意
+        clear();
         return true;
     }
     return false;
 }
 
-void Crop::init() {
-    DocumentManager* manager = DocumentManager::getInstance();
-
-    rapidjson::Document* doc = manager->getDocument(manager->getPath(CropName));
-    std::string plistFilePath = (*doc)["plistpath"].GetString();
-
-    std::string frame_n_format = (*doc)["frame_format"].GetString();
-    std::string spriteframe = getFrameName(frame_n_format, LiveDay);      // Plant days are from 1, 0 is plant wilt
-
-    if (FileUtils::getInstance()->isFileExist(plistFilePath)) {
-        // If the plist file exists, load it
-        MapLayer::loadPlist(plistFilePath);
+void BasicCrop::clear() {
+    if (_sprite && _sprite->getParent()) {
+        _sprite->removeFromParent();
     }
-    else {
-        CCLOG("Error: Plist file %s not found!", plistFilePath.c_str());
-        return; // Exit the function to avoid further errors
+    _sprite = nullptr;
+}
+
+void BasicCrop::updateSpriteFrame() {
+    if (!_sprite) return;
+
+    // 非真实美术，仅用颜色表示不同阶段
+    if (_withered) {
+        _sprite->setColor(Color3B::GRAY);
+        return;
     }
 
-    // Ensure parent is not null to avoid null pointer access
-    if (parent != nullptr) {
-        // Use the loaded plist to create the sprite, ensuring the sprite frame exists
-        parent->addSpriteWithFrame(info, spriteframe, false);
-    }
-    else {
-        CCLOG("Error: parent is nullptr!");
+    float ratio = _maturationDay > 0
+                  ? static_cast<float>(_liveDay) / _maturationDay
+                  : 1.0f;
+    if (ratio < 0.33f) {
+        _sprite->setColor(Color3B::GREEN);   // 幼苗
+    } else if (ratio < 0.66f) {
+        _sprite->setColor(Color3B::YELLOW);  // 生长期
+    } else {
+        _sprite->setColor(Color3B::ORANGE);  // 成熟
     }
 }
 
-void Crop::clear() {
-    info.sprite = nullptr;  // Clear the sprite reference
+// =======================
+// CropDecorator
+// =======================
+
+CropDecorator::CropDecorator(std::shared_ptr<BaseCrop> component)
+: _component(std::move(component)) {
 }
 
-void Crop::settle() {
-    std::string currentSeason = TimeManager::getInstance()->getSeason();  // Get current season from TimeManager
-    DocumentManager* manager = DocumentManager::getInstance();
+void CropDecorator::init(cocos2d::Node* parent, const cocos2d::Vec2& tilePos) {
+    _component->init(parent, tilePos);
+}
 
-    rapidjson::Document* doc_for_season = manager->getDocument(manager->getPath(CropName));
-    
+void CropDecorator::dailySettle() {
+    _component->dailySettle();
+}
 
-    bool in_right_season = 0;
-    if ((*doc_for_season).HasMember("growing_season") && (*doc_for_season)["growing_season"].IsArray()) {
-        for (const auto& grow_season : (*doc_for_season)["growing_season"].GetArray()) {
-            if (grow_season.GetString() == currentSeason)
-                in_right_season = 1;
+bool CropDecorator::harvest() {
+    return _component->harvest();
+}
+
+void CropDecorator::clear() {
+    _component->clear();
+}
+
+const std::string& CropDecorator::getName() const {
+    return _component->getName();
+}
+
+int CropDecorator::getLiveDay() const {
+    return _component->getLiveDay();
+}
+
+int CropDecorator::getMaturationDay() const {
+    return _component->getMaturationDay();
+}
+
+bool CropDecorator::isWatered() const {
+    return _component->isWatered();
+}
+
+bool CropDecorator::isWithered() const {
+    return _component->isWithered();
+}
+
+void CropDecorator::setWithered(bool withered) {
+    _component->setWithered(withered);
+}
+
+void CropDecorator::water() {
+    _component->water();
+}
+
+void CropDecorator::applyPesticide() {
+    _component->applyPesticide();
+}
+
+// =======================
+// ImmatureCropDecorator
+// =======================
+
+ImmatureCropDecorator::ImmatureCropDecorator(std::shared_ptr<BaseCrop> component)
+: CropDecorator(std::move(component)) {
+}
+
+bool ImmatureCropDecorator::harvest() {
+    // 未成熟且未枯萎时禁止收获
+    if (getLiveDay() < getMaturationDay() && !isWithered()) {
+        // 实际项目中可以弹出提示：“作物尚未成熟”
+        return false;
+    }
+    return CropDecorator::harvest();
+}
+
+void ImmatureCropDecorator::dailySettle() {
+    CropDecorator::dailySettle();
+    // 可以在这里加“未成熟中的特效”，当前保持空实现
+}
+
+// =======================
+// MatureCropDecorator
+// =======================
+
+MatureCropDecorator::MatureCropDecorator(std::shared_ptr<BaseCrop> component)
+: CropDecorator(std::move(component)) {
+}
+
+bool MatureCropDecorator::harvest() {
+    bool success = CropDecorator::harvest();
+    if (success) {
+        // 这里可以增加“完美成熟奖励”等逻辑
+    }
+    return success;
+}
+
+void MatureCropDecorator::dailySettle() {
+    CropDecorator::dailySettle();
+    // 可以在这里做高亮、闪烁等提示“可收获”
+}
+
+// =======================
+// DroughtCropDecorator
+// =======================
+
+DroughtCropDecorator::DroughtCropDecorator(std::shared_ptr<BaseCrop> component)
+: CropDecorator(std::move(component)),
+  _continuousDryDays(0) {
+}
+
+void DroughtCropDecorator::dailySettle() {
+    // 先根据浇水情况更新连续干旱天数
+    if (!isWatered() && !isWithered()) {
+        ++_continuousDryDays;
+        if (_continuousDryDays >= 3) {
+            // 连续 3 天不浇水 → 枯萎
+            setWithered(true);
         }
+    } else {
+        _continuousDryDays = 0;
     }
 
-    // wilt in wrong season
-    if (in_right_season == 0) {
-        LiveDay = 0;           // in plist 0 stands for wilt picture
-    }
-
-    // grow in right season
-    else{
-        if (LiveDay < MaturationDay &&
-            Water&&             // havent been watered cant growth
-            (LiveDay!=0))       // wilted plant cant growth
-        {
-            int deltaliveday = 1;
-            LiveDay += deltaliveday;  // Increment the LiveDay if the crop hasn't matured and has been watered
-            
-            //for some deltaliveday more than 1, for safety
-            if (LiveDay > MaturationDay)
-                LiveDay = MaturationDay;
-        }
-    }
-
-    // change the sprite
-    rapidjson::Document* doc = manager->getDocument(manager->getPath(CropName));
-    std::string plistFilePath = (*doc)["plistpath"].GetString();
-
-    std::string frame_n_format = (*doc)["frame_format"].GetString();
-    std::string spriteframe = getFrameName(frame_n_format, LiveDay);
-
-    if (FileUtils::getInstance()->isFileExist(plistFilePath)) {
-        // If the plist file exists, load it
-        MapLayer::loadPlist(plistFilePath);
-    }
-    else {
-        CCLOG("Error: Plist file %s not found!", plistFilePath.c_str());
-        return; // Exit the function to avoid further errors
-    }
-
-    // Ensure parent is not null to avoid null pointer access
-    if (parent != nullptr) {
-        // Use the loaded plist to create the sprite and update the sprite frame
-        parent->changeWithSingleFrame(info.sprite, spriteframe);
-    }
-    else {
-        CCLOG("Error: parent is nullptr!");
-    }
-
-    // Reset the Water status everyday
-    Water = false;  
-
-    // The crop's change_archive_in_memory will be called by Land::settle()
+    CropDecorator::dailySettle();
 }
+
+void DroughtCropDecorator::water() {
+    _continuousDryDays = 0;
+    CropDecorator::water();
+}
+
+// =======================
+// PestCropDecorator
+// =======================
+
+PestCropDecorator::PestCropDecorator(std::shared_ptr<BaseCrop> component)
+: CropDecorator(std::move(component)),
+  _underPest(true) {
+}
+
+void PestCropDecorator::dailySettle() {
+    CropDecorator::dailySettle();
+
+    if (!_underPest || isWithered()) return;
+
+    // 每天有一定概率直接让作物枯萎
+    static std::default_random_engine engine(std::random_device{}());
+    std::uniform_real_distribution<float> dist(0.0f, 1.0f);
+
+    float r = dist(engine);
+    if (r < 0.1f) { // 10% 概率
+        setWithered(true);
+    }
+}
+
+void PestCropDecorator::applyPesticide() {
+    _underPest = false;
+    CropDecorator::applyPesticide();
+}
+
+// =======================
+// WitheredCropDecorator
+// =======================
+
+WitheredCropDecorator::WitheredCropDecorator(std::shared_ptr<BaseCrop> component)
+: CropDecorator(std::move(component)) {
+    // 构造时立即标记底层作物枯萎
+    setWithered(true);
+}
+
+void WitheredCropDecorator::dailySettle() {
+    // 一旦枯萎就不再生长，因此不调用基类逻辑
+}
+
+bool WitheredCropDecorator::harvest() {
+    // 允许玩家“清地”，但不产出
+    clear();
+    return true;
+}
+
