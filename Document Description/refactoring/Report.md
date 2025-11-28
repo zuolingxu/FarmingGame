@@ -4,9 +4,13 @@
 
 <!-- TOC -->
 - [Software Design Patterns -- Refactoring Report](#software-design-patterns----refactoring-report)
-  - [Project Intorduction](#project-intorduction)
-    - [Project Background](#project-background)
-    - [Project Function](#project-function)
+  - [1.Project Intorduction](#1project-intorduction)
+    - [1.1 Project Background](#11-project-background)
+    - [1.2 Project Function](#12-project-function)
+      - [1.2.1 Player and Farm Features](#121-player-and-farm-features)
+      - [1.2.2 Community and NPC Features](#122-community-and-npc-features)
+      - [1.2.3 Exploration and Adventure Features](#123-exploration-and-adventure-features)
+      - [1.2.4 Character Progression and System Features](#124-character-progression-and-system-features)
   - [Creational Patterns](#creational-patterns)
     - [Factory Pattern](#factory-pattern)
       - [Brief Introduction](#brief-introduction)
@@ -14,19 +18,36 @@
       - [Refactoring Details](#refactoring-details)
       - [UML Class Diagram](#uml-class-diagram)
       - [Benefits of Refactoring](#benefits-of-refactoring)
-  - [Structural Patterns](#structural-patterns)
+  - [3. Structural Patterns](#3-structural-patterns)
       - [Brief Introduction](#brief-introduction-1)
       - [Reason for Refactoring](#reason-for-refactoring-1)
       - [Refactoring Details](#refactoring-details-1)
       - [UML Class Diagram](#uml-class-diagram-1)
       - [Benefits of Refactoring](#benefits-of-refactoring-1)
-    - [Decorator Pattern](#decorator-pattern)
+    - [3.2 Decorator Pattern](#32-decorator-pattern)
+      - [3.2.1 Brief Introduction](#321-brief-introduction)
+      - [3.2.2 Reason for Refactoring](#322-reason-for-refactoring)
+      - [3.2.3 Refactoring Details](#323-refactoring-details)
+        - [1. Abstract Component – `BaseCrop`](#1-abstract-component--basecrop)
+        - [2. Concrete Component – `BasicCrop`](#2-concrete-component--basiccrop)
+        - [3. Abstract Decorator – `CropDecorator`](#3-abstract-decorator--cropdecorator)
+        - [4. Concrete Decorators – Five Crop State Classes](#4-concrete-decorators--five-crop-state-classes)
+        - [5. Runtime Composition and Usage](#5-runtime-composition-and-usage)
+      - [3.2.4 UML Class Diagram](#324-uml-class-diagram)
+      - [3.2.5 Benefits of Refactoring](#325-benefits-of-refactoring)
+        - [1. Clear separation of concerns](#1-clear-separation-of-concerns)
+        - [2. Improved extensibility for new states](#2-improved-extensibility-for-new-states)
+        - [3. Support for flexible state composition](#3-support-for-flexible-state-composition)
+        - [4. Better readability and maintainability](#4-better-readability-and-maintainability)
+        - [5. Easier testing and reuse](#5-easier-testing-and-reuse)
+    - [Facade Pattern](#facade-pattern)
       - [Brief Introduction](#brief-introduction-2)
       - [Reason for Refactoring](#reason-for-refactoring-2)
       - [Refactoring Details](#refactoring-details-2)
       - [UML Class Diagram](#uml-class-diagram-2)
       - [Benefits of Refactoring](#benefits-of-refactoring-2)
-    - [Facade Pattern](#facade-pattern)
+  - [Behavioral Patterns](#behavioral-patterns)
+    - [Chain of Responsibility Pattern](#chain-of-responsibility-pattern)
       - [Brief Introduction](#brief-introduction-3)
       - [Reason for Refactoring](#reason-for-refactoring-3)
       - [Refactoring Details](#refactoring-details-3)
@@ -39,7 +60,8 @@
       - [Refactoring Details](#refactoring-details-4)
       - [UML Class Diagram](#uml-class-diagram-4)
       - [Benefits of Refactoring](#benefits-of-refactoring-4)
-    - [Strategy Pattern](#strategy-pattern)
+  - [Additional Patterns](#additional-patterns)
+    - [Null Object Pattern](#null-object-pattern)
       - [Brief Introduction](#brief-introduction-5)
       - [Reason for Refactoring](#reason-for-refactoring-5)
       - [Refactoring Details](#refactoring-details-5)
@@ -55,11 +77,82 @@
   - [Reference](#reference)
 <!-- TOC -->
 
-## Project Intorduction
+## 1.Project Intorduction
 
-### Project Background
+### 1.1 Project Background
+This project implements a Stardew Valley–style farming life simulation game. The player acts as a new farmer who has just arrived in a small town. Starting from an undeveloped piece of land, the player cultivates fields, plants crops, raises animals, and builds relationships with local villagers. The game features four seasons, festival events, and daily quests. With limited stamina and time each day, the player must carefully plan their activities and balance between farm management, social interaction, and exploration. 
 
-### Project Function
+The game adopts a frontend–backend architecture. The frontend, built on Cocos2d-x, is responsible for rendering tile-based maps and user interfaces, while the backend handles time progression, save/load management, and the states of the main character and all map objects. All configuration and scene data are stored in JSON files and accessed via a dedicated DocumentManager, which keeps game logic and resource management clean and extensible.
+
+<img src="images/Background.png" width="800">
+
+### 1.2 Project Function
+
+The core features of this project include farm management, animal husbandry, community interaction, exploration and adventure, as well as character progression and a time system. With limited stamina and time each day, the player must plan their actions carefully and balance farming, social activities, gathering, and exploration to gradually build a prosperous farm and rich social network.
+
+#### 1.2.1 Player and Farm Features
+**Farm Management**
+The player can till the soil, plant seeds, water fields, and harvest a variety of crops on designated farm tiles.
+
+Crop growth and maturity depend on both crop type and season, and some crops are only available in specific seasons.
+![Farm1](images/Farm1.png)
+
+**Animal Husbandry**
+The player can raise multiple kinds of livestock such as cows and chickens. Animals have attributes like satiety, value, and reproduction rate.
+
+By feeding different types of fodder, the player can speed up growth and improve product quality. During night-time settlement, animals may grow, reproduce, or die if not properly fed.
+![Farm2](images/Farm2.png)
+
+**Resource & Product Management**
+The player can buy seeds, animal feed, and other resources from shops, and sell mature crops and animal products to earn money.
+
+The inventory UI allows the player to view and manage all items, serving as the basis for crafting, trading, and gifting.
+
+#### 1.2.2 Community and NPC Features
+
+**Community Interaction**
+The player can talk to town residents and give them gifts to increase friendship, unlocking more dialogue and interactive events.
+
+Each NPC has preferred gifts that provide additional affection bonuses when given.
+![Farm3](images/Farm3.png)
+
+**Quest System**
+The quest panel displays available commissions from residents, such as collecting specific items or helping repair buildings.
+
+Completing quests rewards the player with money, items, or reputation and drives both character growth and town development.
+
+#### 1.2.3 Exploration and Adventure Features
+
+**Map Exploration**
+The player can leave the farm and explore surrounding regions, including forests, mountains, mines, and the seaside.
+
+Different regions provide distinct resources and interactions, enhancing openness and the sense of adventure.
+
+**Mining & Gathering**
+In mines, the player can excavate ores and rare materials used for crafting and trading.
+
+In the wild, the player can gather wood, herbs, and other resources that are required for recipes or quests.
+![Farm4](images/Farm4.png)
+
+**Fishing System**
+
+At specific water areas, the player can enter a fishing UI. Each cast yields fish or items with a certain degree of randomness.
+
+Rare fish can be sold at high prices or used as special cooking ingredients.
+![Farm5](images/Farm5.png)
+
+
+#### 1.2.4 Character Progression and System Features
+
+**Time & Day-Night System**
+The game features an in-game clock and calendar, mapping real time to in-game days with a fixed ratio.
+
+At night or when the player chooses to sleep, the system settles daily events such as crop growth, animal updates, and quest refresh, and then automatically saves progress.
+
+**UI & Scene Management**
+The game provides various UI screens, including start menu, map scenes, inventory, shop, crafting, fishing, quest bar, NPC dialogue, and save/load interfaces.
+
+A unified scene and UI management module handles map switching, layer stacking, and data persistence to ensure a smooth and cohesive gameplay experience.
 
 ## Creational Patterns
 
@@ -75,7 +168,7 @@
 
 #### Benefits of Refactoring
 
-## Structural Patterns
+## 3. Structural Patterns
 
 #### Brief Introduction
 
@@ -87,18 +180,408 @@
 
 #### Benefits of Refactoring
 
-### Decorator Pattern
+### 3.2 Decorator Pattern
 
-#### Brief Introduction
+#### 3.2.1 Brief Introduction
+The Decorator Pattern is a structural design pattern that allows behavior to be added to individual objects dynamically without changing their original class definitions. A decorator wraps a component object that implements the same abstract interface, and forwards most requests to this wrapped component. Additional responsibilities or states are then injected before or after the delegated calls. Client code interacts with the abstract interface and does not need to distinguish whether the object is a plain component or a component wrapped by multiple decorators.
+![Decorator](images/Decorator.png)
+In this project, the Decorator Pattern is applied to model various crop states in the game, such as immature, mature, drought, pest, and withered. Each of these states is implemented as a concrete decorator. At runtime, different decorators can be composed on top of the same crop instance (e.g., “immature + pest + drought”), which avoids putting a large number of flags and conditional branches into a single `Crop` class.
 
-#### Reason for Refactoring
+#### 3.2.2 Reason for Refactoring
+Before refactoring, a single Crop class typically represented all aspects of a crop, including:
+* Life cycle (planted, growing, mature, withered);
 
-#### Refactoring Details
+* Daily watering status and pest infestation;
 
-#### UML Class Diagram
+* Yield calculation and harvesting behavior;
 
-#### Benefits of Refactoring
+* Binding and updating of the visual sprite on the tile-based map.
 
+As more features were added, the Crop class became over-responsible. New states such as drought, pest, fertilizer effects, and special events were continuously added, leading to several problems:
+
+1. God class problem: The Crop class violated the Single Responsibility Principle. Methods like dailySettle() and harvest() contained many intertwined conditional branches.
+
+2. Poor extensibility for new states: Introducing a new state (e.g., disease or frost) required modifications to multiple data fields and methods inside Crop, increasing the risk of regression.
+
+3. State explosion: When crops could simultaneously be “mature + drought + pest”, it became difficult to express such combinations clearly within a single class. Readability and maintainability were severely harmed.
+
+4. Hard-to-test logic: Logic related to drought and pests was scattered across several methods, making it hard to test or reuse environmental effects in isolation.
+
+Therefore, the refactoring goals were:
+
+* Decouple “normal growth” behavior from “special state” behavior;
+
+* Express complex state combinations via the composition of decorators;
+
+* Reduce the invasiveness of new crop states on existing code, and improve extensibility and testability.
+#### 3.2.3 Refactoring Details
+After refactoring, the original Crop class is decomposed into several roles:
+
+##### 1. Abstract Component – `BaseCrop`
+
+`BaseCrop` defines the unified interface for crops: lifecycle methods such as init(...), dailySettle(), harvest(), and clear(), as well as state access methods like getLiveDay(), getMaturationDay(), isWatered(), and isWithered().
+```cpp
+class BaseCrop {
+public:
+    virtual ~BaseCrop() = default;
+
+    // Life cycle
+    virtual void init(cocos2d::Node* parent, const cocos2d::Vec2& tilePos) = 0;
+    virtual void dailySettle() = 0;
+    virtual bool harvest() = 0;
+    virtual void clear() = 0;
+
+    // State query
+    virtual const std::string& getName() const = 0;
+    virtual int  getLiveDay() const = 0;
+    virtual int  getMaturationDay() const = 0;
+    virtual bool isWatered() const = 0;
+    virtual bool isWithered() const = 0;
+    virtual void setWithered(bool withered) = 0;
+
+    // Player / environment operations
+    virtual void water() = 0;
+    virtual void applyPesticide() = 0;
+};
+```
+Client code (e.g., tiles and time manager) depends only on the BaseCrop abstraction, and does not care about the concrete implementation.
+
+##### 2. Concrete Component – `BasicCrop`
+
+`BasicCrop` implements the `BaseCrop` interface and encapsulates the core “normal growth” logic: crop name, current live days, maturation days, daily watering flag, and withered flag.
+
+In dailySettle(), the crop grows if it was watered; otherwise, it stays at the same day count. Reaching the maturation day only affects the appearance but does not directly encode drought, pest, or other special rules.
+
+updateSpriteFrame() updates the sprite color or frame according to the growth stage, providing basic visual feedback.
+```cpp
+class BasicCrop : public BaseCrop {
+public:
+    BasicCrop(const std::string& name, int maturationDay)
+    : _name(name),
+      _liveDay(0),
+      _maturationDay(maturationDay),
+      _watered(false),
+      _withered(false),
+      _parent(nullptr),
+      _tilePos(Vec2::ZERO),
+      _sprite(nullptr) {}
+
+    void init(Node* parent, const Vec2& tilePos) override {
+        _parent  = parent;
+        _tilePos = tilePos;
+
+        _sprite = Sprite::create();
+        if (_sprite) {
+            _sprite->setPosition(tilePos);
+            if (_parent) _parent->addChild(_sprite);
+        }
+        updateSpriteFrame();
+    }
+
+    void dailySettle() override {
+        if (_withered) return;
+
+        if (_watered) {
+            ++_liveDay;
+            _watered = false;
+        }
+
+        if (_liveDay == 0 && !_watered) {
+            _withered = true;
+        }
+
+        updateSpriteFrame();
+    }
+
+    bool harvest() override {
+        if (!_withered && _liveDay >= _maturationDay) {
+            clear();
+            return true;
+        }
+        return false;
+    }
+
+    void clear() override {
+        if (_sprite && _sprite->getParent())
+            _sprite->removeFromParent();
+        _sprite = nullptr;
+    }
+
+    // State access & operations
+    const std::string& getName() const override { return _name; }
+    int  getLiveDay() const override { return _liveDay; }
+    int  getMaturationDay() const override { return _maturationDay; }
+    bool isWatered() const override { return _watered; }
+    bool isWithered() const override { return _withered; }
+    void setWithered(bool w) override { _withered = w; }
+
+    void water() override { _watered = true; }
+    void applyPesticide() override { /* no-op for basic crop */ }
+
+protected:
+    std::string _name;
+    int  _liveDay;
+    int  _maturationDay;
+    bool _watered;
+    bool _withered;
+
+    Node*   _parent;
+    Vec2    _tilePos;
+    Sprite* _sprite;
+
+    void updateSpriteFrame() {
+        if (!_sprite) return;
+
+        if (_withered) {
+            _sprite->setColor(Color3B::GRAY);
+            return;
+        }
+
+        float ratio = _maturationDay > 0
+                      ? static_cast<float>(_liveDay) / _maturationDay
+                      : 1.0f;
+        if (ratio < 0.33f)       _sprite->setColor(Color3B::GREEN);
+        else if (ratio < 0.66f)  _sprite->setColor(Color3B::YELLOW);
+        else                     _sprite->setColor(Color3B::ORANGE);
+    }
+};
+```
+
+##### 3. Abstract Decorator – `CropDecorator`
+
+`CropDecorator` also implements `BaseCrop` and holds a `std::shared_ptr<BaseCrop>` named `_component`.
+
+The default implementation simply forwards all calls to `_component`, such as dailySettle(), harvest(), water(), and applyPesticide().
+```cpp
+class CropDecorator : public BaseCrop {
+public:
+    explicit CropDecorator(std::shared_ptr<BaseCrop> component)
+    : _component(std::move(component)) {}
+
+    void init(Node* parent, const Vec2& tilePos) override {
+        _component->init(parent, tilePos);
+    }
+
+    void dailySettle() override       { _component->dailySettle(); }
+    bool harvest() override           { return _component->harvest(); }
+    void clear() override             { _component->clear(); }
+
+    const std::string& getName() const override   { return _component->getName(); }
+    int  getLiveDay() const override              { return _component->getLiveDay(); }
+    int  getMaturationDay() const override        { return _component->getMaturationDay(); }
+    bool isWatered() const override               { return _component->isWatered(); }
+    bool isWithered() const override              { return _component->isWithered(); }
+    void setWithered(bool w) override             { _component->setWithered(w); }
+
+    void water() override             { _component->water(); }
+    void applyPesticide() override    { _component->applyPesticide(); }
+
+protected:
+    std::shared_ptr<BaseCrop> _component;
+};
+```
+Concrete decorators override a subset of these methods and inject additional behavior before or after calling the base implementation.
+
+##### 4. Concrete Decorators – Five Crop State Classes
+
+**ImmatureCropDecorator**:
+Overrides harvest() to disallow harvesting when liveDay < maturationDay and the crop is not withered, preventing accidental harvesting of immature crops.
+```cpp
+class ImmatureCropDecorator : public CropDecorator {
+public:
+    explicit ImmatureCropDecorator(std::shared_ptr<BaseCrop> component)
+    : CropDecorator(std::move(component)) {}
+
+    bool harvest() override {
+        if (!isWithered() && getLiveDay() < getMaturationDay()) {
+            return false; // prevent harvesting immature crops
+        }
+        return CropDecorator::harvest();
+    }
+
+    void dailySettle() override {
+        CropDecorator::dailySettle();
+        // optional: add “immature” effects here
+    }
+};
+
+```
+**MatureCropDecorator**:
+Represents crops that have reached the maturation day. It can add visual hints in dailySettle() and optionally grant extra rewards in harvest() (e.g., additional yield).
+```cpp
+class MatureCropDecorator : public CropDecorator {
+public:
+    explicit MatureCropDecorator(std::shared_ptr<BaseCrop> component)
+    : CropDecorator(std::move(component)) {}
+
+    bool harvest() override {
+        bool success = CropDecorator::harvest();
+        if (success) {
+            // optional: add extra rewards for perfectly mature crops
+        }
+        return success;
+    }
+
+    void dailySettle() override {
+        CropDecorator::dailySettle();
+        // optional: highlight mature crops
+    }
+};
+```
+**DroughtCropDecorator**:
+Maintains a _continuousDryDays counter and updates it in dailySettle().
+
+If the crop is not watered for several consecutive days, it calls setWithered(true) to mark the crop as withered.
+
+water() clears the drought counter and forwards the call to the wrapped component.
+```cpp
+class DroughtCropDecorator : public CropDecorator {
+public:
+    explicit DroughtCropDecorator(std::shared_ptr<BaseCrop> component)
+    : CropDecorator(std::move(component)),
+      _continuousDryDays(0) {}
+
+    void dailySettle() override {
+        if (!isWatered() && !isWithered()) {
+            ++_continuousDryDays;
+            if (_continuousDryDays >= 3) {
+                setWithered(true);
+            }
+        } else {
+            _continuousDryDays = 0;
+        }
+        CropDecorator::dailySettle();
+    }
+
+    void water() override {
+        _continuousDryDays = 0;
+        CropDecorator::water();
+    }
+
+private:
+    int _continuousDryDays;
+};
+```
+
+**PestCropDecorator**:
+Simulates pest damage in dailySettle() using random numbers. When _underPest is true, each day there is a certain probability that the crop becomes withered.
+
+applyPesticide() clears the pest state by setting _underPest to false.
+```cpp
+class PestCropDecorator : public CropDecorator {
+public:
+    explicit PestCropDecorator(std::shared_ptr<BaseCrop> component)
+    : CropDecorator(std::move(component)),
+      _underPest(true) {}
+
+    void dailySettle() override {
+        CropDecorator::dailySettle();
+        if (!_underPest || isWithered()) return;
+
+        static std::default_random_engine engine(std::random_device{}());
+        std::uniform_real_distribution<float> dist(0.0f, 1.0f);
+
+        if (dist(engine) < 0.1f) {
+            setWithered(true);
+        }
+    }
+
+    void applyPesticide() override {
+        _underPest = false;
+        CropDecorator::applyPesticide();
+    }
+
+private:
+    bool _underPest;
+};
+```
+
+**WitheredCropDecorator**:
+
+Calls setWithered(true) in the constructor to mark the underlying crop as withered.
+
+dailySettle() no longer delegates to the inner component, stopping any further growth.
+
+harvest() allows the player to clear the crop from the map but produces no yield.
+```cpp
+class WitheredCropDecorator : public CropDecorator {
+public:
+    explicit WitheredCropDecorator(std::shared_ptr<BaseCrop> component)
+    : CropDecorator(std::move(component)) {
+        setWithered(true);
+    }
+
+    void dailySettle() override {
+        // Do nothing: no more growth after withering
+    }
+
+    bool harvest() override {
+        clear();       // remove from the map, no yield
+        return true;
+    }
+
+    bool isWithered() const override {
+        return true;
+    }
+};
+```
+
+##### 5. Runtime Composition and Usage
+At runtime, the game first creates a base crop:
+```
+std::shared_ptr<BaseCrop> crop =
+    std::make_shared<BasicCrop>("Turnip", 4);
+```
+Then, depending on the current environment and state, it wraps the crop with different decorators:
+
+* Newly planted crops are wrapped with ImmatureCropDecorator.
+`crop = std::make_shared<ImmatureCropDecorator>(crop);`
+
+* When the crop reaches the maturation day, it is wrapped with MatureCropDecorator.
+`crop = std::make_shared<MatureCropDecorator>(crop);`
+* If it is not watered during a day, a DroughtCropDecorator is added.
+`crop = std::make_shared<DroughtCropDecorator>(crop);`
+* Pest events attach a PestCropDecorator.
+`crop = std::make_shared<PestCropDecorator>(crop);`
+* Once the crop is determined to be withered, it is wrapped with WitheredCropDecorator to enforce withered semantics.
+`crop = std::make_shared<WitheredCropDecorator>(crop);`
+
+The client maintains only a `std::shared_ptr<BaseCrop>` and simply calls `crop->dailySettle()`, `crop->water()`, `and crop->harvest()` without needing to know how many decorators are stacked on top.
+
+#### 3.2.4 UML Class Diagram
+The following figure illustrates the UML class diagram of the crop refactoring using the Decorator Pattern.
+
+* `BaseCrop` is the abstract component that defines the common interface for all crop objects.
+
+* `BasicCrop` inherits from `BaseCrop` and is the only concrete component. It encapsulates the normal growth behavior and basic state management.
+
+* `CropDecorator` also inherits from `BaseCrop`, but internally holds a BaseCrop reference via composition (- `component` : `BaseCrop`). It serves as the base class for all decorators.
+
+* `ImmatureCropDecorator`, `MatureCropDecorator`, `DroughtCropDecorator`, `PestCropDecorator`, and `WitheredCropDecorator` all inherit from `CropDecorator`. Each of them overrides methods like `harvest()`, `dailySettle()`, `water()`, or `applyPesticide()` to inject state-specific logic.
+![DecoratorUML](images/DecoratorUML.png)
+#### 3.2.5 Benefits of Refactoring
+By refactoring crops into the “base component + decorators” structure, the project gains several benefits:
+
+##### 1. Clear separation of concerns
+Normal growth behavior is encapsulated inside BasicCrop, while environmental and state-specific behaviors (drought, pest, withered, etc.) are isolated into their own decorator classes. This eliminates the need for a single class filled with numerous flags and conditional branches.
+
+##### 2. Improved extensibility for new states
+When new crop states are required (e.g., disease, frost, or fertilizer boost), developers only need to implement a new decorator that inherits from CropDecorator and override the necessary methods. The BasicCrop and existing decorators remain unchanged, which follows the Open–Closed Principle.
+
+##### 3. Support for flexible state composition
+Multiple decorators can be stacked on the same crop instance:
+
+* A mature crop can simultaneously suffer from pests and drought.
+
+* A newly planted crop can be instantly withered due to a special event. 
+
+These combinations are expressed by nested wrappers instead of a huge method that handles all possible state combinations.
+
+##### 4. Better readability and maintainability
+Each decorator focuses on one concern, and its class name directly conveys its semantics (e.g., DroughtCropDecorator, PestCropDecorator). This makes the implementation easier to read, understand, and maintain, especially in a team setting.
+
+##### 5. Easier testing and reuse
+Each decorator can be tested independently. For example, one can specifically verify that “a crop becomes withered after three continuous dry days” or “pest infestation causes withering with a certain probability per day”. The same decorators can also be reused for multiple crop types without duplicating logic.
 ### Facade Pattern
 
 #### Brief Introduction
