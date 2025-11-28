@@ -1,0 +1,32 @@
+@startuml
+' Before Refactoring Diagram
+
+class AppDelegate
+class UILogic
+class Gate
+
+class SceneManager {
+  + NextMap()
+  + showUILayer()
+  + hideUILayer()
+}
+
+class DocumentManager {
+  + load()
+  + save()
+}
+
+class TimeManager {
+  + goToNextDay()
+}
+
+note "Client classes are tightly coupled \n with multiple manager subsystems." as N1
+
+AppDelegate ..> SceneManager
+UILogic ..> SceneManager
+UILogic ..> DocumentManager
+Gate ..> SceneManager
+
+N1 .[hidden]. UILogic
+
+@enduml
