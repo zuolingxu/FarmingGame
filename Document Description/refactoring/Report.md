@@ -713,18 +713,141 @@ The application of the Facade pattern yielded several significant benefits:
 
 #### Benefits of Refactoring
 
-## Additional Patterns
+## 5. Additional Patterns
 
 ### Null Object Pattern
 
-#### Brief Introduction
+#### 5.1 Brief Introduction
+The Null Object Pattern is a behavioral design pattern that defines an object representing “absence” or “do-nothing” behavior, instead of using a null pointer/reference. The null object implements the same interface as real objects and provides safe, meaningful default behavior. Client code can uniformly invoke methods on the interface without checking for null, eliminating defensive null-checks scattered throughout the codebase.
 
-#### Reason for Refactoring
 
-#### Refactoring Details
+In this project, the Null Object Pattern is applied to the player’s **currently held item** system. The original design used a raw pointer `Item* currentItem` that frequently became `nullptr` when the player held nothing. This forced more than 15 null-checks across interaction, UI, and inventory code (e.g., `if (currentItem != nullptr && currentItem->type == PICKAXE)`). By introducing a `NullItem` singleton that implements the full `Item` interface with safe no-op behavior, all null-checks are completely eliminated.
 
-#### UML Class Diagram
+#### 5.2 Reason for Refactoring
+Before refactoring, the item system suffered from classic “null pointer hell”:
 
-#### Benefits of Refactoring
+1. **Frequent null checks** – Almost every interaction (mining, tilling, watering, eating, fishing) required `currentItem != nullptr` checks.
+2. **Inconsistent return values** – `getCurrentItemType()` had to return `ItemType::NONE` via a ternary operator when `currentItem` was null.
+3. **Error-prone pointer management** – When an item’s quantity reached zero, developers had to manually set `currentItem = nullptr`, risking dangling pointers.
+4. **Poor readability and extensibility** – Adding a new tool (e.g., axe, sickle) required modifying every null-checking site.
+5. **Violation of “Tell, Don’t Ask”** – Code constantly asked “do you have an item?” instead of simply telling the item to perform an action.
+
+These problems became especially severe because **“holding nothing” is the most common player state** (approximately 70% of gameplay time), yet it was represented by the absence of an object rather than a proper object with defined behavior.
+
+#### 5.3 Refactoring Details
+The original value-type `struct Item` was transformed into a polymorphic hierarchy using the Null Object Pattern:
+
+##### 1. Abstract Component – `Item`
+```cpp
+class Item {
+public:
+    virtual ~Item() = default;
+    virtual ItemType    getType() const = 0;
+    virtual std::string getIconPath() const = 0;
+    virtual int         getQuantity() const { return 0; }
+    virtual void        setQuantity(int) {}
+
+    // Behavior queries (default: false/no-op)
+    virtual bool isTool() const       { return false; }
+    virtual bool canMine() const      { return false; }
+    virtual bool canHoe() const       { return false; }
+    virtual bool canWater() const     { return false; }
+    virtual bool canFish() const      { return false; }
+    virtual bool isConsumable() const { return false; }
+
+    // Safe actions
+    virtual void use() const {}
+    virtual void consume() const {}
+};
+```
+
+##### 2. Concrete Component – `RealItem`
+Implements actual item logic (icon loading, quantity, tool/consumable checks, consumption that deducts quantity and restores energy).
+```cpp
+class RealItem final : public Item {
+    // ... implements all meaningful behavior
+    void consume() const override {
+        if (MainCharacter::getInstance()->modifyItemQuantity(type_, -1)) {
+            MainCharacter::getInstance()->modifyEnergy(getEnergyValue(type_));
+        }
+    }
+};
+```
+
+##### 3. Null Object – `NullItem` (Singleton)
+```cpp
+class NullItem final : public Item {
+private:
+    NullItem() = default;
+public:
+    static NullItem* getInstance() {
+        static NullItem instance;
+        return &instance;
+    }
+
+    ItemType    getType() const override     { return ItemType::NONE; }
+    std::string getIconPath() const override { return "ui/empty_hand.png"; }
+
+    void use() const override {
+        CCLOG("Nothing in hand");   // Optional feedback
+    }
+};
+```
+
+##### 4. MainCharacter Changes
+```cpp
+class MainCharacter {
+private:
+    std::vector<std::unique_ptr<RealItem>> inventory;   // Owns real items
+    Item* currentItem = NullItem::getInstance();        // Never nullptr
+};
+```
+- Constructor initializes `currentItem` to `NullItem::getInstance()`
+- `setCurrentItem()` switches to a `RealItem*` or falls back to `NullItem`
+- All inventory operations use `std::unique_ptr<RealItem>` for automatic memory management
+- `getCurrentItem()` and `getCurrentItemType()` now have no null checks
+
+#### 5.4 UML Class Diagram
+The refactored structure forms a classic Null Object hierarchy:
+- `Item` serves as the common abstract interface that defines all item-related operations.
+
+- `RealItem` provides the full, meaningful implementation for actual tools and consumables.
+
+- `NullItem` (implemented as a Meyers’ singleton) acts as the null object, returning safe default values (`ItemType::NONE`, empty icon path) and performing harmless no-op actions.
+
+All client code — including `MainCharacter` character logic, tile interaction systems (mining, tilling, watering, fishing), inventory management, and UI rendering — now depends **solely on the `Item*` (or `const Item*`) abstraction. Crucially, **none of these clients ever perform a null-pointer check again**. Whether the player is holding a real pickaxe or nothing at all, the pointer is always valid and the polymorphic call is safe:
+
+
+This transformation completely eliminates the null-checks that previously littered the codebase, achieving the ultimate goal of the Null Object Pattern: **the "absence" of an item is represented by a real object that knows how to behave correctly when absent**.
+
+![NullObjectUML](images/NullObjectUML.png)
+
+#### 5.5 Benefits of Refactoring
+The application of the Null Object Pattern yielded significant improvements:
+
+1. **Complete elimination of null checks**  
+   Over 15 instances of `currentItem != nullptr` and ternary operators were removed.
+
+2. **Safer and more robust code**  
+   Impossible to accidentally dereference a null `currentItem`. The program is now immune to crashes caused by forgotten null checks.
+
+3. **Cleaner, intention-revealing API**  
+   Code changed from defensive “Ask” style:
+   ```cpp
+   if (currentItem && currentItem->type == PICKAXE) mine();
+   ```
+   to declarative “Tell” style:
+   ```cpp
+   if (currentItem->canMine()) mine();
+   ```
+
+4. **Greatly improved extensibility**  
+   Adding a new tool (e.g., axe) only requires implementing `canChop()` in one `RealItem` case — no changes needed in any interaction site.
+
+5. **Natural representation of the most common state**  
+   “Empty hand” is now a first-class object with defined behavior (display empty-hand icon, safe no-op actions), perfectly matching real gameplay.
+
+6. **Modern C++ memory safety**  
+   Combined with `std::unique_ptr<RealItem>` in inventory, all item lifetime management is now fully RAII-compliant with zero manual deletes.
 
 ## Reference
