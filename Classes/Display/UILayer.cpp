@@ -105,8 +105,6 @@ bool UILayer::initWithType(UILayerType type)
     return true;
 }
 
-// TODO: UI尝试使用构建者模式重构
-
 void UILayer::createTaskBarLayout()
 {
     //create taskbar layout

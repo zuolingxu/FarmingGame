@@ -34,7 +34,6 @@ void SceneManager::createMapWithDocument(rapidjson::Document* doc)
     map_.emplace(name, map);
 }
 
-// TODO：此处是构建SceneManager单例的地方，后续可以考虑用构建者模式重构（但只有这一个单例的话意义不大）
 SceneManager* SceneManager::getInstance()
 {
     // Initialize UIs when SceneManager is first accessed
@@ -86,5 +85,3 @@ void SceneManager::NextMap(const std::string& map_name, const std::string& pos, 
     // repeat=3 -> 执行4次，正好对应四个处理器（Start/Create/Render/Assemble）
     loader->schedule(functionCallback, instance_, interval, 3, 0.0f, false, "loading");
 }
-
-// TODO: 提取为外观模式

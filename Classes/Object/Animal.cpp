@@ -1,4 +1,5 @@
 #include "Animal.h"
+#include "MovementStrategy.h"
 
 std::set<int> Animal::tag = {};
 
@@ -55,25 +56,15 @@ void Animal::defaultAction() {
 		CCLOG("defaultAction->parent_ nullptr");
 		return;
 	}
-	else
-		patrolPath();       // Start moving
-}
-
-// TODO: 策略模式重构
-
-void Animal::patrolPath() {
 	PlayerSprite* animalSprite = dynamic_cast<PlayerSprite*>(info_.sprite);
+	if (!animalSprite) {
+		CCLOG("defaultAction->sprite nullptr");
+		return;
+	}
 
-	animalSprite->schedule([=](float deltaTime) {
-		// Move down
-		animalSprite->move(PlayerSprite::MOVEMENT::W_DOWN, info_.position.Y() - 2);
-
-		// Move up
-		animalSprite->scheduleOnce([=](float deltaTime) {
-			animalSprite->move(PlayerSprite::MOVEMENT::W_UP, 5 - info_.position.Y());
-			}, 3.0f, "up_move_key");
-
-		}, 6.0f, "down_move_key"); // Repeat every 6 seconds
+	// 使用策略模式封装移动逻辑
+	MovementStrategies::AnimalPatrolStrategy strategy;
+	strategy.apply(animalSprite, info_);
 }
 
 void Animal::interact()

@@ -53,8 +53,6 @@ bool MainCharacter::modifylevel(int delta) {
         level_gift();
         UILogic::getInstance()->refreshLevelUI(level);
     }
-    //todo xianshilevel
-   
 
     return 1;
 

@@ -1,4 +1,5 @@
 #include "NPC.h"
+#include "MovementStrategy.h"
 
 NPC::NPC(MapLayer* parent, const Vec<int>& pos, std::string npcName, int emo, int length, bool pause)
 	: MapObject(pos), parent_(parent), name(npcName), emotion(emo), isPaused(pause)
@@ -88,7 +89,6 @@ void NPC::init()
 	defaultAction();
 }
 
-// TODO: 用策略模式重构此处
 
 // Set default behavior for NPC
 void NPC::defaultAction()
@@ -98,35 +98,17 @@ void NPC::defaultAction()
 		return;
 	}
 	PlayerSprite* npcSprite = dynamic_cast<PlayerSprite*>(info_.sprite);
-	if (name == "Haley")
-	{
-		npcSprite->schedule([=](float deltaTime) {
-			if (isPaused) {                             // If isPaused is true, stop moving
-				return;
-			}
-
-			npcSprite->move(PlayerSprite::MOVEMENT::W_LEFT, 6);
-
-			npcSprite->scheduleOnce([=](float deltaTime) {
-				if (isPaused) {
-					return;
-				}
-
-				npcSprite->move(PlayerSprite::MOVEMENT::W_RIGHT, 6);
-				}, 4.0f, "right_move_key");
-
-			}, 11.0f, "left_move_key");
+	if (!npcSprite) {
+		CCLOG("defaultAction->sprite nullptr");
+		return;
 	}
-	else if (name == "Caroline") {
-		npcSprite->move(PlayerSprite::MOVEMENT::W_DOWN, 3);
-		npcSprite->schedule([=](float deltaTime) {
-			npcSprite->move(PlayerSprite::MOVEMENT::W_UP, 2);
 
-			npcSprite->scheduleOnce([=](float deltaTime) {
-				npcSprite->move(PlayerSprite::MOVEMENT::W_DOWN, 2);
-				}, 4.0f, "down_move_key");
-
-			}, 8.0f, "up_move_key");
+	// 使用策略模式封装移动逻辑
+	auto strategy = MovementStrategies::CreateNPCStrategy(
+		name, [this]() { return isPaused; }
+	);
+	if (strategy) {
+		strategy->apply(npcSprite, info_);
 	}
 }
 
