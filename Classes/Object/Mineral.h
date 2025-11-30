@@ -1,10 +1,18 @@
 #pragma once
-#pragma once
 #include "cocos2d.h"
 #include "MapObject.h"
 #include "DocumentManager.h"
 #include "json/document.h"
 #include "MapLayer.h"
+#include "MapObjectFactory.h"
+
+static bool mineral_registered = [](){
+    MapObjectFactory::registerCreator("Mineral", [](rapidjson::Value& v, MapLayer* p, const Vec<int>& pos)->MapObject* {
+        return Mineral::create(v, p, pos); 
+    });
+    return true;
+}();
+
 
 class Mineral : public MapObject {
 private:

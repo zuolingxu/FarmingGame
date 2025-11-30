@@ -1,6 +1,14 @@
 #pragma once
 #include "MapObject.h"
 #include "string"
+#include "MapObjectFactory.h"
+
+static bool gate_registered = [](){
+    MapObjectFactory::registerCreator("Gate", [](rapidjson::Value& v, MapLayer* p, const Vec<int>& pos)->MapObject* {
+        return Gate::create(v, p, pos); 
+    });
+    return true;
+}();
 
 class Gate final : protected MapObject {
 public:

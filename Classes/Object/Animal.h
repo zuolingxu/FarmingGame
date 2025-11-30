@@ -7,6 +7,15 @@
 #include"PlayerSprite.h"
 #include "MainCharacter.h"
 #include<set>
+#include "MapObjectFactory.h"
+
+
+static bool animal_registered = [](){
+    MapObjectFactory::registerCreator("Animal", [](rapidjson::Value& v, MapLayer* p, const Vec<int>& pos)->MapObject* {
+        return Animal::create(v, p, pos);
+    });
+    return true;
+}();
 
 class Animal final: protected MapObject {
 private:

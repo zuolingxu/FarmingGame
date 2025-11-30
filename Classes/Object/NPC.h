@@ -8,6 +8,15 @@
 #include "Audio.h"
 #include "UIlogic.h"
 #include "SceneManager.h"
+#include "MapObjectFactory.h"
+
+static bool npc_registered = [](){
+    MapObjectFactory::registerCreator("NPC", [](rapidjson::Value& v, MapLayer* p, const Vec<int>& pos)->MapObject* {
+        return NPC::create(v, p, pos); 
+    });
+    return true;
+}();
+
 
 class NPC final : protected MapObject {
 private:

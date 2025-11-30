@@ -6,6 +6,7 @@
 #include "Land.h"
 #include "MainCharacter.h"
 #include "Audio.h"
+#include "MapObjectFactory.h"
 
 USING_NS_CC;
 #ifdef _MSC_VER
@@ -105,7 +106,16 @@ void MapLayer::addTiledMap()
 
 void MapLayer::addObject(const Vec<int>& pos, rapidjson::Value& val)
 {
-    MapObject* obj = MapObject::create(val, this, pos);
+    std::string type = val["Type"].GetString();
+    rapidjson::Value& SubVal = val["Info"];
+    MapObject* obj = nullptr;
+    try {
+        obj = MapObjectFactory::create(type, SubVal, parents, pos);
+    } catch (const std::exception& e) {
+        CCLOG("create failed: %s", e.what());
+        return;
+    }
+
     if (obj != nullptr)
     {
         obj->retain();

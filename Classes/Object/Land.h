@@ -6,6 +6,15 @@
 #include "json/document.h"
 #include "MapLayer.h"
 #include "UILogic.h"
+#include "MapObjectFactory.h"
+
+static bool land_registered = [](){
+    MapObjectFactory::registerCreator("Land", [](rapidjson::Value& v, MapLayer* p, const Vec<int>& pos)->MapObject* {
+        return Land::create(v, p, pos); 
+    });
+    return true;
+}();
+
 
 class Crop;
 

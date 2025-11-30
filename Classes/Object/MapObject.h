@@ -25,7 +25,6 @@ public:
 	MapObject(const MapObject& other) = delete;
 	MapObject& operator=(const MapObject& other) = delete;
 	
-	static MapObject* create(rapidjson::Value& val, MapLayer* parents, const Vec<int>& pos);
 	MapObject::ObjectInfo& getInfo();
 	virtual void init() = 0; 
 	virtual void interact() = 0;
