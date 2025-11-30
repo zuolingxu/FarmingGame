@@ -152,14 +152,101 @@ A unified scene and UI management module handles map switching, layer stacking, 
 ###  2.1. <a name='FactoryPattern'></a>Factory Pattern
 
 ####  2.1.1. <a name='BriefIntroduction'></a>Brief Introduction
+The Factory Pattern is a creational design pattern that centralizes object creation behind an abstraction. Client code requests products via a factory instead of instantiating concrete classes directly. This separates "what" to create from "how" to create, improving decoupling, adherence to the Single Responsibility Principle (SRP), and enabling the Open/Closed Principle (OCP) for introducing new product types.
+
+In this project, map entities such as `Animal`, `NPC`, `Land`, `Mineral`, and `Gate` are concrete products that derive from the abstract `MapObject`. The creation of these products is handled by a dedicated factory module (`MapObjectFactory`) instead of being inside `MapObject`.
+
+![Factory Pattern](./images/FactoryPattern.png)
 
 ####  2.1.2. <a name='ReasonforRefactoring'></a>Reason for Refactoring
+Originally, `MapObject` exposed a static `create(...)` and contained an if-else chain to instantiate different concrete classes based on a type string. This had several drawbacks:
+
+- Tight coupling: `MapObject` became responsible for both behavior and creation, violating SRP.
+- Poor extensibility: adding a new type required modifying `MapObject::create(...)`, breaking OCP and increasing regression risk.
+- Scattered lifecycle policy: memory management (e.g., `autorelease`) and error handling were mixed with product selection logic.
+
+the original code are as follows:
+```cpp
+if (type == "Animal")
+{
+ref = Animal::create(SubVal, parents, pos);
+}
+else if (type == "NPC")
+{
+ref = NPC::create(SubVal, parents, pos);
+}
+else if (type == "Land")
+{
+ref = Land::create(SubVal,parents, pos);
+}
+else if (type == "Mineral")
+{
+ref = Mineral::create(SubVal, parents, pos);
+}
+else if (type == "Gate")
+{
+ref = Gate::create(SubVal, parents, pos);
+}
+else
+{
+throw std::runtime_error("Archive has been corrupted");
+}
+
+```
+
+Given the number of map object types under `Classes/Object` (`Animal`, `NPC`, `Land`, `Mineral`, `Gate`), centralizing creation in a factory module makes the codebase easier to extend and maintain.
 
 ####  2.1.3. <a name='RefactoringDetails'></a>Refactoring Details
+We moved object creation out of `MapObject` and into `MapObjectFactory` (`Classes/Object/MapObjectFactory.h/.cpp`). The refactoring followed these principles:
+
+- `MapObject` no longer owns creation logic; it remains the abstract product base (`Classes/Object/MapObject.h/.cpp`).
+- Each concrete product (`Animal`, `NPC`, `Land`, `Mineral`, `Gate`) keeps a static `create()` as its construction entry point, encapsulating class-specific initialization.
+- `MapObjectFactory` directs construction by dispatching the requested type to the corresponding concrete `create()` method, providing a single place to manage creation policy and error handling.
+- The new code obeys SRP by separating creation from behavior, and OCP by allowing new types to be added without modifying existing code.
+
+Files involved:
+- `Classes/Object/MapObjectFactory.h` defines the factory interface and dispatch mechanism.
+- `Classes/Object/MapObjectFactory.cpp` implements creation routing and centralizes lifecycle policy (e.g., unified error handling; optional `autorelease` coordination).
+- `Classes/Object/Animal.h/.cpp`, `NPC.h/.cpp`, `Land.h/.cpp`, `Mineral.h/.cpp`, `Gate.h/.cpp` each provide `create()` and product-specific logic.
+- `Classes/Object/MapObject.cpp` no longer contains the old static `create(...)` chain.
+
+Creation flow after refactoring:
+- Client code requests an object by type (e.g., "Animal").
+- `MapObjectFactory::create()` maps the type to the corresponding concrete class and invokes its `create()`.
+- The factory returns a `MapObject*` to the client, while keeping lifecycle and error handling consistent.
+
+The new creation code is as follows:
+```cpp
+void MapObjectFactory::registerCreator(const std::string& type, Creator c) {
+    registry()[type] = std::move(c);
+}
+
+MapObject* MapObjectFactory::create(const std::string& type, rapidjson::Value& val, MapLayer* parent, const Vec<int>& pos) {
+    auto it = registry().find(type);
+    if (it == registry().end()) {
+        throw std::runtime_error("Unknown MapObject type: " + type);
+    }
+    return it->second(val, parent, pos);
+}
+```
 
 ####  2.1.4. <a name='UMLClassDiagram'></a>UML Class Diagram
+We provide a brief structure image and a detailed UML reflecting the factory-centric creation model:
+
+![Factory UML](./images/FactoryPatternUML.png)
+
+Notes:
+- The Product package includes `MapObject` (abstract) and five concrete classes (`Animal`, `NPC`, `Land`, `Mineral`, `Gate`).
+- The Factory package includes `MapObjectFactory` as the creation controller, along with conceptual creator roles for the five concrete products to indicate factory-side construction responsibilities.
 
 ####  2.1.5. <a name='BenefitsofRefactoring'></a>Benefits of Refactoring
+This refactoring delivers the following benefits:
+
+- Separation of concerns: `MapObject` focuses on product behavior, while `MapObjectFactory` handles creation and policy.
+- Extensibility: adding new map object types only requires extending factory dispatch (or introducing registration) without touching product base classes.
+- Consistent lifecycle: memory management and error handling are centralized, reducing duplication and leaks.
+- Testability: construction paths are isolated in one place, making it easier to mock or stub creation during tests.
+- Maintainability: fewer cross-cutting changes and clearer module boundaries within `Classes/Object`.
 
 <div style="page-break-after: always;"></div>
 
