@@ -923,14 +923,184 @@ The CoR foundation transforms scene transitions from rigid numeric gating into a
 ###  4.2. <a name='StrategyPattern'></a>Strategy Pattern
 
 ####  4.2.1. <a name='BriefIntroduction-1'></a>Brief Introduction
+The Strategy Pattern is a behavioral design pattern that enables selecting an algorithm’s implementation at runtime by encapsulating interchangeable behaviors behind a stable interface. Client code holds a reference to the abstract strategy and delegates the behavior to it, without knowing or depending on the concrete implementation. This promotes substitution, testability, and adherence to the Open/Closed Principle (OCP).
+
+In this project, we apply Strategy to encapsulate movement behaviors for non-player characters (NPCs) and animals. Previously, movement routines were hard-coded inside `NPC::defaultAction()` and `Animal::patrolPath()`. After refactoring, these routines are implemented as standalone strategy classes under `Classes/HelperClasses`, and clients simply select and apply the appropriate strategy.
+
+Key ideas we leverage:
+- Encapsulate changing movement logic (patrol routes, pause conditions, timing) into strategies.
+- Maintain a stable interface (`MovementStrategy`) that accepts `PlayerSprite*` and `MapObject::ObjectInfo`.
+- Allow data-driven selection (e.g., NPC name → movement strategy) via a small factory function.
+
+![Strategy Pattern](images/StrategyPattern.png)
 
 ####  4.2.2. <a name='ReasonforRefactoring-1'></a>Reason for Refactoring
+Before refactoring, movement code suffered from several problems:
+1. Tight coupling to clients: `NPC` and `Animal` owned the scheduling/timing details, direction constants, and repeat keys, mixing domain state with animation control logic.
+2. Code duplication: Similar patterns (move left/right with pauses; move down/up in loops) appeared in multiple classes with minor variations.
+3. Poor extensibility: Adding a new NPC movement style required modifying `NPC::defaultAction()` directly, risking regressions and growing an if-else chain by name/type.
+4. Testing difficulty: Movement routines were anonymous lambdas captured inline; isolating and unit-testing time-dependent behavior was hard.
+5. Violations of SRP and OCP: Client classes became controllers of animation timing and scheduling, rather than focusing on their domain responsibilities (state, interaction, settlement).
+
+Refactoring goals:
+- Decouple movement “how” from client “what”.
+- Centralize timing/scheduling idioms and keys for consistency.
+- Enable runtime selection and future extension of movement styles without touching clients.
+- Improve testability by isolating strategies as concrete classes.
+
+The original code snippets from `NPC.cpp` and `Animal.cpp`:
+
+```cpp
+// Set default behavior for NPC
+void NPC::defaultAction()
+{
+	if (parent_ == nullptr) {
+		CCLOG("defaultAction->parent_ nullptr");
+		return;
+	}
+	PlayerSprite* npcSprite = dynamic_cast<PlayerSprite*>(info_.sprite);
+	if (name == "Haley")
+	{
+        // Move Strategy: Left/Right scheduling loop with pause check
+	}
+	else if (name == "Caroline") {
+        // Move Strategy: Down then Up scheduling loop
+	}
+}
+```
 
 ####  4.2.3. <a name='RefactoringDetails-1'></a>Refactoring Details
+We introduced a dedicated strategy module and rewired clients to use it.
+
+Components and interfaces:
+- `MovementStrategy` (interface):
+    - Method: `apply(PlayerSprite* sprite, const MapObject::ObjectInfo& info)`
+    - Role: Execute movement behavior on the supplied sprite using the contextual `ObjectInfo` (grid position, size, etc.).
+
+- Concrete strategies:
+    - `AnimalPatrolStrategy`:
+        - Behavior: Down-then-up patrol loop; mirrors previous `Animal::patrolPath()`.
+        - Scheduling keys preserved: `down_move_key`, `up_move_key`.
+        - Uses `info.position.Y()` to compute path lengths, ensuring movement remains data-driven per instance.
+    - `HaleyPatrolStrategy`:
+        - Behavior: Left/Right patrol loop; respects an external pause function.
+        - Constructor accepts `std::function<bool()> isPausedFn` provided by `NPC`.
+        - Scheduling keys preserved: `left_move_key`, `right_move_key`.
+        - Matches original semantics, including early returns when paused.
+    - `CarolinePatrolStrategy`:
+        - Behavior: Down then Up scheduling loop with a subsequent Down; identical timing to original code.
+        - Scheduling keys preserved: `up_move_key`, `down_move_key`.
+
+- Strategy factory:
+    - `CreateNPCStrategy(const std::string& npcName, std::function<bool()> isPausedFn)` returns a `std::unique_ptr<MovementStrategy>`.
+    - Current mappings: `"Haley" → HaleyPatrolStrategy`, `"Caroline" → CarolinePatrolStrategy`. Unknown names return `nullptr` (no default movement).
+
+Client refactoring:
+- `Animal::defaultAction()`:
+    - Old: checked `parent_` then called `patrolPath()`.
+    - New: checks `parent_`, obtains `PlayerSprite*`, and applies `AnimalPatrolStrategy` with `info_`.
+    - `patrolPath()` retained for historical reference but no longer invoked by default.
+
+- `NPC::defaultAction()`:
+    - Old: inline movement logic branching on `name` with captured `isPaused` state.
+    - New: constructs a strategy via `CreateNPCStrategy(name, [this]{ return isPaused; })` and applies it to `PlayerSprite*`.
+    - Unknown NPC names result in no movement strategy, preventing unintended behavior.
+
+Compatibility and invariants:
+- All original schedule keys are preserved, ensuring existing `unschedule(...)` in `NPC::clear()` continues to work.
+- All movement durations, delays, and lengths remain identical to the pre-refactor behavior.
+- `PlayerSprite` APIs (`move`, `schedule`, `scheduleOnce`) are unchanged.
+
+Files added:
+- `Classes/HelperClasses/MovementStrategy.h`
+- `Classes/HelperClasses/MovementStrategy.cpp`
+
+Files modified:
+- `Classes/Object/NPC.cpp`: include strategy header and replace inline logic with factory usage.
+- `Classes/Object/Animal.cpp`: include strategy header and apply `AnimalPatrolStrategy`.
+
+Testing considerations:
+- Strategies can be tested by constructing a fake `ObjectInfo` and a test `PlayerSprite` stub that records `move(...)` calls and scheduled events.
+- Pause behavior is injected via the function parameter, enabling deterministic tests.
+
+The refactored `NPC::defaultAction()` now looks like this:
+
+```cpp
+// Base movement strategy interface
+class MovementStrategy {
+public:
+    virtual ~MovementStrategy() = default;
+    virtual void apply(PlayerSprite* sprite, const MapObject::ObjectInfo& info) = 0;
+};
+
+// Animal's patrol strategy (replaces Animal::patrolPath)
+class AnimalPatrolStrategy final : public MovementStrategy {
+public:
+    void apply(PlayerSprite* sprite, const MapObject::ObjectInfo& info) override;
+};
+
+// Haley's movement strategy
+class HaleyPatrolStrategy final : public MovementStrategy {
+public:
+    explicit HaleyPatrolStrategy(std::function<bool()> isPausedFn)
+        : isPausedFn_(std::move(isPausedFn)) {}
+
+    void apply(PlayerSprite* sprite, const MapObject::ObjectInfo& info) override;
+
+private:
+    std::function<bool()> isPausedFn_;
+};
+
+// Caroline's movement strategy
+class CarolinePatrolStrategy final : public MovementStrategy {
+public:
+    void apply(PlayerSprite* sprite, const MapObject::ObjectInfo& info) override;
+};
+
+// factory method to create NPC strategies based on name
+std::unique_ptr<MovementStrategy> CreateNPCStrategy(
+    const std::string& npcName,
+    std::function<bool()> isPausedFn);
+```
 
 ####  4.2.4. <a name='UMLClassDiagram-1'></a>UML Class Diagram
 
+![Strategy Pattern UML](images/StrategyPatternUML.png)
+
+Diagram notes:
+- Haley strategy accepts an injected pause predicate to honor runtime state.
+- Keys and timing semantics are preserved to keep compatibility with existing clear/unschedule flows.
+
 ####  4.2.5. <a name='BenefitsofRefactoring-1'></a>Benefits of Refactoring
+This refactoring yields both architectural and practical benefits:
+
+1. Decoupling and SRP alignment
+     - Movement orchestration exits client classes; `NPC` and `Animal` focus on domain state and interactions.
+     - Scheduling and timing live in strategies, improving cohesion and readability.
+
+2. Extensibility via OCP
+     - Adding new movement styles (e.g., festival dancing, random wandering, pathfinding-driven routes) is done by introducing a new strategy and (optionally) wiring it in the factory, without modifying clients.
+
+3. Reusability and consistency
+     - Common scheduling patterns (keys, delays) are consolidated, reducing duplication and divergence.
+
+4. Testability
+     - Strategies become isolated units, enabling focused tests for timing and state transitions (pause, loop boundaries, destination checks).
+
+5. Maintainability
+     - Reduced conditional branching inside clients; movement logic lives in well-named classes that self-document intent.
+
+6. Runtime configurability
+     - Strategy selection can be extended to be data-driven (e.g., from JSON configs or NPC metadata), enabling designers to author movement without touching C++.
+
+7. Safety and compatibility
+     - By preserving schedule keys and durations, we avoid regressions in existing clear/unschedule logic and visual timing expectations.
+
+Future work:
+- Introduce more NPC strategies (e.g., `Abigail`), and a `DefaultIdleStrategy` for unknown names.
+- Expand factory to read strategy bindings from configuration files.
+- Consider a composite strategy that sequences multiple behaviors (e.g., morning routine → work shift → evening wander).
+- Add a test harness that mocks `PlayerSprite` scheduling to validate timing deterministically.
 
 <div style="page-break-after: always;"></div>
 

@@ -1,0 +1,60 @@
+@startuml
+' Movement Strategy Pattern for FarmingGame
+
+title Movement Strategy Pattern - FarmingGame
+
+package "MovementStrategies" {
+  interface MovementStrategy {
+    + apply(sprite: PlayerSprite*, info: MapObject::ObjectInfo): void
+  }
+
+  class AnimalPatrolStrategy implements MovementStrategy
+
+  class HaleyPatrolStrategy implements MovementStrategy {
+    - isPausedFn_: std::function<bool()>
+    + HaleyPatrolStrategy(isPausedFn: std::function<bool()>)
+  }
+
+  class CarolinePatrolStrategy implements MovementStrategy
+}
+
+' Represent the free function as a utility for diagram clarity
+class "CreateNPCStrategy" <<utility>> {
+  + CreateNPCStrategy(npcName: std::string, isPausedFn: std::function<bool()>): std::unique_ptr<MovementStrategy>
+}
+
+MovementStrategy <|.. AnimalPatrolStrategy
+MovementStrategy <|.. HaleyPatrolStrategy
+MovementStrategy <|.. CarolinePatrolStrategy
+
+"CreateNPCStrategy" ..> MovementStrategy : returns
+
+class NPC
+class Animal
+class PlayerSprite
+class "MapObject::ObjectInfo" as ObjectInfo
+
+NPC ..> "CreateNPCStrategy" : uses
+NPC ..> MovementStrategy : uses via factory
+Animal ..> AnimalPatrolStrategy : uses
+
+MovementStrategy ..> PlayerSprite : parameter
+MovementStrategy ..> ObjectInfo : parameter
+
+note right of HaleyPatrolStrategy
+- Left/Right patrol loop
+- Respects pause via isPausedFn_
+- Keeps keys: left_move_key, right_move_key
+end note
+
+note right of AnimalPatrolStrategy
+- Down then Up patrol loop
+- Keeps keys: down_move_key, up_move_key
+end note
+
+note right of CarolinePatrolStrategy
+- Up/Down looping movement
+- Keeps keys: up_move_key, down_move_key
+end note
+
+@enduml
