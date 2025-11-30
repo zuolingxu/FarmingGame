@@ -74,6 +74,11 @@
       - [Refactoring Details](#refactoring-details-6)
       - [UML Class Diagram](#uml-class-diagram-6)
       - [Benefits of Refactoring](#benefits-of-refactoring-6)
+  - [AI Tools Usage in Refactoring](#ai-tools-usage-in-refactoring)
+    - [Phase 1: Initial Concept Exploration and Broad Literature Review](#phase-1-initial-concept-exploration-and-broad-literature-review)
+    - [Phase 2: Targeted Case Study and Implementation Research](#phase-2-targeted-case-study-and-implementation-research)
+    - [Phase 3: Critical Analysis and Filtering of AI-Sourced Information](#phase-3-critical-analysis-and-filtering-of-ai-sourced-information)
+    - [Reflection](#reflection)
   - [Reference](#reference)
 <!-- TOC -->
 
@@ -849,5 +854,39 @@ The application of the Null Object Pattern yielded significant improvements:
 
 6. **Modern C++ memory safety**  
    Combined with `std::unique_ptr<RealItem>` in inventory, all item lifetime management is now fully RAII-compliant with zero manual deletes.
+
+## AI Tools Usage in Refactoring
+
+In our refactoring process, AI tools were employed strictly in an auxiliary capacity, functioning as an advanced research assistant rather than a direct contributor to the codebase. This strategic choice allowed us to leverage AI's powerful information retrieval capabilities while ensuring that all design decisions and code implementations remained human-led. Our usage can be detailed in three distinct phases:
+
+### Phase 1: Initial Concept Exploration and Broad Literature Review
+
+At the outset, our goal was to build a solid theoretical foundation for the chosen design patterns. We used AI to accelerate this learning process.
+
+Instead of simple queries like "What is Facade Pattern?", we engaged the AI in a dialogue to explore the pattern's nuances. For instance, we prompted: *"Search for the explain of the Facade Pattern's role in game engine architecture and compare its typical use cases against the Mediator Pattern."* This provided a comparative analysis that was more insightful than a standard web search.
+
+
+![](./images/SearchResultsA1.png)
+![](./images/SearchResultsA2.png)
+
+### Phase 2: Targeted Case Study and Implementation Research
+
+Once we had a firm grasp of the theory, we needed practical, context-specific examples.
+
+We narrowed our queries to find information relevant to our specific technology stack. For example: *"Find tutorials or GitHub repositories demonstrating Facade Pattern usage specifically within a Cocos2d-x project for managing game states and subsystems."*
+
+![](./images/SearchResultsB1.png)
+![](./images/SearchResultsB2.png)
+
+### Phase 3: Critical Analysis and Filtering of AI-Sourced Information
+
+Crucially, our process involved a manual verification and filtering stage, reinforcing the human-in-the-loop principle.
+
+*   **Information Validation**: We discovered that AI, while powerful, could sometimes provide outdated or overly complex information. For example, one AI-suggested implementation for a pattern used advanced C++17 features that were incompatible with our project's C++11 standard. This required us to critically evaluate the AI's output and manually adapt the concepts to our constraints.
+*   **Synthesizing Knowledge**: The AI provided a wealth of raw information, but the task of synthesizing this information into a coherent design plan was entirely our own. We reviewed the collected articles, code examples, and discussions, debated the trade-offs, and then designed our `GameFacade` from scratch, informed by—but not dictated by—the AI-sourced materials.
+
+### Reflection
+
+This multi-phase approach proved highly effective. By defining the AI's role as a research assistant, we streamlined the often time-consuming process of literature review and technical research. The AI handled the "legwork" of finding relevant data, which freed up our cognitive resources to focus on the higher-level tasks of analysis, design, and implementation. This demonstrates a balanced and responsible use of AI in software engineering, where the tool enhances human intellect rather than replacing it.
 
 ## Reference
