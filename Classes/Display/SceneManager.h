@@ -51,33 +51,4 @@ private:
     // clear all game logic when changing Archive
     void clearMaps();
 
-    // The callbacks for NextMap function
-    class NextMapCallBack {
-    private:
-        float loading_per = 0; //  loading percentage
-        std::string map_name; //  the name of the target map
-        std::string pos; //  the position of the player
-        cocos2d::ui::LoadingBar* loading_bar = nullptr; //  the loading bar
-        cocos2d::Node* next_map = nullptr; //  the target map's Node
-    public:
-        // Constructor and Destructor
-        NextMapCallBack(std::string map_name, std::string pos);
-        ~NextMapCallBack() = default;
-
-        // the callback function
-        void operator()();
-
-        // create a new Scene with a loading bar
-        void start();
-
-        // create and clear the maps, this steps will only be effective when archive status changes
-        // After creating/loading/free Archive, And when you change the map, this function will be called
-        void create();
-
-        // make the target map to front
-        void render();
-
-        // assemble new scene
-        void assemble();
-    };
 };
