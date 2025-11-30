@@ -773,13 +773,150 @@ The application of the Facade pattern yielded several significant benefits:
 
 ####  4.1.1. <a name='BriefIntroduction-1'></a>Brief Introduction
 
+The Chain of Responsibility (CoR) Pattern is a behavioral design pattern that decouples a sender from multiple potential receivers by passing a request along a chain of handler objects. Each handler decides either (1) to process the request or (2) to forward it to the next handler in the chain. This promotes loose coupling, localizes stage-specific logic, and supports flexible assembly, insertion, removal, or reordering of processing steps without changing client code.
+
+In our scene transition workflow the request is implicit: “advance the scene loading pipeline one step”. Prior to refactoring, this progression logic was encoded via hard-coded percentage thresholds inside `NextMapCallBack::operator()`. The CoR refactoring converts those percentage-gated conditional blocks into four discrete handler classes representing semantically meaningful phases: `StartHandler`, `CreateHandler`, `RenderHandler`, and `AssembleHandler`. Each invocation advances exactly one stage. The caller (the scheduler in `SceneManager::NextMap`) remains oblivious to internal phase boundaries.
+
+Key Intent Applied:
+1. Replace monolithic conditional dispatch with composable objects.
+2. Eliminate magic numeric thresholds (1 / 10 / 80 / 100) as control flow drivers.
+3. Provide an extensible pipeline for future scene transition steps (e.g., prefetch assets, fade-out audio, analytics logging) without altering existing handlers.
+
+Design Motifs:
+- Request Granularity: One scheduler tick equals one handler execution.
+- Single Advancement: No handler loops or recursion; deterministic progression improves traceability.
+- Handler Responsibility: Each handler encapsulates exactly one cohesive operation aligned with SRP.
+
+![Chain of Responsibility](images/ChainOfResponsibility.png)
+
 ####  4.1.2. <a name='ReasonforRefactoring-1'></a>Reason for Refactoring
+
+Prior implementation issues in `NextMapCallBack`:
+
+1. Hard-Coded Threshold Logic: Four sequential `if/else` branches keyed to `loading_per` percentage values tightly coupled phase semantics to arbitrary numbers. Adjusting or inserting a new phase required renormalizing those thresholds and touching shared conditional code.
+2. Mixed Concerns: Progress calculation, UI bar updates, map creation, player instantiation, scene replacement, and UI layer visibility resided in a single method—violating SRP and reducing readability.
+3. Poor Extensibility: Adding an intermediate phase (e.g., asynchronous resource streaming) meant editing a brittle chain of comparisons, increasing regression risk.
+4. Limited Testability: Individual phases could not be unit-tested in isolation; tests had to drive numeric percentage inputs to hit the intended branch.
+5. Hidden Temporal Ordering: Ordering was implicit in numeric ranges rather than explicit in object structure, making intent obscure to new contributors.
+
+Refactoring Goals:
+1. Make sequence explicit via object chain ordering instead of numeric ranges.
+2. Localize side-effects (scene creation, map manipulation, UI toggling) per handler for focused testing.
+3. Enable insertion/removal/reordering with constant client surface.
+4. Prepare for potential asynchronous or conditional skips (future: ability for a handler to decide “not ready—retry”).
+5. Reduce cognitive load by isolating stage semantics.
+
+The original code snippet from `SceneManager.cpp`:
+
+```cpp
+void SceneManager::NextMapCallBack::operator()()
+{
+    if (loading_per < 1.0f) {
+        start();
+    } else if (loading_per < 10.0f) {
+        create();
+    } else if (loading_per < 80.0f) {
+        render();
+    } else if (loading_per < 100.0f) {
+        assemble();
+    }
+    loading_bar->setPercent(loading_per);
+}
+```
 
 ####  4.1.3. <a name='RefactoringDetails-1'></a>Refactoring Details
 
+Scope of Change:
+- Extracted callback and handlers from `SceneManager` into new compilation unit `HandleNextScene.h/.cpp`.
+- Removed in-class `NextMapCallBack` definition and prior threshold-based logic from `SceneManager.cpp`.
+- Introduced an abstract base `NextSceneHandler` declaring `handle(NextMapCallBack&)` and chain linkage via `setNext` / `next`.
+- Implemented four concrete handlers:
+    - `StartHandler`: Builds loading scene & progress UI.
+    - `CreateHandler`: Creates or clears maps, conditionally loads introduction map.
+    - `RenderHandler`: Moves target map to front; instantiates player sprite if position specified; updates current map name.
+    - `AssembleHandler`: Constructs final scene, attaches UI node, shows relevant layers, performs transition.
+
+Execution Model:
+1. `SceneManager::NextMap` schedules the callback lambda four times (repeat = 3 → 4 executions).
+2. On each invocation `NextMapCallBack::operator()` invokes current handler’s `handle`, then advances `current_ = current_->next()`.
+3. When `current_` becomes `nullptr` the chain is exhausted—subsequent scheduler ticks (if any) are inert (can be optimized by unscheduling early in future).
+
+Transition from Percent-Driven Flow:
+- `loading_per` is retained only for UI progress bar continuity, but no longer determines control flow; each handler sets a meaningful milestone value (5, 45, 85, 100). These are presentation details isolated per handler.
+
+Potential Enhancements:
+1. Memory Management: Replace raw handler pointers with `std::unique_ptr` chain for automatic lifetime.
+2. Cancellation: Provide early exit (e.g., user abort) by clearing `current_` or adding a guard.
+3. Async Integration: Allow handlers to post async tasks (asset streaming) and defer advancement until completion callback triggers.
+4. Logging / Telemetry: Add a decorator or observer to emit timing metrics per phase.
+5. Error Isolation: Wrap each `handle` body with localized exception handling; escalate aggregated failure context to a recovery handler.
+
+The refactored `NextMapCallBack` now looks like this:
+
+```cpp
+NextMapCallBack::NextMapCallBack(std::string map_name_, std::string pos_)
+    : map_name(std::move(map_name_))
+    , pos(std::move(pos_))
+{
+    head_ = new StartHandler();
+    NextSceneHandler* createH = new CreateHandler();
+    NextSceneHandler* renderH = new RenderHandler();
+    NextSceneHandler* assembleH = new AssembleHandler();
+
+    head_->setNext(createH);
+    createH->setNext(renderH);
+    renderH->setNext(assembleH);
+
+    current_ = head_;
+}
+
+void NextMapCallBack::operator()()
+{
+    if (current_) {
+        current_->handle(*this);
+        current_ = current_->next();
+    }
+    if (loading_bar) {
+        loading_bar->setPercent(loading_per);
+    }
+}
+```
+
 ####  4.1.4. <a name='UMLClassDiagram-1'></a>UML Class Diagram
 
+![Chain of Responsibility UML](images/ChainOfResponsibilityUML.png)
+
+Sequence Diagram Notes (for inclusion):
+- Emphasize deterministic single-step advancement per scheduler tick.
+- Show progress bar update after each handler.
+- Highlight map and UI adjustments localized to their respective handlers.
+
 ####  4.1.5. <a name='BenefitsofRefactoring-1'></a>Benefits of Refactoring
+
+Primary Benefits:
+1. Explicit Phase Modeling: Handler classes make scene transition stages first-class citizens, improving discoverability and documentation potential.
+2. Extensibility: Adding a new phase becomes a localized operation (create new handler + link) without modifying existing logic—aligns with Open/Closed Principle.
+3. Readability & Maintainability: Eliminates cryptic percentage branching; responsibilities are self-descriptive by class name.
+4. Testability: Each handler can be unit-tested by constructing a tailored `NextMapCallBack` context and invoking `handle()` directly.
+5. Reduced Risk Surface: Changes to one phase no longer risk unintended side effects in unrelated phases.
+6. Separation of Concerns: Progress UI updates, map lifecycle management, player spawning, and scene assembly are segregated.
+7. Future Async Readiness: Chain architecture provides a natural anchor point for introducing asynchronous handlers with continuation semantics.
+
+Secondary Benefits:
+1. Metrics / Profiling Hooks: Handlers offer fine-grained instrumentation points for load-time analytics.
+2. Conditional Phase Skipping: A handler could internally decide to bypass itself or insert fallback phases (e.g., degraded assets) without caller changes.
+3. Easier Rollback Strategy: Potential to implement a reverse chain for error recovery (unwind partially created resources).
+4. UI Variation: The `StartHandler` could be swapped for themed variants (festival loading screens) without touching other stages.
+
+Residual Technical Debt & Next Steps:
+1. Macro-Based Privacy Breakage: Replace `#define private public` with structured access (friend or accessor methods).
+2. Raw Pointer Lifecycle: Migrate handler chain to RAII-managed smart pointers.
+3. Unscheduling Optimization: After `current_ == nullptr`, cancel scheduler to reclaim cycles.
+4. Error Channel: Introduce a lightweight result type or status enum to propagate recoverable failures.
+5. Configuration-Driven Assembly: Externalize handler ordering into a configuration file for data-driven customization (e.g., mod support, DLC phases).
+
+Strategic Outlook:
+The CoR foundation transforms scene transitions from rigid numeric gating into a scalable pipeline. This unlocks architectural flexibility for advanced features—asset prefetching, adaptive loading UI, network synchronization, or analytics instrumentation—without destabilizing existing logic.
 
 <div style="page-break-after: always;"></div>
 
